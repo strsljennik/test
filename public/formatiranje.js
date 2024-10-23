@@ -7,12 +7,16 @@ let currentColor = '#FFFFFF';
 // Funkcija za BOLD formatiranje
 document.getElementById('boldBtn').addEventListener('click', function() {
     isBold = !isBold;
+    updateInputStyle();
+});
    
 });
 
 // Funkcija za ITALIC formatiranje
 document.getElementById('italicBtn').addEventListener('click', function() {
     isItalic = !isItalic;
+    updateInputStyle();
+});
     
 });
 
