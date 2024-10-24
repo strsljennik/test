@@ -104,6 +104,13 @@ io.on('connection', (socket) => {
         delete users[userId];
         io.emit('updateGuestList', Object.values(users)); // Ažuriraj listu gostiju
     });
+// Kada klijent pošalje play_song događaj, emituj ga ostalim klijentima
+    socket.on('play_song', (songUrl) => {
+        socket.broadcast.emit('play_song', songUrl);
+    });
+
+
+    
 });
 
 // Pokreni server
