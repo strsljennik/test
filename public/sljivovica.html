@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio Stanica</title>
+    <style>
+        /* Stil za kontejner iframe-a */
+        #radio-container {
+            position: fixed; /* Fiksna pozicija */
+            bottom: 10px; /* Od dna */
+            right: 10px; /* Od desne strane */
+            width: 100px; /* Početna širina */
+            height: 100px; /* Početna visina */
+            z-index: 1000; /* Postavlja iznad drugih elemenata */
+            border: 2px solid #000; /* Obračun oko iframe-a */
+            resize: both; /* Omogućava promenu veličine */
+            overflow: auto; /* Omogućava skrolovanje ako je potrebno */
+        }
+        
+        /* Stil za iframe */
+        #radio-iframe {
+            width: 100%; /* Puni kontejner */
+            height: 100%; /* Puni kontejner */
+            border: none; /* Bez okvira */
+        }
+    </style>
+</head>
+<body>
+    <h1>Dobrodošli na moju radio stanicu</h1>
+
+    <!-- Kontejner za iframe -->
+    <div id="radio-container" draggable="true">
+        <iframe id="radio-iframe" src="http://play.radiostanica.com/player/2352/radio-sljivovica" allow="autoplay; encrypted-media"></iframe>
+    </div>
+
+    <script>
+        // Draggable funkcionalnost
+        const container = document.getElementById('radio-container');
+
+        container.addEventListener('dragstart', (e) => {
+            const offsetX = e.offsetX;
+            const offsetY = e.offsetY;
+
+            const dragMove = (e) => {
+                container.style.left = `${e.pageX - offsetX}px`;
+                container.style.top = `${e.pageY - offsetY}px`;
+            };
+
+            const dragEnd = () => {
+                window.removeEventListener('mousemove', dragMove);
+                window.removeEventListener('mouseup', dragEnd);
+            };
+
+            window.addEventListener('mousemove', dragMove);
+            window.addEventListener('mouseup', dragEnd);
+        });
+    </script>
+</body>
+</html>
