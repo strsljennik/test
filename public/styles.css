@@ -108,4 +108,13 @@ body {
 
 #authContainer input {
     margin-right: 5px; /* Razmak između input polja i dugmadi */
+} 
+
+body {
+    background-image: url('https://i.imgur.com/70Db0O3l.jpg'); /* URL do slike */
+    background-size: cover; /* Pozadinska slika treba da pokrije celu stranicu */
+    background-position: center; /* Centriranje slike na ekranu */
+    background-repeat: no-repeat; /* Ne ponavljati sliku */
+    margin: 0; /* Uklanjanje podrazumevajućih margina */
+    height: 100vh; /* Postavljanje visine tela na visinu prozora */
 }
