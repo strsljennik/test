@@ -3,58 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sljivovica Player</title>
+    <title>Radio Belle Amie</title>
     <style>
-        /* Stilovi za dugmad */
-        .button {
-            display: inline-block;
-            padding: 10px 15px;
-            margin: 5px;
-            background-color: #007bff; /* Plava boja */
-            color: white; /* Bijela boja teksta */
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
+        body {
+            position: relative;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5; /* Pozadina je svetla */
         }
-
-        /* Stil za iframe */
         #radio-player {
-            position: fixed;
-            bottom: 0; /* Pozicija u donjem delu */
-            right: 0;  /* Pozicija u desnom delu */
-            width: 150px;  /* Širina iframe-a */
-            height: 150px; /* Visina iframe-a */
-            border: none;  /* Uklanja ivice sa iframe-a */
-            z-index: 1000; /* Uverava se da bude preko drugih elemenata */
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            border: none; /* Uklanja okvir oko iframe-a */
+            display: none; /* Hide the iframe by default */
+        }
+        #play-button {
+            position: absolute;
+            bottom: 20px; /* Razmak od dna */
+            right: 20px; /* Razmak od desnog ruba */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50; /* Zeleni dugme */
+            color: white;
+            border: none;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-    <button class="button" id="play-button">Play</button>
-    <button class="button" id="stop-button">Stop</button>
 
-    <iframe id="radio-player" src="http://play.radiostanica.com/radio/3404/pink-radio"></iframe>
+<button id="play-button">PLAY</button>
+<iframe id="radio-player" src="https://www.radiostanica.com/radio/2297/radio-belle-amie" allow="autoplay"></iframe>
 
-    <script>
-        let mediaPlayer;
+<script>
+const radioPlayer = document.getElementById('radio-player');
+const playButton = document.getElementById('play-button');
+let isPlaying = false;
 
-        // Event listener za dugme Play
-        document.getElementById('play-button').addEventListener('click', () => {
-            if (!mediaPlayer) {
-                mediaPlayer = new Audio("http://play.radiostanica.com/radio/3404/pink-radio");
-                mediaPlayer.play();
-            } else {
-                mediaPlayer.play();
-            }
-        });
+playButton.addEventListener('click', () => {
+    if (!isPlaying) {
+        radioPlayer.style.display = 'block'; // Prikazuje iframe
+        radioPlayer.contentWindow.postMessage('play', '*'); // Pošalje poruku za reprodukciju
+        playButton.textContent = 'STOP'; // Menja tekst dugmeta na STOP
+    } else {
+        radioPlayer.contentWindow.postMessage('pause', '*'); // Pošalje poruku za pauzu
+        radioPlayer.style.display = 'none'; // Sakriva iframe
+        playButton.textContent = 'PLAY'; // Menja tekst dugmeta na PLAY
+    }
+    isPlaying = !isPlaying; // Menja stanje
+});
+</script>
 
-        // Event listener za dugme Stop
-        document.getElementById('stop-button').addEventListener('click', () => {
-            if (mediaPlayer) {
-                mediaPlayer.pause();
-                mediaPlayer.currentTime = 0; // Opcionalno: Resetuje vreme na početak
-            }
-        });
-    </script>
 </body>
 </html>
