@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Belle Amie</title>
+    <title>Radio Player</title>
     <style>
         body {
             position: relative;
@@ -13,8 +13,8 @@
         }
         #play-button {
             position: absolute;
-            bottom: 20px; /* Razmak od dna */
-            right: 20px; /* Razmak od desnog ruba */
+            bottom: 10px; /* Razmak od dna */
+            right: 10px; /* Razmak od desnog ruba */
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
@@ -22,6 +22,7 @@
             color: white;
             border: none;
             border-radius: 5px;
+            z-index: 10; /* Iznad ostalog sadržaja */
         }
         audio {
             display: none; /* Sakrij audio element za interfejs */
@@ -40,8 +41,13 @@ let isPlaying = false;
 
 playButton.addEventListener('click', () => {
     if (!isPlaying) {
-        radioPlayer.play(); // Pokreni strim
-        playButton.textContent = 'STOP'; // Menja tekst dugmeta na STOP
+        radioPlayer.play() // Pokušaj pokretanja strima
+            .then(() => {
+                playButton.textContent = 'STOP'; // Menja tekst dugmeta na STOP
+            })
+            .catch(error => {
+                console.error('Greška prilikom reprodukcije:', error);
+            });
     } else {
         radioPlayer.pause(); // Pauziraj strim
         playButton.textContent = 'PLAY'; // Menja tekst dugmeta na PLAY
