@@ -1,54 +1,59 @@
 <!DOCTYPE html>
-<html lang="sr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Stanica</title>
+    <title>Sljivovica Player</title>
     <style>
-        /* Stil za kontejner iframe-a */
-        #radio-container {
-            position: fixed; /* Fiksna pozicija */
-            bottom: 10px; /* Od dna */
-            right: 10px; /* Od desne strane */
-            width: 200px; /* Početna širina */
-            height: 200px; /* Početna visina */
-            z-index: 1000; /* Postavlja iznad drugih elemenata */
-            border: 2px solid #000; /* Obračun oko iframe-a */
-            resize: both; /* Omogućava promenu veličine */
-            overflow: auto; /* Omogućava skrolovanje ako je potrebno */
+        /* Stilovi za dugmad */
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #007bff; /* Plava boja */
+            color: white; /* Bijela boja teksta */
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
         }
-        
+
         /* Stil za iframe */
-        #radio-iframe {
-            width: 100%; /* Puni kontejner */
-            height: 100%; /* Puni kontejner */
-            border: none; /* Bez okvira */
+        #radio-player {
+            position: fixed;
+            bottom: 0; /* Pozicija u donjem delu */
+            right: 0;  /* Pozicija u desnom delu */
+            width: 150px;  /* Širina iframe-a */
+            height: 150px; /* Visina iframe-a */
+            border: none;  /* Uklanja ivice sa iframe-a */
+            z-index: 1000; /* Uverava se da bude preko drugih elemenata */
         }
     </style>
 </head>
 <body>
-   
+    <button class="button" id="play-button">Play</button>
+    <button class="button" id="stop-button">Stop</button>
+
+    <iframe id="radio-player" src="http://play.radiostanica.com/radio/3404/pink-radio"></iframe>
 
     <script>
-        // Draggable funkcionalnost
-        const container = document.getElementById('radio-container');
+        let mediaPlayer;
 
-        container.addEventListener('dragstart', (e) => {
-            const offsetX = e.offsetX;
-            const offsetY = e.offsetY;
+        // Event listener za dugme Play
+        document.getElementById('play-button').addEventListener('click', () => {
+            if (!mediaPlayer) {
+                mediaPlayer = new Audio("http://play.radiostanica.com/radio/3404/pink-radio");
+                mediaPlayer.play();
+            } else {
+                mediaPlayer.play();
+            }
+        });
 
-            const dragMove = (e) => {
-                container.style.left = `${e.pageX - offsetX}px`;
-                container.style.top = `${e.pageY - offsetY}px`;
-            };
-
-            const dragEnd = () => {
-                window.removeEventListener('mousemove', dragMove);
-                window.removeEventListener('mouseup', dragEnd);
-            };
-
-            window.addEventListener('mousemove', dragMove);
-            window.addEventListener('mouseup', dragEnd);
+        // Event listener za dugme Stop
+        document.getElementById('stop-button').addEventListener('click', () => {
+            if (mediaPlayer) {
+                mediaPlayer.pause();
+                mediaPlayer.currentTime = 0; // Opcionalno: Resetuje vreme na početak
+            }
         });
     </script>
 </body>
