@@ -3,22 +3,22 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB, User } = require('./mongo');
 const bcrypt = require('bcrypt');
-const { spawn } = require('child_process');
 require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Poveži se sa bazom podataka
+// Povezivanje sa bazom podataka
 connectDB();
 
-let users = {}; // Promeni listu korisnika u objekat
-const adminUsername = "Radio Galaksija"; // Definiši administratorski nalog
+let users = {}; // Lista korisnika kao objekat
+const adminUsername = "Radio Galaksija"; // Definišemo admina
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
+// Registracija
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
@@ -38,6 +38,7 @@ app.post('/register', async (req, res) => {
     }
 });
 
+// Login
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
@@ -48,8 +49,8 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ username });
 
     if (user && await bcrypt.compare(password, user.password)) {
-        io.emit('userLoggedIn', username);
         res.send('Logged in');
+        io.emit('userLoggedIn', username);
     } else {
         res.status(400).send('Invalid credentials');
     }
@@ -63,31 +64,40 @@ app.get('/', (req, res) => {
 // Socket.io veza
 io.on('connection', (socket) => {
     console.log('Novi korisnik je povezan');
-
-    // Dodeli socket.id kao jedinstveni ID korisniku
     const userId = socket.id;
     const nickname = `Korisnik-${Object.keys(users).length + 1}`; // Generiši nickname
 
     // Dodaj korisnika u objekat
     users[userId] = nickname;
     console.log(`${nickname} se povezao.`);
+    
+    // Emituj trenutnu listu gostiju
+    io.emit('updateGuestList', Object.values(users));
 
-    // Obavesti ostale korisnike o novom gostu
-    socket.broadcast.emit('newGuest', nickname);
-    io.emit('updateGuestList', Object.values(users)); // Ažuriraj listu gostiju
-
-    // Kada korisnik uspešno uloguje i promeni nickname
+    // Kada se uloguje admin, preuzima kontrolu
     socket.on('userLoggedIn', (username) => {
         if (username === adminUsername) {
-            // Ako je korisnik admin, postavi ga kao "Radio Galaksija" bez dodatne oznake
-            users[userId] = username; 
-        } else {
-            users[userId] = username; // Promeni korisnikov nickname za obične korisnike
-        }
+            // Ako je već prijavljen sa "Radio Galaksija", izbegavamo duplikat
+            const adminExists = Object.values(users).includes(adminUsername);
 
-        io.emit('updateGuestList', Object.values(users)); // Ažuriraj listu za sve korisnike
+            if (adminExists) {
+                // Nađemo korisnika koji koristi admin nick i prevezemo ga na novi socket
+                const adminSocketId = Object.keys(users).find(id => users[id] === adminUsername);
+                delete users[adminSocketId]; // Izbacujemo starog
+            }
+
+            users[userId] = adminUsername; // Novo povezivanje kao admin
+            io.emit('updateGuestList', Object.values(users)); // Osveži listu
+            socket.emit('adminControlsEnabled'); // Omogući kontrolu radija za admina
+
+            console.log(`Korisnik ${adminUsername} preuzeo kontrolu kao admin.`);
+        } else {
+            users[userId] = username;
+            io.emit('updateGuestList', Object.values(users));
+        }
     });
 
+    // Kada korisnik pošalje poruku
     socket.on('chatMessage', (msgData) => {
         const time = new Date().toLocaleTimeString();
         const messageToSend = {
@@ -101,16 +111,18 @@ io.on('connection', (socket) => {
         io.emit('chatMessage', messageToSend);
     });
 
-    socket.on('disconnect', () => {
-        console.log(`${users[userId]} se odjavio.`);
-        // Ukloni korisnika iz objekta koristeći socket ID
-        delete users[userId];
-        io.emit('updateGuestList', Object.values(users)); // Ažuriraj listu gostiju
+    // Kada admin kontroliše muziku
+    socket.on('play_song', (songUrl) => {
+        if (users[userId] === adminUsername) {
+            socket.broadcast.emit('play_song', songUrl);
+        }
     });
 
-    // Kada klijent pošalje play_song događaj, emituj ga ostalim klijentima
-    socket.on('play_song', (songUrl) => {
-        socket.broadcast.emit('play_song', songUrl);
+    // Kada korisnik prekine vezu
+    socket.on('disconnect', () => {
+        console.log(`${users[userId]} se odjavio.`);
+        delete users[userId];
+        io.emit('updateGuestList', Object.values(users));
     });
 });
 
