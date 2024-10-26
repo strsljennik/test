@@ -10,14 +10,11 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Definiši administratorske podatke
-const adminUsername = "Radio Galaksija";
-const adminPassword = "marakana100-";
-
+// Poveži se sa bazom podataka
 connectDB();
 
 let users = {}; // Promeni listu korisnika u objekat
-let isAdminLoggedIn = false; // Praćenje da li je admin prijavljen
+const adminUsername = "Radio Galaksija"; // Definiši administratorski nalog
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
@@ -48,23 +45,17 @@ app.post('/login', async (req, res) => {
         return res.status(400).send('Username and password are required.');
     }
 
-    // Provera za admina
-    if (username === adminUsername && password === adminPassword) {
-        isAdminLoggedIn = true; // Postavi admin status na true
-        return res.json({ message: 'Admin logged in', isAdmin: true });
-    }
-
-    // Provera ostalih korisnika
     const user = await User.findOne({ username });
 
     if (user && await bcrypt.compare(password, user.password)) {
         io.emit('userLoggedIn', username);
-        res.json({ message: 'Logged in', isAdmin: false });
+        res.send('Logged in');
     } else {
         res.status(400).send('Invalid credentials');
     }
 });
 
+// Glavna ruta
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
@@ -72,20 +63,30 @@ app.get('/', (req, res) => {
 // Socket.io veza
 io.on('connection', (socket) => {
     console.log('Novi korisnik je povezan');
-    const userId = socket.id;
 
-    // Provera da li je admin prijavljen i postavljanje njegovog imena
-    if (isAdminLoggedIn) {
-        users[userId] = adminUsername; // Dodeli adminu ime bez dodavanja u listu gostiju
-        socket.emit('adminConnected', adminUsername);
-        isAdminLoggedIn = false; // Resetuj status nakon prijave admina
-    } else {
-        // Dodeli korisničko ime običnim korisnicima
-        const nickname = `Korisnik-${Object.keys(users).length + 1}`;
-        users[userId] = nickname;
-        socket.broadcast.emit('newGuest', nickname);
-        io.emit('updateGuestList', Object.values(users));
-    }
+    // Dodeli socket.id kao jedinstveni ID korisniku
+    const userId = socket.id;
+    const nickname = `Korisnik-${Object.keys(users).length + 1}`; // Generiši nickname
+
+    // Dodaj korisnika u objekat
+    users[userId] = nickname;
+    console.log(`${nickname} se povezao.`);
+
+    // Obavesti ostale korisnike o novom gostu
+    socket.broadcast.emit('newGuest', nickname);
+    io.emit('updateGuestList', Object.values(users)); // Ažuriraj listu gostiju
+
+    // Kada korisnik uspešno uloguje i promeni nickname
+    socket.on('userLoggedIn', (username) => {
+        if (username === adminUsername) {
+            // Ako je korisnik admin, postavi ga kao "DJ" i ažuriraj listu
+            users[userId] = `${username} (DJ)`; // Obeleži admina kao DJ
+        } else {
+            users[userId] = username; // Promeni korisnikov nickname za obične korisnike
+        }
+
+        io.emit('updateGuestList', Object.values(users)); // Ažuriraj listu za sve korisnike
+    });
 
     socket.on('chatMessage', (msgData) => {
         const time = new Date().toLocaleTimeString();
@@ -94,7 +95,7 @@ io.on('connection', (socket) => {
             bold: msgData.bold,
             italic: msgData.italic,
             color: msgData.color,
-            nickname: users[userId],
+            nickname: users[userId], // Koristi nickname iz objekta
             time: time
         };
         io.emit('chatMessage', messageToSend);
@@ -102,15 +103,18 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log(`${users[userId]} se odjavio.`);
+        // Ukloni korisnika iz objekta koristeći socket ID
         delete users[userId];
-        io.emit('updateGuestList', Object.values(users));
+        io.emit('updateGuestList', Object.values(users)); // Ažuriraj listu gostiju
     });
 
+    // Kada klijent pošalje play_song događaj, emituj ga ostalim klijentima
     socket.on('play_song', (songUrl) => {
         socket.broadcast.emit('play_song', songUrl);
     });
 });
 
+// Pokreni server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server je pokrenut na portu ${PORT}`);
