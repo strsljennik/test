@@ -11,15 +11,6 @@
             margin: 0;
             background-color: #f5f5f5; /* Pozadina je svetla */
         }
-        #radio-player {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 150px;
-            height: 150px;
-            border: none; /* Uklanja okvir oko iframe-a */
-            display: none; /* Hide the iframe by default */
-        }
         #play-button {
             position: absolute;
             bottom: 20px; /* Razmak od dna */
@@ -32,12 +23,15 @@
             border: none;
             border-radius: 5px;
         }
+        audio {
+            display: none; /* Sakrij audio element za interfejs */
+        }
     </style>
 </head>
 <body>
 
 <button id="play-button">PLAY</button>
-<iframe id="radio-player" src="https://www.radiostanica.com/radio/2297/radio-belle-amie" allow="autoplay"></iframe>
+<audio id="radio-player" src="DAJTE_TU_DIREKTNI_AUDIO_STREAM_URL" preload="auto"></audio>
 
 <script>
 const radioPlayer = document.getElementById('radio-player');
@@ -46,12 +40,10 @@ let isPlaying = false;
 
 playButton.addEventListener('click', () => {
     if (!isPlaying) {
-        radioPlayer.style.display = 'block'; // Prikazuje iframe
-        radioPlayer.contentWindow.postMessage('play', '*'); // Pošalje poruku za reprodukciju
+        radioPlayer.play(); // Pokreni strim
         playButton.textContent = 'STOP'; // Menja tekst dugmeta na STOP
     } else {
-        radioPlayer.contentWindow.postMessage('pause', '*'); // Pošalje poruku za pauzu
-        radioPlayer.style.display = 'none'; // Sakriva iframe
+        radioPlayer.pause(); // Pauziraj strim
         playButton.textContent = 'PLAY'; // Menja tekst dugmeta na PLAY
     }
     isPlaying = !isPlaying; // Menja stanje
