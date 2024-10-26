@@ -79,8 +79,8 @@ io.on('connection', (socket) => {
     // Kada korisnik uspešno uloguje i promeni nickname
     socket.on('userLoggedIn', (username) => {
         if (username === adminUsername) {
-            // Ako je korisnik admin, postavi ga kao "DJ" i ažuriraj listu
-            users[userId] = `${username} (DJ)`; // Obeleži admina kao DJ
+            // Ako je korisnik admin, postavi ga kao "Radio Galaksija" bez dodatne oznake
+            users[userId] = username; 
         } else {
             users[userId] = username; // Promeni korisnikov nickname za obične korisnike
         }
