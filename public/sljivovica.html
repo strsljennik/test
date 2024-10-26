@@ -4,57 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radio Player</title>
-    <style>
-        body {
-            position: relative;
-            height: 100vh;
-            margin: 0;
-            background-color: #f5f5f5; /* Pozadina je svetla */
-        }
-        #play-button {
-            position: absolute;
-            bottom: 10px; /* Razmak od dna */
-            right: 10px; /* Razmak od desnog ruba */
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #4CAF50; /* Zeleni dugme */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            z-index: 10; /* Iznad ostalog sadržaja */
-        }
-        audio {
-            display: none; /* Sakrij audio element za interfejs */
-        }
-    </style>
 </head>
 <body>
 
-<button id="play-button">PLAY</button>
-<audio id="radio-player" src="DAJTE_TU_DIREKTNI_AUDIO_STREAM_URL" preload="auto"></audio>
-
-<script>
-const radioPlayer = document.getElementById('radio-player');
-const playButton = document.getElementById('play-button');
-let isPlaying = false;
-
-playButton.addEventListener('click', () => {
-    if (!isPlaying) {
-        radioPlayer.play() // Pokušaj pokretanja strima
-            .then(() => {
-                playButton.textContent = 'STOP'; // Menja tekst dugmeta na STOP
-            })
-            .catch(error => {
-                console.error('Greška prilikom reprodukcije:', error);
-            });
-    } else {
-        radioPlayer.pause(); // Pauziraj strim
-        playButton.textContent = 'PLAY'; // Menja tekst dugmeta na PLAY
-    }
-    isPlaying = !isPlaying; // Menja stanje
-});
-</script>
+<h1>Radio Belle Amie</h1>
+<audio controls>
+    <source src="http://92.60.239.23:8000/;*.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
 
 </body>
 </html>
