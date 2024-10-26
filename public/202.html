@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio 202 Player</title>
+    <style>
+        #radioPlayer {
+            display: none; /* Sakrij iframe po defaultu */
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<button id="playButton">Play</button>
+<iframe id="radioPlayer" src="http://stream.radio202.rs:8000/radio202" frameborder="0"></iframe>
+
+<script>
+    const playButton = document.getElementById('playButton');
+    const radioPlayer = document.getElementById('radioPlayer');
+
+    playButton.addEventListener('click', function() {
+        if (radioPlayer.style.display === "none") {
+            radioPlayer.style.display = "block"; // Prikaži iframe
+            playButton.textContent = "Pause"; // Promeni tekst dugmeta
+        } else {
+            radioPlayer.style.display = "none"; // Sakrij iframe
+            playButton.textContent = "Play"; // Promeni tekst dugmeta
+        }
+    });
+</script>
+
+</body>
+</html>
