@@ -29,11 +29,11 @@ document.getElementById('colorPicker').addEventListener('input', function() {
 
 document.getElementById('colorPicker').addEventListener('input', function() {
     currentColor = this.value; // Uzimanje izabrane boje
-    updateGuestListColor();    // Ažuriranje boje za goste
+    updateGuestColor();    // Ažuriranje boje za goste
 });
 
 // Funkcija za ažuriranje boje u listi gostiju
-function updateGuestListColor() {
+function updateGuestColor() {
     let guests = document.querySelectorAll('#guestList .guest'); // Uzimamo sve goste
     guests.forEach(guest => {
         guest.style.color = currentColor; // Promena boje za svakog gosta
