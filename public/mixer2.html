@@ -5,10 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Mixer</title>
     
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script> <!-- Dodaj ovu liniju -->
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     
     <style>
-        /* Tvoj CSS stil... */
+        body {
+            margin: 0; /* Uklanja marginu oko body elementa */
+            padding: 0; /* Uklanja padding oko body elementa */
+            position: relative; /* Postavlja poziciju tela na relativnu da bi se children elementi mogli pozicionirati apsolutno */
+        }
+
+        #mixer {
+            position: absolute; /* Apsolutna pozicija */
+            top: 0; /* 0 pixela od vrha */
+            right: 0; /* 0 pixela od desne strane */
+            background-color: white; /* Postavi pozadinsku boju, promeni po potrebi */
+            padding: 10px; /* Dodaj padding, opcionalno */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Dodaj senku, opcionalno */
+        }
     </style>
 </head>
 <body>
@@ -16,7 +29,7 @@
     <input type="password" id="mixerPassword" placeholder="Unesi lozinku" style="display:none;">
     <button id="openMixer" style="display:none;">Otvori Mixer</button>
     
-    <div id="mixer">
+    <div id="mixer" style="display: none;"> <!-- Dodaj 'display: none;' da se sakrije dok se ne otvori -->
         <h2>Audio Mixer</h2>
         <input type="text" id="songUrl" placeholder="URL pesme">
         <input type="text" id="songName" placeholder="Naziv pesme">
@@ -27,7 +40,7 @@
     </div>
 
     <script>
-        const socket = io(); // Inicijalizacija Socket.io
+        const socket = io();
         const audioPlayer = document.getElementById('audioPlayer');
         const songList = document.getElementById('songList');
         const addSongButton = document.getElementById('addSong');
@@ -42,7 +55,6 @@
         let songs = [];
         let currentSongIndex = 0;
 
-        // Dodavanje funkcionalnosti za otvaranje mixera
         toggleMixer.addEventListener('click', () => {
             mixerPassword.style.display = 'block';
             openMixerButton.style.display = 'block';
@@ -137,12 +149,10 @@
                 audioPlayer.style.display = 'block';
                 currentSongIndex = index;
 
-                // Emituj događaj kada se pesma pušta
                 socket.emit('play_song', songs[index]);
             }
         }
 
-        // Slušaj događaj kada se pesma reprodukuje
         socket.on('play_song', (songUrl) => {
             audioPlayer.src = songUrl;
             audioPlayer.play();
@@ -161,7 +171,6 @@
             songs.splice(currentSongIndex - 1, 1);
         });
 
-        // Funkcionalnost za pomeranje (drag and drop) mixera
         dragElement(document.getElementById("mixer"));
 
         function dragElement(elmnt) {
