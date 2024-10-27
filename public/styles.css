@@ -64,9 +64,9 @@ body {
 #chatInput {
     position: absolute;
     top: 55px;
-    left: 200px; /* Pozicija ostaje nepromenjena */
-    width: 400px;
-    height: 25px;
+    left: 150px; /* Pozicija ostaje nepromenjena */
+    width: 500px;
+    height: 20px;
     padding: 5px;
     border-radius: 5px;
     border: 2px solid white;
