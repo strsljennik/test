@@ -127,6 +127,12 @@ io.on('connection', (socket) => {
     socket.on('play_song', (songUrl) => {
         socket.broadcast.emit('play_song', songUrl);
     });
+socket.on('error', (errorMessage) => {
+    console.error(errorMessage); // Ovo bi trebalo da prikaže grešku u konzoli
+});
+
+
+    
 });
 
 // Pokreni server
