@@ -109,9 +109,3 @@ body {
 #authContainer input {
     margin-right: 5px; /* Razmak između input polja i dugmadi */
 }
-body {
-  background-image: url("https://i.imgur.com/70Db0O3.jpeg");
-  background-size: cover; /* Slika će prekriti ceo ekran */
-  background-position: center; /* Slika će biti centrirana */
-  background-repeat: no-repeat; /* Slika se neće ponavljati */
-}
