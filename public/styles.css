@@ -47,10 +47,10 @@ body {
 
 #messageArea {
     position: absolute;
-    top: 55px; /* 5px ispod toolbar-a */
+    top: 85px; /* 5px ispod toolbar-a */
     left: 5px; /* 5px od leve granice kontejnera */
     right: 185px; /* 5px od desne granice liste gosta */
-    bottom: 50px; /* Do visine polja za unos poruka */
+    bottom: 0px; /* Do visine polja za unos poruka */
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -63,15 +63,15 @@ body {
 
 #chatInput {
     position: absolute;
-    bottom: 10px;
+    top: 55px;
     left: 200px; /* Pozicija ostaje nepromenjena */
     width: 400px;
-    height: 30px;
+    height: 25px;
     padding: 5px;
     border-radius: 5px;
     border: 2px solid white;
     resize: none;
-    font-size: 16px;
+    font-size: 20px;
     background-color: black;
     color: white;
     overflow: hidden;
