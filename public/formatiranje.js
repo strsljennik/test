@@ -72,20 +72,7 @@ socket.on('newGuest', function (nickname) {
     newGuest.textContent = nickname;
     guestList.appendChild(newGuest);
 });
-
-// Ažuriranje liste gostiju
-socket.on('updateGuestList', function (users) {
-    const guestList = document.getElementById('guestList');
-    guestList.innerHTML = ''; // Očisti trenutnu listu
-
-    // Ponovo dodaj DJ-a
-    const dj = document.createElement('div');
-    dj.className = 'guest';
-    dj.id = 'djNickname';
-    dj.textContent = 'Radio Galaksija';
-    guestList.appendChild(dj);
-    
-    // Dodaj ostale goste
+  // Dodaj ostale goste
     users.forEach(user => {
         const newGuest = document.createElement('div');
         newGuest.className = 'guest';
