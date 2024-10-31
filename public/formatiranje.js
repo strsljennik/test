@@ -23,17 +23,28 @@ document.getElementById('colorBtn').addEventListener('click', function() {
 
 // Kada korisnik izabere boju iz palete
 document.getElementById('colorPicker').addEventListener('input', function() {
-    currentColor = this.value; // Uzimanje izabrane boje
-    updateInputStyle(); // Ažuriranje stilova unosa
+    currentColor = this.value;
+    updateInputStyle();
 });
 
-// Funkcija za ažuriranje boje u input polju
-function updateInputStyle() {
-    let inputField = document.getElementById('chatInput');
-    inputField.style.fontWeight = isBold ? 'bold' : 'normal';
-    inputField.style.fontStyle = isItalic ? 'italic' : 'normal';
-    inputField.style.color = currentColor; // Update to current text color
+document.getElementById('colorPicker').addEventListener('input', function() {
+    currentColor = this.value; // Uzimanje izabrane boje
+    updateGuestListColor();    // Ažuriranje boje za goste
+});
+
+// Funkcija za ažuriranje boje u listi gostiju
+function updateGuestListColor() {
+    let guests = document.querySelectorAll('#guestList .guest'); // Uzimamo sve goste
+    guests.forEach(guest => {
+        guest.style.color = currentColor; // Promena boje za svakog gosta
+    });
 }
+ function updateTextStyle() {
+            let inputField = document.getElementById('chatInput');
+            inputField.style.fontWeight = isBold ? 'bold' : 'normal';
+            inputField.style.fontStyle = isItalic ? 'italic' : 'normal';
+            inputField.style.color = currentTextColor; // Update to current text color
+        }
 
 // Kada korisnik pritisne Enter
 document.getElementById('chatInput').addEventListener('keydown', function(event) {
@@ -57,26 +68,37 @@ socket.on('chatMessage', function(data) {
     newMessage.classList.add('message');
     newMessage.style.fontWeight = data.bold ? 'bold' : 'normal';
     newMessage.style.fontStyle = data.italic ? 'italic' : 'normal';
-    newMessage.style.color = data.color; // Koristi boju iz poruke
+    newMessage.style.color = data.color;
     newMessage.innerHTML = `<strong>${data.nickname}:</strong> ${data.text} <span style="font-size: 0.8em; color: gray;">(${data.time})</span>`;
     messageArea.prepend(newMessage);
     messageArea.scrollTop = 0; // Automatsko skrolovanje
 });
 
+
 // Kada nov gost dođe
 socket.on('newGuest', function (nickname) {
     const guestList = document.getElementById('guestList');
     const newGuest = document.createElement('div');
-    newGuest.className = 'guest'; // Dodaj klasu za stil
-    newGuest.style.color = currentColor; // Postavi boju samo za novog gosta
     newGuest.textContent = nickname;
+    // Dodaj novog gosta ispod DJ-a
     guestList.appendChild(newGuest);
 });
-  // Dodaj ostale goste
+
+// Ažuriranje liste gostiju
+socket.on('updateGuestList', function (users) {
+    const guestList = document.getElementById('guestList');
+    guestList.innerHTML = ''; // Očisti trenutnu listu
+    // Ponovo dodaj DJ-a
+    const dj = document.createElement('div');
+    dj.className = 'guest';
+    dj.id = 'djNickname';
+    dj.textContent = 'Radio Galaksija';
+    guestList.appendChild(dj);
+    
+    // Dodaj ostale goste
     users.forEach(user => {
         const newGuest = document.createElement('div');
         newGuest.className = 'guest';
-        newGuest.style.color = currentColor; // Postavi boju samo za novog gosta
         newGuest.textContent = user;
         guestList.appendChild(newGuest);
     });
