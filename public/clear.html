@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio Chat</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #333;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.8);
+            padding-top: 50px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* 5% from the top, centered */
+            border: 1px solid #888;
+            width: 300px; /* Width of the modal */
+            text-align: center;
+            padding: 20px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #f44336;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #04AA6D;
+            color: white;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chat-container">
+    <!-- Ovde će biti sadržaj chata -->
+    <p>Poruka 1</p>
+    <p>Poruka 2</p>
+</div>
+
+<div id="delete-modal" class="modal">
+    <span onclick="document.getElementById('delete-modal').style.display='none'" class="close" title="Zatvori Modal">&times;</span>
+    <form class="modal-content" onsubmit="return checkPassword();">
+        <div class="container">
+            <h1>Unesite lozinku</h1>
+            <input type="password" id="password" placeholder="Lozinka" required>
+            <button type="submit">Potvrdi</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Funkcija za brisanje poruka
+    function deleteAllMessages() {
+        const chatContainer = document.getElementById('chat-container');
+        if (chatContainer) {
+            chatContainer.innerHTML = ''; // Briše sve poruke
+        }
+    }
+
+    // Funkcija za otvaranje modala
+    function showDeleteModal() {
+        document.getElementById('delete-modal').style.display = 'block';
+    }
+
+    // Funkcija za proveru lozinke
+    function checkPassword() {
+        const inputPassword = document.getElementById('password').value;
+        const correctPassword = "galaksija123"; // Ispravna lozinka
+
+        if (inputPassword === correctPassword) {
+            deleteAllMessages(); // Poziva funkciju za brisanje poruka
+            document.getElementById('delete-modal').style.display = 'none'; // Zatvara modal
+            return false; // Sprečava ponovno slanje forme
+        } else {
+            alert("Pogrešna lozinka!"); // Prikazuje poruku o grešci
+            return false; // Sprečava ponovno slanje forme
+        }
+    }
+
+    // Dodaj event listener za desni klik
+    document.addEventListener('contextmenu', function(event) {
+        event.preventDefault(); // Sprečava defaultni kontekst meni
+    });
+
+    // Dodaj event listener za dvostruki desni klik
+    let clickCount = 0;
+    document.addEventListener('contextmenu', function(event) {
+        clickCount++;
+        if (clickCount === 2) {
+            showDeleteModal(); // Otvara modal za lozinku
+            clickCount = 0; // Resetuje brojač klikova
+        }
+    });
+</script>
+
+</body>
+</html>
