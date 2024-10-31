@@ -13,7 +13,8 @@ const io = socketIo(server);
 // Poveži se sa bazom podataka
 connectDB();
 
-let users = {}; // Promeni listu korisnika u objekat
+let users = {}; // Objekat sa korisnicima i njihovim ID-ovima
+let assignedNumbers = new Set(); // Skup brojeva koji su već dodeljeni
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
@@ -47,42 +48,44 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ username });
 
     if (user && await bcrypt.compare(password, user.password)) {
-// Emituj događaj kada se korisnik uloguje
         io.emit('userLoggedIn', username);
-
         res.send('Logged in');
     } else {
         res.status(400).send('Invalid credentials');
     }
 });
 
-// Glavna ruta
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-// Socket.io veza
+// Generiši broj u opsegu 1111-9999 koji još nije dodeljen
+function generateUniqueNumber() {
+    let number;
+    do {
+        number = Math.floor(Math.random() * 8889) + 1111;
+    } while (assignedNumbers.has(number));
+    assignedNumbers.add(number);
+    return number;
+}
+
 io.on('connection', (socket) => {
     console.log('Novi korisnik je povezan');
 
-    // Dodeli socket.id kao jedinstveni ID korisniku
-    const userId = socket.id; 
-    const nickname = `Korisnik-${Object.keys(users).length + 1}`; // Generiši nickname
+    const userId = socket.id;
+    const uniqueNumber = generateUniqueNumber();
+    const nickname = `Gost-${uniqueNumber}`;
 
-    // Dodaj korisnika u objekat
-    users[userId] = nickname; 
+    users[userId] = nickname;
     console.log(`${nickname} se povezao.`);
 
-    // Obavesti ostale korisnike o novom gostu
     socket.broadcast.emit('newGuest', nickname);
-    io.emit('updateGuestList', Object.values(users)); // Ažuriraj listu gostiju
+    io.emit('updateGuestList', Object.values(users));
 
- // Kada korisnik uspešno uloguje i promeni nickname
     socket.on('userLoggedIn', (username) => {
-        users[userId] = username; // Promeni korisnikov nickname
-        io.emit('updateGuestList', Object.values(users)); // Ažuriraj listu za sve korisnike
+        users[userId] = username;
+        io.emit('updateGuestList', Object.values(users));
     });
-
 
     socket.on('chatMessage', (msgData) => {
         const time = new Date().toLocaleTimeString();
@@ -91,22 +94,20 @@ io.on('connection', (socket) => {
             bold: msgData.bold,
             italic: msgData.italic,
             color: msgData.color,
-            nickname: users[userId], // Koristi nickname iz objekta
+            nickname: users[userId],
             time: time
         };
         io.emit('chatMessage', messageToSend);
     });
 
- 
     socket.on('disconnect', () => {
         console.log(`${users[userId]} se odjavio.`);
-        // Ukloni korisnika iz objekta koristeći socket ID
+        assignedNumbers.delete(parseInt(users[userId].split('-')[1], 10)); // Ukloni broj iz dodeljenih
         delete users[userId];
-        io.emit('updateGuestList', Object.values(users)); // Ažuriraj listu gostiju
+        io.emit('updateGuestList', Object.values(users));
     });
 });
 
-// Pokreni server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server je pokrenut na portu ${PORT}`);
