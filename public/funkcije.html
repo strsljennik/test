@@ -13,9 +13,9 @@
         }
         #controlPanel {
             display: none; /* Sakrij kontrolnu tablu po defaultu */
-            position: absolute;
-            bottom: 50px; /* Podesi visinu kontrolne table */
-            right: 0; /* Podesi desnu ivicu */
+            position: fixed;
+            bottom: 60px; /* Podesi visinu kontrolne table */
+            right: 10px; /* Podesi desnu ivicu */
             background-color: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 5px;
@@ -27,11 +27,12 @@
             right: 0;
             width: 40px;
             height: 40px;
-            background-color: transparent;
+            background-color: transparent; /* Bez pozadinske boje */
             color: white;
             font-size: 24px;
             border: none; /* Ukloni ivice */
             cursor: pointer; /* Pokazuje da je dugme kl clickable */
+            outline: none; /* Ukloni ivice kada je dugme fokusirano */
         }
     </style>
 </head>
@@ -44,30 +45,36 @@
         <p><button id="clearChat">Obriši chat</button></p>
         <p><button id="togglePV">Uključi/Isključi PV</button></p>
         <p><button id="banUser">Ban korisnika</button></p>
-        <button id="closePopup">Zatvori</button>
     </div>
 
     <script>
         const correctPassword = 'galaksija123'; // Ispravna lozinka
+        let isPanelOpen = false; // Status kontrolne table
 
         // Funkcija za otvaranje kontrolne table
         function openControlPanel() {
             document.getElementById('controlPanel').style.display = 'block';
+            isPanelOpen = true;
+        }
+
+        // Funkcija za zatvaranje kontrolne table
+        function closeControlPanel() {
+            document.getElementById('controlPanel').style.display = 'none';
+            isPanelOpen = false;
         }
 
         // Event listener za dugme F
         document.getElementById('openButton').addEventListener('click', function() {
-            const password = prompt('Unesite lozinku:');
-            if (password === correctPassword) {
-                openControlPanel();
+            if (!isPanelOpen) {
+                const password = prompt('Unesite lozinku:');
+                if (password === correctPassword) {
+                    openControlPanel();
+                } else {
+                    alert('Pogrešna lozinka!');
+                }
             } else {
-                alert('Pogrešna lozinka!');
+                closeControlPanel();
             }
-        });
-
-        // Zatvaranje kontrolne table
-        document.getElementById('closePopup').addEventListener('click', function() {
-            document.getElementById('controlPanel').style.display = 'none';
         });
     </script>
 
