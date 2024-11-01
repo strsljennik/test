@@ -10,15 +10,17 @@
             color: white;
             font-family: Arial, sans-serif;
         }
-      
-        }
+
         #controlPanel {
             position: absolute;
-            background-color: black;
+            background-color: rgba(50, 50, 50, 0.9);
             color: white;
             padding: 10px;
             border-radius: 5px;
+            border: 1px solid white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
+
         #openControlPanel {
             position: absolute;
             bottom: 0;
@@ -32,7 +34,6 @@
     </style>
 </head>
 <body>
-
 
 <button id="openControlPanel">F</button>
 
@@ -55,7 +56,7 @@
         // Funkcija za brisanje chata
         document.getElementById('clearChat').addEventListener('click', function() {
             if (confirm('Da li ste sigurni da želite obrisati chat?')) {
-                // ovde pošaljite signal za brisanje chata
+                // Ovde dodaj logiku za brisanje chat-a
                 alert('Chat je obrisan.'); // Ovo je samo za prikaz
             }
             panel.remove(); // Ukloni panel nakon akcije
@@ -76,11 +77,11 @@
     }
 
     // Dugme za otvaranje kontrolne table
-    document.getElementById('openControlPanel').addEventListener('click', function() {
+    document.getElementById('openControlPanel').addEventListener('click', function(event) {
         let password = prompt('Unesite lozinku:');
         if (password === 'galaksija123') {
-            // Prikaz kontrolne table na sredini ekrana
-            showControlPanel(window.innerWidth / 2, window.innerHeight / 2);
+            // Prikaz kontrolne table na mestu gde je dugme pritisnuto
+            showControlPanel(event.clientX, event.clientY);
         } else {
             alert('Pogrešna lozinka!');
         }
