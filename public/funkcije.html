@@ -18,9 +18,12 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: rgba(0, 0, 0, 0.8);
+            width: 100px; /* 100px širina */
+            height: 500px; /* 500px visina */
             padding: 20px;
             border-radius: 10px;
             z-index: 1000;
+            overflow-y: auto; /* Dodaje scroll ako je sadržaj veći od visine */
         }
         #modalBackground {
             display: none; /* Sakrij pozadinu modala po defaultu */
@@ -45,6 +48,22 @@
             cursor: pointer; /* Pokazuje da je dugme kl clickable */
             outline: none; /* Ukloni ivice kada je dugme fokusirano */
         }
+        button {
+            margin: 5px 0; /* Razmak između dugmadi */
+            padding: 10px; /* Unutrašnji razmak */
+            background-color: #444; /* Boja pozadine dugmadi */
+            border: none; /* Ukloni ivice */
+            color: white; /* Boja teksta */
+            cursor: pointer; /* Pokazuje da je dugme kl clickable */
+            border-radius: 5px; /* Zaobljeni uglovi dugmadi */
+            width: 100%; /* Širina dugmadi */
+        }
+        button:hover {
+            background-color: #666; /* Promeni boju kada se pređe mišem */
+        }
+        #guestList {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -55,10 +74,17 @@
 
     <div id="modal">
         <h3>Kontrolna Tabla</h3>
-        <p><button id="clearChat">Obriši chat</button></p>
-        <p><button id="togglePV">Uključi/Isključi PV</button></p>
-        <p><button id="banUser">Ban korisnika</button></p>
+        <button id="clearChat">Obriši chat</button>
+        <button id="togglePV">Uključi PV</button>
+        <button id="banUser">Ban korisnika</button>
         <button id="closeModal">Zatvori</button>
+        <div id="guestList">
+            <h4>Lista gostiju</h4>
+            <div id="guest1" class="guest">Gost 1</div>
+            <div id="guest2" class="guest">Gost 2</div>
+            <div id="guest3" class="guest">Gost 3</div>
+            <!-- Dodaj više gostiju po potrebi -->
+        </div>
     </div>
 
     <script>
@@ -91,8 +117,45 @@
 
         // Event listener za pozadinu modala
         document.getElementById('modalBackground').addEventListener('click', closeModal);
+
+        // Funkcija za brisanje chata
+        document.getElementById('clearChat').addEventListener('click', function() {
+            if (confirm('Da li ste sigurni da želite da obrišete chat?')) {
+                alert('Chat je obrisan!'); // Ovo može biti funkcionalnost za brisanje chata
+            }
+            closeModal();
+        });
+
+        // Funkcija za uključivanje privatnog chata
+        document.getElementById('togglePV').addEventListener('click', function() {
+            alert('PV je uključen!'); // Ovo može biti funkcionalnost za privatni chat
+            closeModal();
+        });
+
+        // Funkcija za banovanje korisnika
+        document.getElementById('banUser').addEventListener('click', function() {
+            const guestToBan = prompt('Unesite ime gosta za banovanje:');
+            if (guestToBan) {
+                alert(`${guestToBan} je banovan!`); // Ovo može biti funkcionalnost za banovanje korisnika
+            }
+            closeModal();
+        });
+
+        // Event listeneri za goste
+        const guests = document.querySelectorAll('.guest');
+        guests.forEach(guest => {
+            guest.addEventListener('click', function() {
+                const guestName = this.textContent;
+                const action = prompt(`Šta želite da radite sa ${guestName}?\n1. Ban\n2. Privatni chat\n\nUnesite broj opcije:`);
+                
+                if (action === '1') {
+                    alert(`${guestName} je banovan!`);
+                } else if (action === '2') {
+                    alert(`Privatni chat sa ${guestName} je otvoren!`);
+                }
+            });
+        });
     </script>
 
 </body>
 </html>
-
