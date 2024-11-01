@@ -13,20 +13,11 @@
             padding: 0;
             overflow: hidden;
         }
-        #popup {
-            display: none; /* Sakrij popup po defaultu */
-            position: absolute;
-            bottom: 50px;
-            right: 50px;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 5px;
-            z-index: 1000; /* Da bude iznad ostalih elemenata */
-        }
+        /* Dugme F */
         #controlButton {
             position: absolute;
-            bottom: 0;
-            right: 0;
+            bottom: 10px;
+            right: 10px;
             width: 30px;
             height: 30px;
             background-color: #333;
@@ -41,6 +32,37 @@
         #controlButton:hover {
             background-color: #555;
         }
+        /* Popup prozor za kontrolnu tablu */
+        #popup {
+            display: none;
+            position: fixed;
+            bottom: 50px;
+            right: 50px;
+            width: 300px;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+        }
+        #popup h3 {
+            margin-top: 0;
+        }
+        #popup button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            background-color: #444;
+            color: white;
+            border-radius: 5px;
+        }
+        #popup button:hover {
+            background-color: #666;
+        }
     </style>
 </head>
 <body>
@@ -49,9 +71,9 @@
 
 <div id="popup">
     <h3>Kontrolna Tabla</h3>
-    <p><button id="clearChat">Obriši chat</button></p>
-    <p><button id="togglePV">Uključi/Isključi PV</button></p>
-    <p><button id="banUser">Ban korisnika</button></p>
+    <button id="clearChat">Obriši chat</button>
+    <button id="togglePV">Uključi/Isključi PV</button>
+    <button id="banUser">Ban korisnika</button>
     <button id="closePopup">Zatvori</button>
 </div>
 
@@ -71,7 +93,8 @@
 
     // Event listener za dugme F
     document.getElementById('controlButton').addEventListener('click', function() {
-        openPopup();
+        const popup = document.getElementById('popup');
+        popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
     });
 
     // Logika za brisanje chata
@@ -100,3 +123,4 @@
 
 </body>
 </html>
+
