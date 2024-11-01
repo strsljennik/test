@@ -21,21 +21,9 @@
             border-radius: 5px;
             z-index: 1000; /* Da bude iznad ostalih elemenata */
         }
-        #openPopup {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 10px; /* Širina dugmeta */
-            height: 10px; /* Visina dugmeta */
-            background-color: white;
-            border: none;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
-
-<button id="openPopup">F</button>
 
 <div id="popup">
     <h3>Kontrolna Tabla</h3>
@@ -50,14 +38,24 @@
     const socket = new WebSocket('ws://localhost:3000'); // Zamenite sa vašom WebSocket adresom
 
     // Funkcija za otvaranje popup prozora
-    document.getElementById('openPopup').addEventListener('click', function() {
+    function showPopup() {
         document.getElementById('popup').style.display = 'block';
-    });
+    }
 
     // Funkcija za zatvaranje popup prozora
-    document.getElementById('closePopup').addEventListener('click', function() {
+    function closePopup() {
         document.getElementById('popup').style.display = 'none';
+    }
+
+    // Slušanje pritiska tastera
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'f' || event.key === 'F') { // Proveri da li je pritisnut taster 'F'
+            showPopup(); // Prikaži popup
+        }
     });
+
+    // Dodaj događaje za zatvaranje popup-a
+    document.getElementById('closePopup').addEventListener('click', closePopup);
 
     // Logika za brisanje chata
     document.getElementById('clearChat').addEventListener('click', function() {
@@ -85,3 +83,4 @@
 
 </body>
 </html>
+
