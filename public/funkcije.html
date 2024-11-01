@@ -13,7 +13,7 @@
 
         #chat-container {
             padding: 20px;
-            /* Stavi ovde stilove za tvoj chat */
+            /* Stilovi za chat */
         }
 
         button {
@@ -27,8 +27,8 @@
             z-index: 1; 
             right: 0; 
             top: 20%; /* Pomeranje od vrha */
-            width: 300px; 
-            height: 100px; 
+            width: 100px;  /* Širina modala */
+            height: 300px;  /* Visina modala */
             background-color: rgb(255, 255, 255); 
             border: 1px solid #888; 
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -53,15 +53,14 @@
             cursor: pointer;
         }
     </style>
-    <title>Radio Chat</title>
+    <title>Chat Funkcije</title>
 </head>
 <body>
     <div id="chat-container">
         <h1>Chat prostor</h1>
         <!-- Tvoj chat ovde -->
+        <button id="users-btn" style="position: fixed; bottom: 20px; left: 20px;">Korisnici</button>
     </div>
-
-    <button id="access-btn" style="position: fixed; bottom: 20px; right: 20px;">F</button>
 
     <!-- Modal za unos lozinke -->
     <div id="password-modal" class="modal">
@@ -74,21 +73,25 @@
     </div>
 
     <!-- Modal sa funkcijama -->
-    <div id="functions-modal" class="modal" style="display: none;">
+    <div id="functions-modal" class="modal">
         <div class="modal-content">
             <span class="close" id="close-functions-modal">&times;</span>
-            <h2>Funkcije</h2>
-            <button id="delete-chat">Obriši chat</button>
+            <h2>Izaberi korisnika</h2>
             <button id="private-toggle">Privatne poruke</button>
             <button id="ban-user">Ban korisnika</button>
         </div>
     </div>
 
     <script>
-        document.getElementById('access-btn').onclick = function() {
-            document.getElementById('password-modal').style.display = "block";
+        document.getElementById('users-btn').onclick = function() {
+            document.getElementById('functions-modal').style.display = "block";
         }
 
+        document.getElementById('close-functions-modal').onclick = function() {
+            document.getElementById('functions-modal').style.display = "none";
+        }
+
+        // Modal za lozinku
         document.getElementById('close-password-modal').onclick = function() {
             document.getElementById('password-modal').style.display = "none";
         }
@@ -101,16 +104,6 @@
             } else {
                 alert('Pogrešna lozinka!');
             }
-        }
-
-        document.getElementById('close-functions-modal').onclick = function() {
-            document.getElementById('functions-modal').style.display = "none";
-        }
-
-        document.getElementById('delete-chat').onclick = function() {
-            // Logika za brisanje chata
-            alert('Chat je obrisan.');
-            document.getElementById('functions-modal').style.display = "none"; // Zatvori modal
         }
 
         document.getElementById('private-toggle').onclick = function() {
