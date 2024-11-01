@@ -10,14 +10,23 @@
             color: white;
             font-family: Arial, sans-serif;
         }
+
+        #chatContainer {
+            padding: 10px;
+            border: 1px solid white;
+            height: 400px;
+            overflow-y: auto;
+        }
+
         #controlPanel {
             position: absolute;
             background-color: black;
             color: white;
             padding: 10px;
             border-radius: 5px;
-            display: none; /* Da se ne prikazuje odmah */
+            display: none; /* Sakrij kontrolnu tablu po defaultu */
         }
+
         #openControlPanel {
             position: absolute;
             bottom: 10px;
@@ -28,56 +37,57 @@
             padding: 10px;
             cursor: pointer;
         }
-        #chatContainer {
-            /* Stilizuj chat ovde */
-        }
     </style>
 </head>
 <body>
 
 <div id="chatContainer">
-    <!-- Ovde ide tvoj chat -->
+    <!-- Tvoj chat sadržaj ovde -->
+    <p>Dobrodošli u chat!</p>
 </div>
 
 <button id="openControlPanel">F</button>
-
-<div id="controlPanel"></div>
+<div id="controlPanel"></div> <!-- Kontrolna tabla ovde -->
 
 <script>
-    let pvEnabled = false;
+    let pvEnabled = false; // Privatne poruke su isključene po defaultu
 
+    // Funkcija za prikaz kontrolne table sa opcijama
     function showControlPanel(x, y) {
         let panel = document.getElementById('controlPanel');
         panel.style.top = y + 'px';
         panel.style.left = x + 'px';
-        panel.style.display = 'block'; // Prikazuj panel
-
+        panel.style.display = 'block'; // Prikaži panel
         panel.innerHTML = `
             <p id="clearChat">Obriši chat</p>
             <p id="togglePV">${pvEnabled ? 'Isključi PV' : 'Uključi PV za sve'}</p>
             <p id="selectBanUser">Selektuj korisnika za ban</p>
         `;
 
+        // Event listener za brisanje chata
         document.getElementById('clearChat').addEventListener('click', function() {
             if (confirm('Da li ste sigurni da želite obrisati chat?')) {
-                document.getElementById('chatContainer').innerHTML = ''; // Briše chat
+                document.getElementById('chatContainer').innerHTML = ''; // Brisanje sadržaja
                 alert('Chat je obrisan.');
             }
             panel.style.display = 'none'; // Sakrij panel nakon akcije
         });
 
+        // Event listener za uključivanje ili isključivanje PV
         document.getElementById('togglePV').addEventListener('click', function() {
             pvEnabled = !pvEnabled;
             alert(`PV za sve je sada ${pvEnabled ? 'uključen' : 'isključen'}.`);
-            panel.style.display = 'none';
+            panel.style.display = 'none'; // Sakrij panel nakon akcije
         });
 
+        // Event listener za selektovanje korisnika za ban
         document.getElementById('selectBanUser').addEventListener('click', function() {
             alert('Dva puta kliknite na korisnika u listi da biste ga banovali.');
-            panel.style.display = 'none';
+            panel.style.display = 'none'; // Sakrij panel nakon akcije
         });
     }
 
+    // Dugme za otvaranje kontrolne table
     document.getElementById('openControlPanel').addEventListener('click', function() {
         let password = prompt('Unesite lozinku:');
         if (password === 'galaksija123') {
