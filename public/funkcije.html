@@ -38,24 +38,21 @@
     const socket = new WebSocket('ws://localhost:3000'); // Zamenite sa vašom WebSocket adresom
 
     // Funkcija za otvaranje popup prozora
-    function showPopup() {
+    function openPopup() {
         document.getElementById('popup').style.display = 'block';
     }
 
     // Funkcija za zatvaranje popup prozora
-    function closePopup() {
+    document.getElementById('closePopup').addEventListener('click', function() {
         document.getElementById('popup').style.display = 'none';
-    }
-
-    // Slušanje pritiska tastera
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'f' || event.key === 'F') { // Proveri da li je pritisnut taster 'F'
-            showPopup(); // Prikaži popup
-        }
     });
 
-    // Dodaj događaje za zatvaranje popup-a
-    document.getElementById('closePopup').addEventListener('click', closePopup);
+    // Event listener za taster F
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'F') {
+            openPopup();
+        }
+    });
 
     // Logika za brisanje chata
     document.getElementById('clearChat').addEventListener('click', function() {
@@ -83,4 +80,3 @@
 
 </body>
 </html>
-
