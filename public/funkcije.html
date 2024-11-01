@@ -11,7 +11,10 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         /* Dugme F */
         #controlButton {
@@ -36,8 +39,9 @@
         #popup {
             display: none;
             position: fixed;
-            bottom: 50px;
-            right: 50px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 300px;
             background-color: rgba(0, 0, 0, 0.9);
             color: white;
@@ -45,6 +49,7 @@
             border-radius: 8px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.6);
             z-index: 1000;
+            text-align: center;
         }
         #popup h3 {
             margin-top: 0;
@@ -81,21 +86,17 @@
     // WebSocket konekcija
     const socket = new WebSocket('ws://localhost:3000'); // Zamenite sa vašom WebSocket adresom
 
-    // Funkcija za otvaranje popup prozora
-    function openPopup() {
-        document.getElementById('popup').style.display = 'block';
-    }
-
-    // Funkcija za zatvaranje popup prozora
-    document.getElementById('closePopup').addEventListener('click', function() {
-        document.getElementById('popup').style.display = 'none';
-    });
-
-    // Event listener za dugme F
-    document.getElementById('controlButton').addEventListener('click', function() {
+    // Funkcija za otvaranje i zatvaranje popup prozora
+    function togglePopup() {
         const popup = document.getElementById('popup');
         popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-    });
+    }
+
+    // Event listener za dugme F
+    document.getElementById('controlButton').addEventListener('click', togglePopup);
+
+    // Zatvaranje popup prozora
+    document.getElementById('closePopup').addEventListener('click', togglePopup);
 
     // Logika za brisanje chata
     document.getElementById('clearChat').addEventListener('click', function() {
@@ -123,4 +124,3 @@
 
 </body>
 </html>
-
