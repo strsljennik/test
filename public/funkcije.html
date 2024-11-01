@@ -1,110 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Funkcije Chat Aplikacije</title>
+    <title>Chat Aplikacija</title>
     <style>
-        /* CSS stilovi */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        .banned {
-            text-decoration: line-through;
-            color: red;
+        /* Stilizovanje dugmeta F i panela sa funkcijama */
+        #functionButton {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            font-size: 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
         }
         #functionPanel {
             display: none;
             position: fixed;
             bottom: 50px;
             right: 0;
-            background-color: white;
+            background: white;
             border: 1px solid #ccc;
             padding: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000; /* Osiguraj da panel bude iznad ostalih elemenata */
-        }
-        #functionButton {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            z-index: 1000; /* Osiguraj da dugme bude iznad ostalih elemenata */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
-    <div id="chatContainer">
-        <!-- Chat messages will be displayed here -->
-    </div>
-    <input type="text" id="privateMessageInput" placeholder="Poruka za...">
-    <button id="sendPrivateMessage" onclick="sendPrivateMessage()">Pošalji privatnu poruku</button>
-    
-    <button id="functionButton">F</button>
-    <div id="functionPanel">
-        <h3>Funkcije</h3>
-        <button onclick="deleteChat()">Obriši chat</button>
-        <button onclick="togglePrivateMessaging('userId')">Privatna poruka</button>
-        <p>Dupli klik na korisnika da bi ga banovao.</p>
-        <p>Privatna poruka se šalje u formatu: <strong>nik-broj ------> poruka</strong></p>
-    </div>
 
-    <script>
-        // JavaScript funkcije
-        let bannedUsers = new Set();
-        const correctPassword = "galaksija123"; // Definiši ispravnu lozinku
+<button id="functionButton">F</button>
+<div id="functionPanel">
+    <button id="deleteChat">Obriši Chat</button>
+    <button id="banGuest">Banovanje Gosta</button>
+</div>
 
-        function togglePrivateMessaging(userId) {
-            const privateMessageInput = document.getElementById('privateMessageInput');
-            privateMessageInput.placeholder = `Poruka za ${userId}`;
-            privateMessageInput.dataset.recipient = userId;
+<script>
+    const correctPassword = "galaksija123";
+    const functionPanel = document.getElementById('functionPanel');
+
+    // Funkcija za otvaranje panela sa funkcijama na klik dugmeta F
+    document.getElementById('functionButton').onclick = function() {
+        const password = prompt("Unesite lozinku za pristup funkcijama:");
+        if (password === correctPassword) {
+            functionPanel.style.display = functionPanel.style.display === 'none' ? 'block' : 'none';
+        } else {
+            alert("Pogrešna lozinka! Pokušajte ponovo.");
         }
+    };
 
-        function sendPrivateMessage() {
-            const input = document.getElementById('privateMessageInput');
-            const recipient = input.dataset.recipient;
-            const message = input.value;
+    // Logika za brisanje chata
+    document.getElementById('deleteChat').onclick = function() {
+        // Ovdje možete dodati kod za brisanje chat-a
+        console.log("Chat je obrisan.");
+    };
 
-            if (recipient && message) {
-                const formattedMessage = `${recipient} ------> ${message}`;
-                // Logika za slanje poruke na server
-                console.log(formattedMessage);
-                input.value = ''; // Očisti input
-            }
-        }
+    // Logika za banovanje gosta
+    document.getElementById('banGuest').onclick = function() {
+        const guestName = prompt("Unesite ime gosta za banovanje:");
+        // Ovdje možete dodati kod za banovanje gosta
+        console.log(`${guestName} je banovan.`);
+    };
+</script>
 
-        function deleteChat() {
-            // Logika za brisanje svih poruka
-            console.log("Sve poruke su obrisane.");
-        }
-
-        function banUser(userId) {
-            if (!bannedUsers.has(userId)) {
-                bannedUsers.add(userId);
-                // Logika za banovanje korisnika
-                console.log(`${userId} je banovan.`);
-            }
-        }
-
-        // Event listener za dupli klik na korisnika
-        document.addEventListener('dblclick', (event) => {
-            const userId = event.target.dataset.userId; // Pretpostavljamo da korisnici imaju data atribut
-            if (userId) {
-                banUser(userId);
-                event.target.classList.add('banned'); // Dodaj klasu za stilizovanje
-            }
-        });
-
-        document.getElementById('functionButton').onclick = function() {
-            const password = prompt("Unesite lozinku za pristup funkcijama:");
-            if (password === correctPassword) {
-                const panel = document.getElementById('functionPanel');
-                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-            } else {
-                alert("Pogrešna lozinka! Pokušajte ponovo.");
-            }
-        };
-    </script>
 </body>
 </html>
