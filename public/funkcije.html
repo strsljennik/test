@@ -5,25 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Aplikacija</title>
     <style>
-        /* Stilizovanje dugmeta F i panela sa funkcijama */
+        /* Stilizovanje dugmeta F kao kocke */
         #functionButton {
             position: fixed;
-            bottom: 0;
-            right: 0;
-            font-size: 30px;
-            background: none;
+            bottom: 20px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            font-size: 16px;
+            background-color: #008cba;
+            color: white;
             border: none;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px; /* Malo zaobljenje ivica */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
+        /* Stilizovanje panela sa funkcijama */
         #functionPanel {
-            display: none;
+            display: none; /* Sakrij panel dok se ne otvori */
             position: fixed;
             bottom: 50px;
-            right: 0;
+            right: 20px;
             background: white;
             border: 1px solid #ccc;
             padding: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000; /* Da bi bio iznad drugih elemenata */
+        }
+        button {
+            margin: 5px 0;
+            padding: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -36,29 +51,21 @@
 </div>
 
 <script>
-    const correctPassword = "galaksija123";
     const functionPanel = document.getElementById('functionPanel');
 
-    // Funkcija za otvaranje panela sa funkcijama na klik dugmeta F
+    // Na klik dugmeta F, otvara se panel
     document.getElementById('functionButton').onclick = function() {
-        const password = prompt("Unesite lozinku za pristup funkcijama:");
-        if (password === correctPassword) {
-            functionPanel.style.display = functionPanel.style.display === 'none' ? 'block' : 'none';
-        } else {
-            alert("Pogrešna lozinka! Pokušajte ponovo.");
-        }
+        functionPanel.style.display = functionPanel.style.display === 'none' || functionPanel.style.display === '' ? 'block' : 'none';
     };
 
     // Logika za brisanje chata
     document.getElementById('deleteChat').onclick = function() {
-        // Ovdje možete dodati kod za brisanje chat-a
         console.log("Chat je obrisan.");
     };
 
     // Logika za banovanje gosta
     document.getElementById('banGuest').onclick = function() {
         const guestName = prompt("Unesite ime gosta za banovanje:");
-        // Ovdje možete dodati kod za banovanje gosta
         console.log(`${guestName} je banovan.`);
     };
 </script>
