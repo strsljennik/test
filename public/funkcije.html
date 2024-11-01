@@ -9,17 +9,28 @@
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
-            position: relative; /* Omogućava pozicioniranje dugmeta */
+            position: relative;
         }
-        #controlPanel {
-            display: none; /* Sakrij kontrolnu tablu po defaultu */
+        #modal {
+            display: none; /* Sakrij modal po defaultu */
             position: fixed;
-            bottom: 60px; /* Podesi visinu kontrolne table */
-            right: 10px; /* Podesi desnu ivicu */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background-color: rgba(0, 0, 0, 0.8);
             padding: 20px;
-            border-radius: 5px;
-            z-index: 1000; /* Da bude iznad ostalih elemenata */
+            border-radius: 10px;
+            z-index: 1000;
+        }
+        #modalBackground {
+            display: none; /* Sakrij pozadinu modala po defaultu */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 900; /* Ispod modala */
         }
         #openButton {
             position: fixed;
@@ -40,43 +51,48 @@
 
     <button id="openButton">F</button>
 
-    <div id="controlPanel">
+    <div id="modalBackground"></div>
+
+    <div id="modal">
         <h3>Kontrolna Tabla</h3>
         <p><button id="clearChat">Obriši chat</button></p>
         <p><button id="togglePV">Uključi/Isključi PV</button></p>
         <p><button id="banUser">Ban korisnika</button></p>
+        <button id="closeModal">Zatvori</button>
     </div>
 
     <script>
         const correctPassword = 'galaksija123'; // Ispravna lozinka
-        let isPanelOpen = false; // Status kontrolne table
 
-        // Funkcija za otvaranje kontrolne table
-        function openControlPanel() {
-            document.getElementById('controlPanel').style.display = 'block';
-            isPanelOpen = true;
+        // Funkcija za otvaranje modala
+        function openModal() {
+            document.getElementById('modal').style.display = 'block';
+            document.getElementById('modalBackground').style.display = 'block';
         }
 
-        // Funkcija za zatvaranje kontrolne table
-        function closeControlPanel() {
-            document.getElementById('controlPanel').style.display = 'none';
-            isPanelOpen = false;
+        // Funkcija za zatvaranje modala
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('modalBackground').style.display = 'none';
         }
 
         // Event listener za dugme F
         document.getElementById('openButton').addEventListener('click', function() {
-            if (!isPanelOpen) {
-                const password = prompt('Unesite lozinku:');
-                if (password === correctPassword) {
-                    openControlPanel();
-                } else {
-                    alert('Pogrešna lozinka!');
-                }
+            const password = prompt('Unesite lozinku:');
+            if (password === correctPassword) {
+                openModal();
             } else {
-                closeControlPanel();
+                alert('Pogrešna lozinka!');
             }
         });
+
+        // Event listener za dugme Zatvori u modalu
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+
+        // Event listener za pozadinu modala
+        document.getElementById('modalBackground').addEventListener('click', closeModal);
     </script>
 
 </body>
 </html>
+
