@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio Galaksija Chat</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #chatArea {
+            width: 800px;
+            height: 600px;
+            border: 1px solid white;
+            overflow-y: scroll;
+            padding: 10px;
+            position: relative;
+        }
+        #controlPanel {
+            position: absolute;
+            background-color: black;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #openControlPanel {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chatArea">
+    <!-- Chat messages will be displayed here -->
+</div>
+<button id="openControlPanel">F</button>
+
+<script>
+    let pvEnabled = false; // Privatne poruke su isključene po defaultu
+
+    // Funkcija za prikaz kontrolne table sa opcijama
+    function showControlPanel(x, y) {
+        let panel = document.createElement('div');
+        panel.id = 'controlPanel';
+        panel.style.top = y + 'px';
+        panel.style.left = x + 'px';
+        document.body.appendChild(panel);
+        panel.innerHTML = `
+            <p id="clearChat">Obriši chat</p>
+            <p id="togglePV">${pvEnabled ? 'Isključi PV' : 'Uključi PV za sve'}</p>
+            <p id="selectBanUser">Selektuj korisnika za ban</p>
+        `;
+
+        // Funkcija za brisanje chata
+        document.getElementById('clearChat').addEventListener('click', function() {
+            if (confirm('Da li ste sigurni da želite obrisati chat?')) {
+                // ovde pošaljite signal za brisanje chata
+                alert('Chat je obrisan.'); // Ovo je samo za prikaz
+            }
+            panel.remove(); // Ukloni panel nakon akcije
+        });
+
+        // Funkcija za uključivanje ili isključivanje PV
+        document.getElementById('togglePV').addEventListener('click', function() {
+            pvEnabled = !pvEnabled;
+            alert(`PV za sve je sada ${pvEnabled ? 'uključen' : 'isključen'}.`);
+            panel.remove(); // Ukloni panel nakon akcije
+        });
+
+        // Funkcija za selektovanje korisnika za ban
+        document.getElementById('selectBanUser').addEventListener('click', function() {
+            alert('Dva puta kliknite na korisnika u listi da biste ga banovali.');
+            panel.remove(); // Ukloni panel nakon akcije
+        });
+    }
+
+    // Dugme za otvaranje kontrolne table
+    document.getElementById('openControlPanel').addEventListener('click', function() {
+        let password = prompt('Unesite lozinku:');
+        if (password === 'galaksija123') {
+            // Prikaz kontrolne table na sredini ekrana
+            showControlPanel(window.innerWidth / 2, window.innerHeight / 2);
+        } else {
+            alert('Pogrešna lozinka!');
+        }
+    });
+</script>
+
+</body>
+</html>
