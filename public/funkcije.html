@@ -9,21 +9,43 @@
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
         #popup {
             display: none; /* Sakrij popup po defaultu */
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            bottom: 50px;
+            right: 50px;
             background-color: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 5px;
             z-index: 1000; /* Da bude iznad ostalih elemenata */
         }
+        #controlButton {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            background-color: #333;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1001;
+        }
+        #controlButton:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
+
+<button id="controlButton">F</button>
 
 <div id="popup">
     <h3>Kontrolna Tabla</h3>
@@ -47,11 +69,9 @@
         document.getElementById('popup').style.display = 'none';
     });
 
-    // Event listener za taster F
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'F') {
-            openPopup();
-        }
+    // Event listener za dugme F
+    document.getElementById('controlButton').addEventListener('click', function() {
+        openPopup();
     });
 
     // Logika za brisanje chata
