@@ -1,122 +1,88 @@
 <!DOCTYPE html>
-<html lang="sr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privat Ban i Brisanje Chata</title>
+    <title>Chat App</title>
     <style>
-        /* Stil za modal */
-        #myModal {
-            display: none; 
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            width: 300px; 
-            background: white; 
-            border: 1px solid black; 
-            padding: 20px; 
-            z-index: 1000; 
-        }
-
-        /* Stil za overlay iza modala */
-        .overlay {
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0, 0, 0, 0.5); 
-            z-index: 999; 
-        }
-
+        /* CSS stilovi */
         .banned {
             text-decoration: line-through;
             color: red;
         }
+        #functionPanel {
+            display: none;
+            position: fixed;
+            bottom: 50px;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
-    <!-- Dugme F -->
-    <button id="modalButton" style="position: absolute; top: 20px; left: 20px;">F</button>
-
-    <!-- Overlay -->
-    <div class="overlay" id="overlay"></div>
-
-    <!-- Modalni prozor -->
-    <div id="myModal">
-        <span id="closeModal" style="cursor: pointer;">&times; Close</span>
-        <p>Izaberite korisnika za ban ili brisanje chata:</p>
-        <div>
-            <span id="selectedUser">Korisnik: <strong id="userName">Anonymous</strong></span>
-        </div>
-        <button id="privateBan">Privat Ban</button>
-        <button id="deleteChat">Obriši Chat</button>
+    <div id="chatContainer">
+        <!-- Chat messages will be displayed here -->
     </div>
-
-    <div id="userList">
-        <h3>Lista Korisnika:</h3>
-        <ul>
-            <li class="user" data-username="Korisnik1">Korisnik1</li>
-            <li class="user" data-username="Korisnik2">Korisnik2</li>
-            <li class="user" data-username="Korisnik3">Korisnik3</li>
-        </ul>
+    <input type="text" id="privateMessageInput" placeholder="Poruka za...">
+    <button id="sendPrivateMessage" onclick="sendPrivateMessage()">Pošalji privatnu poruku</button>
+    
+    <button id="functionButton" style="position: fixed; bottom: 0; right: 0;">F</button>
+    <div id="functionPanel">
+        <button onclick="deleteChat()">Obriši chat</button>
+        <button onclick="togglePrivateMessaging('userId')">Privatna poruka</button>
     </div>
 
     <script>
-        // Otvaranje modala
-        document.getElementById("modalButton").onclick = function() {
-            document.getElementById("myModal").style.display = "block";
-            document.getElementById("overlay").style.display = "block";
-        };
+        // JavaScript funkcije
+        let bannedUsers = new Set();
 
-        // Zatvaranje modala
-        document.getElementById("closeModal").onclick = function() {
-            closeModal();
-        };
-
-        // Zatvaranje modala kada se klikne van njega
-        window.onclick = function(event) {
-            if (event.target == document.getElementById("overlay")) {
-                closeModal();
-            }
-        };
-
-        // Funkcija za zatvaranje modala
-        function closeModal() {
-            document.getElementById("myModal").style.display = "none";
-            document.getElementById("overlay").style.display = "none";
+        function togglePrivateMessaging(userId) {
+            const privateMessageInput = document.getElementById('privateMessageInput');
+            privateMessageInput.placeholder = `Poruka za ${userId}`;
+            privateMessageInput.dataset.recipient = userId;
         }
 
-        // Odabir korisnika iz liste
-        const users = document.querySelectorAll('.user');
-        users.forEach(user => {
-            user.onclick = function() {
-                const username = this.getAttribute('data-username');
-                document.getElementById('userName').innerText = username;
-            };
+        function sendPrivateMessage() {
+            const input = document.getElementById('privateMessageInput');
+            const recipient = input.dataset.recipient;
+            const message = input.value;
+
+            if (recipient && message) {
+                const formattedMessage = `${recipient} ------> ${message}`;
+                // Logika za slanje poruke na server
+                console.log(formattedMessage);
+                input.value = ''; // Očisti input
+            }
+        }
+
+        function deleteChat() {
+            // Logika za brisanje svih poruka
+            console.log("Sve poruke su obrisane.");
+        }
+
+        function banUser(userId) {
+            if (!bannedUsers.has(userId)) {
+                bannedUsers.add(userId);
+                // Logika za banovanje korisnika
+                console.log(`${userId} je banovan.`);
+            }
+        }
+
+        // Event listener za dupli klik na korisnika
+        document.addEventListener('dblclick', (event) => {
+            const userId = event.target.dataset.userId; // Pretpostavljamo da korisnici imaju data atribut
+            if (userId) {
+                banUser(userId);
+                event.target.classList.add('banned'); // Dodaj klasu za stilizovanje
+            }
         });
 
-        // Privatni ban funkcionalnost
-        document.getElementById("privateBan").onclick = function() {
-            const username = document.getElementById('userName').innerText;
-            const selectedUser = [...users].find(user => user.getAttribute('data-username') === username);
-            if (selectedUser) {
-                selectedUser.classList.add('banned');
-                closeModal();
-                alert(`${username} je baniran na privat!`);
-            }
-        };
-
-        // Brisanje chata funkcionalnost
-        document.getElementById("deleteChat").onclick = function() {
-            const username = document.getElementById('userName').innerText;
-            const selectedUser = [...users].find(user => user.getAttribute('data-username') === username);
-            if (selectedUser) {
-                alert(`Chat sa ${username} je obrisan!`);
-                closeModal();
-            }
+        document.getElementById('functionButton').onclick = function() {
+            const panel = document.getElementById('functionPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
         };
     </script>
 </body>
