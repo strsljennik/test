@@ -3,159 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Galaksija Chat</title>
     <style>
+        /* Osnovni stilovi */
         body {
-            background-color: black;
-            color: white;
             font-family: Arial, sans-serif;
-            position: relative;
+            margin: 0;
+            padding: 0;
         }
-        #modal {
-            display: none; /* Sakrij modal po defaultu */
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            width: 100px; /* 100px širina */
-            height: 500px; /* 500px visina */
+
+        #chat-container {
             padding: 20px;
-            border-radius: 10px;
-            z-index: 1000;
-            overflow-y: auto; /* Dodaje scroll ako je sadržaj veći od visine */
+            /* Stavi ovde stilove za tvoj chat */
         }
-        #modalBackground {
-            display: none; /* Sakrij pozadinu modala po defaultu */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 900; /* Ispod modala */
-        }
-        #openButton {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            width: 40px;
-            height: 40px;
-            background-color: transparent; /* Bez pozadinske boje */
-            color: white;
-            font-size: 24px;
-            border: none; /* Ukloni ivice */
-            cursor: pointer; /* Pokazuje da je dugme kl clickable */
-            outline: none; /* Ukloni ivice kada je dugme fokusirano */
-        }
+
         button {
-            margin: 5px 0; /* Razmak između dugmadi */
-            padding: 10px; /* Unutrašnji razmak */
-            background-color: #444; /* Boja pozadine dugmadi */
-            border: none; /* Ukloni ivice */
-            color: white; /* Boja teksta */
-            cursor: pointer; /* Pokazuje da je dugme kl clickable */
-            border-radius: 5px; /* Zaobljeni uglovi dugmadi */
-            width: 100%; /* Širina dugmadi */
+            cursor: pointer;
         }
-        button:hover {
-            background-color: #666; /* Promeni boju kada se pređe mišem */
+
+        /* Modal stilovi */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            right: 0; 
+            top: 20%; /* Pomeranje od vrha */
+            width: 300px; 
+            height: 100px; 
+            background-color: rgb(255, 255, 255); 
+            border: 1px solid #888; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            overflow: auto; 
         }
-        #guestList {
-            margin-top: 20px;
+
+        .modal-content {
+            padding: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
+    <title>Radio Chat</title>
 </head>
 <body>
+    <div id="chat-container">
+        <h1>Chat prostor</h1>
+        <!-- Tvoj chat ovde -->
+    </div>
 
-    <button id="openButton">F</button>
+    <button id="access-btn" style="position: fixed; bottom: 20px; right: 20px;">F</button>
 
-    <div id="modalBackground"></div>
+    <!-- Modal za unos lozinke -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-password-modal">&times;</span>
+            <h2>Unesite lozinku</h2>
+            <input type="password" id="password-input">
+            <button id="submit-password">Potvrdi</button>
+        </div>
+    </div>
 
-    <div id="modal">
-        <h3>Kontrolna Tabla</h3>
-        <button id="clearChat">Obriši chat</button>
-        <button id="togglePV">Uključi PV</button>
-        <button id="banUser">Ban korisnika</button>
-        <button id="closeModal">Zatvori</button>
-        <div id="guestList">
-            <h4>Lista gostiju</h4>
-            <div id="guest1" class="guest">Gost 1</div>
-            <div id="guest2" class="guest">Gost 2</div>
-            <div id="guest3" class="guest">Gost 3</div>
-            <!-- Dodaj više gostiju po potrebi -->
+    <!-- Modal sa funkcijama -->
+    <div id="functions-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="close-functions-modal">&times;</span>
+            <h2>Funkcije</h2>
+            <button id="delete-chat">Obriši chat</button>
+            <button id="private-toggle">Privatne poruke</button>
+            <button id="ban-user">Ban korisnika</button>
         </div>
     </div>
 
     <script>
-        const correctPassword = 'galaksija123'; // Ispravna lozinka
-
-        // Funkcija za otvaranje modala
-        function openModal() {
-            document.getElementById('modal').style.display = 'block';
-            document.getElementById('modalBackground').style.display = 'block';
+        document.getElementById('access-btn').onclick = function() {
+            document.getElementById('password-modal').style.display = "block";
         }
 
-        // Funkcija za zatvaranje modala
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-            document.getElementById('modalBackground').style.display = 'none';
+        document.getElementById('close-password-modal').onclick = function() {
+            document.getElementById('password-modal').style.display = "none";
         }
 
-        // Event listener za dugme F
-        document.getElementById('openButton').addEventListener('click', function() {
-            const password = prompt('Unesite lozinku:');
-            if (password === correctPassword) {
-                openModal();
+        document.getElementById('submit-password').onclick = function() {
+            const password = document.getElementById('password-input').value;
+            if (password === 'galaksija123') {
+                document.getElementById('password-modal').style.display = "none";
+                document.getElementById('functions-modal').style.display = "block";
             } else {
                 alert('Pogrešna lozinka!');
             }
-        });
+        }
 
-        // Event listener za dugme Zatvori u modalu
-        document.getElementById('closeModal').addEventListener('click', closeModal);
+        document.getElementById('close-functions-modal').onclick = function() {
+            document.getElementById('functions-modal').style.display = "none";
+        }
 
-        // Event listener za pozadinu modala
-        document.getElementById('modalBackground').addEventListener('click', closeModal);
+        document.getElementById('delete-chat').onclick = function() {
+            // Logika za brisanje chata
+            alert('Chat je obrisan.');
+            document.getElementById('functions-modal').style.display = "none"; // Zatvori modal
+        }
 
-        // Funkcija za brisanje chata
-        document.getElementById('clearChat').addEventListener('click', function() {
-            if (confirm('Da li ste sigurni da želite da obrišete chat?')) {
-                alert('Chat je obrisan!'); // Ovo može biti funkcionalnost za brisanje chata
+        document.getElementById('private-toggle').onclick = function() {
+            // Logika za omogućavanje privatnih poruka
+            alert('Privatne poruke su omogućene.');
+            document.getElementById('functions-modal').style.display = "none"; // Zatvori modal
+        }
+
+        document.getElementById('ban-user').onclick = function() {
+            // Logika za baniranje korisnika
+            const userToBan = prompt("Unesite ime korisnika za banovanje:");
+            if (userToBan) {
+                alert(`${userToBan} je banovan.`);
             }
-            closeModal();
-        });
+            document.getElementById('functions-modal').style.display = "none"; // Zatvori modal
+        }
 
-        // Funkcija za uključivanje privatnog chata
-        document.getElementById('togglePV').addEventListener('click', function() {
-            alert('PV je uključen!'); // Ovo može biti funkcionalnost za privatni chat
-            closeModal();
-        });
-
-        // Funkcija za banovanje korisnika
-        document.getElementById('banUser').addEventListener('click', function() {
-            const guestToBan = prompt('Unesite ime gosta za banovanje:');
-            if (guestToBan) {
-                alert(`${guestToBan} je banovan!`); // Ovo može biti funkcionalnost za banovanje korisnika
+        // Zatvaranje modala kada se klikne izvan njega
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('password-modal')) {
+                document.getElementById('password-modal').style.display = "none";
             }
-            closeModal();
-        });
-
-        // Event listeneri za goste
-        const guests = document.querySelectorAll('.guest');
-        guests.forEach(guest => {
-            guest.addEventListener('click', function() {
-                const guestName = this.textContent;
-                const action = prompt(`Šta želite da radite sa ${guestName}?\n1. Ban\n2. Privatni chat\n\nUnesite broj opcije:`);
-                
-                if (action === '1') {
-                    alert(`${guestName} je banovan!`);
-                } else if (action === '2') {
-                    alert(`Privatni chat sa ${guestName} je otvoren!`);
-                }
-            });
-        });
+            if (event.target == document.getElementById('functions-modal')) {
+                document.getElementById('functions-modal').style.display = "none";
+            }
+        }
     </script>
-
 </body>
 </html>
