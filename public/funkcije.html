@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
+    <title>Funkcije Chat Aplikacije</title>
     <style>
         /* CSS stilovi */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
         .banned {
             text-decoration: line-through;
             color: red;
@@ -19,6 +24,13 @@
             border: 1px solid #ccc;
             padding: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000; /* Osiguraj da panel bude iznad ostalih elemenata */
+        }
+        #functionButton {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            z-index: 1000; /* Osiguraj da dugme bude iznad ostalih elemenata */
         }
     </style>
 </head>
@@ -29,10 +41,13 @@
     <input type="text" id="privateMessageInput" placeholder="Poruka za...">
     <button id="sendPrivateMessage" onclick="sendPrivateMessage()">Pošalji privatnu poruku</button>
     
-    <button id="functionButton" style="position: fixed; bottom: 0; right: 0;">F</button>
+    <button id="functionButton">F</button>
     <div id="functionPanel">
+        <h3>Funkcije</h3>
         <button onclick="deleteChat()">Obriši chat</button>
         <button onclick="togglePrivateMessaging('userId')">Privatna poruka</button>
+        <p>Dupli klik na korisnika da bi ga banovao.</p>
+        <p>Privatna poruka se šalje u formatu: <strong>nik-broj ------> poruka</strong></p>
     </div>
 
     <script>
