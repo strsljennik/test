@@ -27,24 +27,13 @@ document.getElementById('colorPicker').addEventListener('input', function() {
     updateInputStyle();
 });
 
-document.getElementById('colorPicker').addEventListener('input', function() {
-    currentColor = this.value; // Uzimanje izabrane boje
-    updateGuestListColor();    // Ažuriranje boje za goste
-});
-
-// Funkcija za ažuriranje boje u listi gostiju
-function updateGuestListColor() {
-    let guests = document.querySelectorAll('#guestList .guest'); // Uzimamo sve goste
-    guests.forEach(guest => {
-        guest.style.color = currentColor; // Promena boje za svakog gosta
-    });
+// Primena stilova na polju za unos
+function updateInputStyle() {
+    let inputField = document.getElementById('chatInput');
+    inputField.style.fontWeight = isBold ? 'bold' : 'normal';
+    inputField.style.fontStyle = isItalic ? 'italic' : 'normal';
+    inputField.style.color = currentColor;
 }
- function updateTextStyle() {
-            let inputField = document.getElementById('chatInput');
-            inputField.style.fontWeight = isBold ? 'bold' : 'normal';
-            inputField.style.fontStyle = isItalic ? 'italic' : 'normal';
-            inputField.style.color = currentTextColor; // Update to current text color
-        }
 
 // Kada korisnik pritisne Enter
 document.getElementById('chatInput').addEventListener('keydown', function(event) {
