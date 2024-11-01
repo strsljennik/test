@@ -3,133 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privat Ban i Brisanje Chata</title>
     <style>
-        /* Osnovni stilovi */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        #chat-container {
-            padding: 20px;
-            /* Stilovi za chat */
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        /* Modal stilovi */
-        .modal {
+        /* Stil za modal */
+        #myModal {
             display: none; 
             position: fixed; 
-            z-index: 1; 
-            right: 0; 
-            top: 20%; /* Pomeranje od vrha */
-            width: 100px;  /* Širina modala */
-            height: 300px;  /* Visina modala */
-            background-color: rgb(255, 255, 255); 
-            border: 1px solid #888; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            overflow: auto; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: 300px; 
+            background: white; 
+            border: 1px solid black; 
+            padding: 20px; 
+            z-index: 1000; 
         }
 
-        .modal-content {
-            padding: 10px;
+        /* Stil za overlay iza modala */
+        .overlay {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0, 0, 0, 0.5); 
+            z-index: 999; 
         }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
+        .banned {
+            text-decoration: line-through;
+            color: red;
         }
     </style>
-    <title>Chat Funkcije</title>
 </head>
 <body>
-    <div id="chat-container">
-        <h1>Chat prostor</h1>
-        <!-- Tvoj chat ovde -->
-        <button id="users-btn" style="position: fixed; bottom: 20px; left: 20px;">Korisnici</button>
+    <!-- Dugme F -->
+    <button id="modalButton" style="position: absolute; top: 20px; left: 20px;">F</button>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Modalni prozor -->
+    <div id="myModal">
+        <span id="closeModal" style="cursor: pointer;">&times; Close</span>
+        <p>Izaberite korisnika za ban ili brisanje chata:</p>
+        <div>
+            <span id="selectedUser">Korisnik: <strong id="userName">Anonymous</strong></span>
+        </div>
+        <button id="privateBan">Privat Ban</button>
+        <button id="deleteChat">Obriši Chat</button>
     </div>
 
-    <!-- Modal za unos lozinke -->
-    <div id="password-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="close-password-modal">&times;</span>
-            <h2>Unesite lozinku</h2>
-            <input type="password" id="password-input">
-            <button id="submit-password">Potvrdi</button>
-        </div>
-    </div>
-
-    <!-- Modal sa funkcijama -->
-    <div id="functions-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="close-functions-modal">&times;</span>
-            <h2>Izaberi korisnika</h2>
-            <button id="private-toggle">Privatne poruke</button>
-            <button id="ban-user">Ban korisnika</button>
-        </div>
+    <div id="userList">
+        <h3>Lista Korisnika:</h3>
+        <ul>
+            <li class="user" data-username="Korisnik1">Korisnik1</li>
+            <li class="user" data-username="Korisnik2">Korisnik2</li>
+            <li class="user" data-username="Korisnik3">Korisnik3</li>
+        </ul>
     </div>
 
     <script>
-        document.getElementById('users-btn').onclick = function() {
-            document.getElementById('functions-modal').style.display = "block";
-        }
+        // Otvaranje modala
+        document.getElementById("modalButton").onclick = function() {
+            document.getElementById("myModal").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        };
 
-        document.getElementById('close-functions-modal').onclick = function() {
-            document.getElementById('functions-modal').style.display = "none";
-        }
+        // Zatvaranje modala
+        document.getElementById("closeModal").onclick = function() {
+            closeModal();
+        };
 
-        // Modal za lozinku
-        document.getElementById('close-password-modal').onclick = function() {
-            document.getElementById('password-modal').style.display = "none";
-        }
-
-        document.getElementById('submit-password').onclick = function() {
-            const password = document.getElementById('password-input').value;
-            if (password === 'galaksija123') {
-                document.getElementById('password-modal').style.display = "none";
-                document.getElementById('functions-modal').style.display = "block";
-            } else {
-                alert('Pogrešna lozinka!');
-            }
-        }
-
-        document.getElementById('private-toggle').onclick = function() {
-            // Logika za omogućavanje privatnih poruka
-            alert('Privatne poruke su omogućene.');
-            document.getElementById('functions-modal').style.display = "none"; // Zatvori modal
-        }
-
-        document.getElementById('ban-user').onclick = function() {
-            // Logika za baniranje korisnika
-            const userToBan = prompt("Unesite ime korisnika za banovanje:");
-            if (userToBan) {
-                alert(`${userToBan} je banovan.`);
-            }
-            document.getElementById('functions-modal').style.display = "none"; // Zatvori modal
-        }
-
-        // Zatvaranje modala kada se klikne izvan njega
+        // Zatvaranje modala kada se klikne van njega
         window.onclick = function(event) {
-            if (event.target == document.getElementById('password-modal')) {
-                document.getElementById('password-modal').style.display = "none";
+            if (event.target == document.getElementById("overlay")) {
+                closeModal();
             }
-            if (event.target == document.getElementById('functions-modal')) {
-                document.getElementById('functions-modal').style.display = "none";
-            }
+        };
+
+        // Funkcija za zatvaranje modala
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
         }
+
+        // Odabir korisnika iz liste
+        const users = document.querySelectorAll('.user');
+        users.forEach(user => {
+            user.onclick = function() {
+                const username = this.getAttribute('data-username');
+                document.getElementById('userName').innerText = username;
+            };
+        });
+
+        // Privatni ban funkcionalnost
+        document.getElementById("privateBan").onclick = function() {
+            const username = document.getElementById('userName').innerText;
+            const selectedUser = [...users].find(user => user.getAttribute('data-username') === username);
+            if (selectedUser) {
+                selectedUser.classList.add('banned');
+                closeModal();
+                alert(`${username} je baniran na privat!`);
+            }
+        };
+
+        // Brisanje chata funkcionalnost
+        document.getElementById("deleteChat").onclick = function() {
+            const username = document.getElementById('userName').innerText;
+            const selectedUser = [...users].find(user => user.getAttribute('data-username') === username);
+            if (selectedUser) {
+                alert(`Chat sa ${username} je obrisan!`);
+                closeModal();
+            }
+        };
     </script>
 </body>
 </html>
