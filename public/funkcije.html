@@ -10,71 +10,78 @@
             color: white;
             font-family: Arial, sans-serif;
         }
-
-        #chatContainer {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-
-        #controlPanel {
-            display: none; /* Sakrij kontrolnu tablu po defaultu */
-            position: fixed; /* Koristi fixed da ostane na mestu */
-            top: 50%; /* Postavi u sredinu ekrana */
+        #popup {
+            display: none; /* Sakrij popup po defaultu */
+            position: absolute;
+            top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%); /* Centriranje */
-            background-color: rgba(0, 0, 0, 0.8); /* Polu-prozirna pozadina */
-            color: white;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 5px;
-            z-index: 1000; /* Uveri se da je iznad ostalog sadržaja */
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Blagi sjaj */
+            z-index: 1000; /* Da bude iznad ostalih elemenata */
         }
-
-        #openControlPanel {
-            position: fixed; /* Fiksna pozicija na dnu desno */
-            bottom: 20px; /* Malo od margine */
-            right: 20px; /* Malo od margine */
+        #openPopup {
+            position: absolute;
+            bottom: 0;
+            right: 0;
             width: 10px; /* Širina dugmeta */
             height: 10px; /* Visina dugmeta */
             background-color: white;
             border: none;
             cursor: pointer;
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Blagi sjaj */
         }
     </style>
 </head>
 <body>
-    <div id="chatContainer">
-        <button id="openControlPanel">F</button>
-        <div id="controlPanel">
-            <p id="clearChat">Obriši chat</p>
-            <p id="togglePV">Uključi PV za sve</p>
-            <p id="selectBanUser">Selektuj korisnika za ban</p>
-        </div>
-    </div>
 
-    <script>
-        // Dugme za otvaranje kontrolne table
-        document.getElementById('openControlPanel').addEventListener('click', function() {
-            let panel = document.getElementById('controlPanel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none'; // Toggle display
-        });
+<button id="openPopup">F</button>
 
-        // Funkcije unutar kontrolne table
-        document.getElementById('clearChat').addEventListener('click', function() {
-            if (confirm('Da li ste sigurni da želite obrisati chat?')) {
-                alert('Chat je obrisan.');
-            }
-        });
+<div id="popup">
+    <h3>Kontrolna Tabla</h3>
+    <p><button id="clearChat">Obriši chat</button></p>
+    <p><button id="togglePV">Uključi/Isključi PV</button></p>
+    <p><button id="banUser">Ban korisnika</button></p>
+    <button id="closePopup">Zatvori</button>
+</div>
 
-        document.getElementById('togglePV').addEventListener('click', function() {
-            alert('Privatne poruke su uključene/isključene.');
-        });
+<script>
+    // WebSocket konekcija
+    const socket = new WebSocket('ws://localhost:3000'); // Zamenite sa vašom WebSocket adresom
 
-        document.getElementById('selectBanUser').addEventListener('click', function() {
-            alert('Kliknite na korisnika za ban.');
-        });
-    </script>
+    // Funkcija za otvaranje popup prozora
+    document.getElementById('openPopup').addEventListener('click', function() {
+        document.getElementById('popup').style.display = 'block';
+    });
+
+    // Funkcija za zatvaranje popup prozora
+    document.getElementById('closePopup').addEventListener('click', function() {
+        document.getElementById('popup').style.display = 'none';
+    });
+
+    // Logika za brisanje chata
+    document.getElementById('clearChat').addEventListener('click', function() {
+        if (confirm('Da li ste sigurni da želite obrisati chat?')) {
+            socket.send(JSON.stringify({ action: 'clearChat' })); // Slanje poruke serveru
+            alert('Chat je obrisan!'); // Ovo je samo za prikaz
+        }
+    });
+
+    // Logika za uključivanje/isključivanje privatnih poruka
+    document.getElementById('togglePV').addEventListener('click', function() {
+        socket.send(JSON.stringify({ action: 'togglePV' })); // Slanje poruke serveru
+        alert('PV je uključen/isključen!'); // Ovo je samo za prikaz
+    });
+
+    // Logika za banovanje korisnika
+    document.getElementById('banUser').addEventListener('click', function() {
+        const username = prompt('Unesite korisničko ime za banovanje:');
+        if (username) {
+            socket.send(JSON.stringify({ action: 'banUser', username: username })); // Slanje poruke serveru
+            alert(`${username} je banovan!`); // Ovo je samo za prikaz
+        }
+    });
+</script>
+
 </body>
 </html>
