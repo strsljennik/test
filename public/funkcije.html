@@ -53,6 +53,7 @@
     <script>
         // JavaScript funkcije
         let bannedUsers = new Set();
+        const correctPassword = "galaksija123"; // Definiši ispravnu lozinku
 
         function togglePrivateMessaging(userId) {
             const privateMessageInput = document.getElementById('privateMessageInput');
@@ -96,8 +97,13 @@
         });
 
         document.getElementById('functionButton').onclick = function() {
-            const panel = document.getElementById('functionPanel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            const password = prompt("Unesite lozinku za pristup funkcijama:");
+            if (password === correctPassword) {
+                const panel = document.getElementById('functionPanel');
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            } else {
+                alert("Pogrešna lozinka! Pokušajte ponovo.");
+            }
         };
     </script>
 </body>
