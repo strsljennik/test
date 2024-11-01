@@ -1,55 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Galaksija</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <link rel="stylesheet" href="styles.css"> <!-- Povezivanje CSS datoteke -->
+    <title>Privat Ban i Brisanje Chata</title>
+    <style>
+        /* Stil za modal */
+        #myModal {
+            display: none; 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: 300px; 
+            background: white; 
+            border: 1px solid black; 
+            padding: 20px; 
+            z-index: 1000; 
+        }
+
+        /* Stil za overlay iza modala */
+        .overlay {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0, 0, 0, 0.5); 
+            z-index: 999; 
+        }
+
+        .banned {
+            text-decoration: line-through;
+            color: red;
+        }
+    </style>
 </head>
 <body>
+    <!-- Dugme F -->
+    <button id="modalButton" style="position: absolute; top: 20px; left: 20px;">F</button>
 
-<div id="authContainer">
-    <form id="registerForm">
-        <input type="text" placeholder="Korisničko ime" required>
-        <input type="password" placeholder="Lozinka" required>
-        <button type="submit">Registracija</button>
-    </form>
-    <form id="loginForm">
-        <input type="text" placeholder="Korisničko ime" required>
-        <input type="password" placeholder="Lozinka" required>
-        <button type="submit">Prijava</button>
-    </form>
-</div>
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
 
-   <div id="chatContainer">
-        <div id="toolbar">
-            <button class="toolbarBtn" id="boldBtn">Bold</button>
-            <button class="toolbarBtn" id="italicBtn">Italic</button>
-            <button class="toolbarBtn" id="colorBtn">Color</button>
-            <button class="toolbarBtn" id="smilesBtn">Smiles</buton>
-<input type="color" id="colorPicker" style="display: none;"> <!-- Ova linija dodaje skriveni color picker -->
-  </div>
-
-
-        <div id="messageArea"></div>
-
-       <div id="messageInput">
-            <textarea id="chatInput" rows="1" placeholder="Type your message..."></textarea>
+    <!-- Modalni prozor -->
+    <div id="myModal">
+        <span id="closeModal" style="cursor: pointer;">&times; Close</span>
+        <p>Izaberite korisnika za ban ili brisanje chata:</p>
+        <div>
+            <span id="selectedUser">Korisnik: <strong id="userName">Anonymous</strong></span>
         </div>
-
-        <div id="guestList">
-            <div class="guest" id="djNickname">Radio Galaksija</div>
- <!-- Ostali gosti će se ovde dodavati -->
-        </div>
+        <button id="privateBan">Privat Ban</button>
+        <button id="deleteChat">Obriši Chat</button>
     </div>
 
-<script src="regist.js"></script>
-<script src="formatiranje.js"></script> <!-- Povezivanje JavaScript datoteke -->
-<script src="smile.js"></script> <!-- Povezivanje JavaScript datoteke za smilove -->
-  <iframe src="https://zeno.fm/player/radio-galaksija" width="150" height="150" frameborder="0" scrolling="no" style="position: absolute; bottom: 0; left: 0;"></iframe>
- <iframe id="chat-frame" src="funkcije.html"></iframe>   
-    
- </script>
+    <div id="userList">
+        <h3>Lista Korisnika:</h3>
+        <ul>
+            <li class="user" data-username="Korisnik1">Korisnik1</li>
+            <li class="user" data-username="Korisnik2">Korisnik2</li>
+            <li class="user" data-username="Korisnik3">Korisnik3</li>
+        </ul>
+    </div>
+
+    <script>
+        // Otvaranje modala
+        document.getElementById("modalButton").onclick = function() {
+            document.getElementById("myModal").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        };
+
+        // Zatvaranje modala
+        document.getElementById("closeModal").onclick = function() {
+            closeModal();
+        };
+
+        // Zatvaranje modala kada se klikne van njega
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("overlay")) {
+                closeModal();
+            }
+        };
+
+        // Funkcija za zatvaranje modala
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        // Odabir korisnika iz liste
+        const users = document.querySelectorAll('.user');
+        users.forEach(user => {
+            user.onclick = function() {
+                const username = this.getAttribute('data-username');
+                document.getElementById('userName').innerText = username;
+            };
+        });
+
+        // Privatni ban funkcionalnost
+        document.getElementById("privateBan").onclick = function() {
+            const username = document.getElementById('userName').innerText;
+            const selectedUser = [...users].find(user => user.getAttribute('data-username') === username);
+            if (selectedUser) {
+                selectedUser.classList.add('banned');
+                closeModal();
+                alert(`${username} je baniran na privat!`);
+            }
+        };
+
+        // Brisanje chata funkcionalnost
+        document.getElementById("deleteChat").onclick = function() {
+            const username = document.getElementById('userName').innerText;
+            const selectedUser = [...users].find(user => user.getAttribute('data-username') === username);
+            if (selectedUser) {
+                alert(`Chat sa ${username} je obrisan!`);
+                closeModal();
+            }
+        };
+    </script>
 </body>
 </html>
