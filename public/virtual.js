@@ -9,20 +9,19 @@ function sendMessageToChat(guest) {
 
     const messageElement = document.createElement('div');
     messageElement.innerHTML = `<span style="color: ${guest.color}; font-weight: bold; font-style: italic;">${guest.nickname}: ${guest.message}</span>`;
-    
-    messageArea.appendChild(messageElement);
+
+    // Umetni novu poruku na vrh chat prozora
+    messageArea.insertBefore(messageElement, messageArea.firstChild);
     
     // Dodavanje razmaka između poruka
     const spacingElement = document.createElement('div');
     spacingElement.style.height = '10px'; // Podešavanje visine razmaka
-    messageArea.appendChild(spacingElement);
-
-
+    messageArea.insertBefore(spacingElement, messageArea.firstChild);
 }
 
 function addGuestToList(guest) {
     const guestList = document.getElementById('guestList');
-    
+
     // Proveri da li gost već postoji u listi
     if (!Array.from(guestList.children).some(el => el.textContent === guest.nickname)) {
         const guestElement = document.createElement('div');
@@ -36,16 +35,16 @@ function addGuestToList(guest) {
 function startVirtualGuests() {
     let index = 0;
 
-    // Odmah šalje prvu poruku i dodaje prvog gosta
-    sendMessageToChat(virtualGuests[index]);
+    // Učitavanje prvih poruka odmah
     addGuestToList(virtualGuests[index]);
+    sendMessageToChat(virtualGuests[index]);
     index++;
 
-    // Slanje ostalih poruka u intervalima od 2 minuta
+    // Slanje poruka u intervalima od 2 minuta
     setInterval(() => {
         if (index < virtualGuests.length) {
             sendMessageToChat(virtualGuests[index]);
-            addGuestToList(virtualGuests[index]); // Dodavanje gosta u listu
+            addGuestToList(virtualGuests[index]);
             index++;
         } else {
             index = 0; // Vraća se na početak
