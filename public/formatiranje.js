@@ -105,36 +105,3 @@ document.getElementById('openModal').onclick = function() {
     deleteChat(); // Pozivamo funkciju za brisanje chata
 };
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('banButton').onclick = function() {
-        const password = prompt('Unesite lozinku za baniranje:');
-        if (password === 'galaksija123') {
-            alert('Pristup za baniranje odobren. Dvostruki klik na ime ili broj korisnika da biste ih banirali.');
-            enableBanMode(); // Aktiviramo režim baniranja
-        } else {
-            alert('Pogrešna lozinka!');
-        }
-    };
-
-    // Aktivacija ban režima
-    function enableBanMode() {
-        const guests = document.querySelectorAll('.guest'); // Pronađi sve elemente sa klasom 'guest'
-        guests.forEach(guest => {
-            guest.ondblclick = function() {
-                const username = this.textContent; // Uzimamo ime korisnika
-                const confirmBan = confirm(`Da li želite da banirate korisnika: ${username}?`);
-                if (confirmBan) {
-                    banUser(this); // Pozivamo funkciju za baniranje
-                }
-            };
-        });
-    }
-
-    // Funkcija za baniranje korisnika
-    function banUser(guestElement) {
-        guestElement.style.textDecoration = 'line-through'; // Crvena linija preko korisnika
-        guestElement.style.color = 'red'; // Promeni boju korisnika na crveno
-        guestElement.style.pointerEvents = 'none'; // Onemogući dalji unos
-        alert(`${guestElement.textContent} je baniran i više ne može da piše na chat.`);
-    }
-});
