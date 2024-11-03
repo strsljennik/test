@@ -17,7 +17,7 @@ function sendMessageToChat(guest) {
     spacingElement.style.height = '10px'; // Podešavanje visine razmaka
     messageArea.appendChild(spacingElement);
 
-    messageArea.scrollTop = messageArea.scrollHeight; // Automatsko skrolovanje
+
 }
 
 function addGuestToList(guest) {
