@@ -108,7 +108,8 @@ io.on('connection', (socket) => {
     });
 });
 
-const PORT = process.env.PORT || 3000;
+// Postavi port na 10000
+const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
     console.log(`Server je pokrenut na portu ${PORT}`);
 });
