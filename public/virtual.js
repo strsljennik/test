@@ -41,7 +41,7 @@ function startVirtualGuests() {
     addGuestToList(virtualGuests[index]);
     index++;
 
-    // Slanje ostalih poruka u intervalima od 3 minuta
+    // Slanje ostalih poruka u intervalima od 2 minuta
     setInterval(() => {
         if (index < virtualGuests.length) {
             sendMessageToChat(virtualGuests[index]);
@@ -50,7 +50,7 @@ function startVirtualGuests() {
         } else {
             index = 0; // Vraća se na početak
         }
-    }, 180000); // 3 minuta u milisekundama
+    }, 120000); // 2 minuta u milisekundama
 }
 
 // Pokretanje virtuelnih gostiju kada se stranica učita
