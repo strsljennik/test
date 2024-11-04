@@ -3,7 +3,6 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB, User } = require('./mongo');
 const bcrypt = require('bcrypt');
-const { spawn } = require('child_process');
 require('dotenv').config();
 
 const app = express();
@@ -13,8 +12,8 @@ const io = socketIo(server);
 // Poveži se sa bazom podataka
 connectDB();
 
-let users = {}; // Objekat sa korisnicima i njihovim ID-ovima
-let assignedNumbers = new Set(); // Skup brojeva koji su već dodeljeni
+let users = {};
+let assignedNumbers = new Set();
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
@@ -69,27 +68,28 @@ function generateUniqueNumber() {
     return number;
 }
 
+const setupSocketHandlers = (io) => {
+    io.on('connection', (socket) => {
         const userId = socket.id;
         const uniqueNumber = generateUniqueNumber();
         const nickname = `Gost-${uniqueNumber}`;
-        const userStyles = { bold: false, italic: false, color: '#FFFFFF' }; // Početni stilovi
+        const userStyles = { bold: false, italic: false, color: '#FFFFFF' };
 
-        socket.on('updateStyle', (newStyles) => {
-        if (users[userId]) {
-        users[userId].styles = { ...users[userId].styles, ...newStyles }; // Ažuriraj samo promene
-    }
-    io.emit('updateGuestList', Object.values(users).map(user => ({ ...user.styles, nickname: user.nickname }))); // Emituj sve korisnike
-});
-
-
-        users[userId] = { nickname, styles: userStyles }; // Dodajemo stilove u korisnički objekat
+        users[userId] = { nickname, styles: userStyles };
         console.log(`${nickname} se povezao.`);
 
         socket.broadcast.emit('newGuest', nickname);
         io.emit('updateGuestList', Object.values(users).map(user => ({ ...user.styles, nickname: user.nickname })));
 
+        socket.on('updateStyle', (newStyles) => {
+            if (users[userId]) {
+                users[userId].styles = { ...users[userId].styles, ...newStyles };
+            }
+            io.emit('updateGuestList', Object.values(users).map(user => ({ ...user.styles, nickname: user.nickname })));
+        });
+
         socket.on('userLoggedIn', (username) => {
-            users[userId] = { nickname: username, styles: userStyles }; // Očuvaj stilove
+            users[userId] = { nickname: username, styles: userStyles };
             io.emit('updateGuestList', Object.values(users).map(user => ({ ...user.styles, nickname: user.nickname })));
         });
 
@@ -106,10 +106,9 @@ function generateUniqueNumber() {
             io.emit('chatMessage', messageToSend);
         });
 
-       
         socket.on('disconnect', () => {
             console.log(`${users[userId].nickname} se odjavio.`);
-            assignedNumbers.delete(parseInt(users[userId].nickname.split('-')[1], 10)); // Ukloni broj iz dodeljenih
+            assignedNumbers.delete(parseInt(users[userId].nickname.split('-')[1], 10));
             delete users[userId];
             io.emit('updateGuestList', Object.values(users).map(user => ({ ...user.styles, nickname: user.nickname })));
         });
