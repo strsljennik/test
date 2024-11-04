@@ -38,22 +38,27 @@ const setupSocketHandlers = (io) => {
 
         // Funkcija za ažuriranje liste gostiju
         const updateGuestList = () => {
-            io.emit('updateGuestList', Object.values(users)); // Emituj sve korisnike
+            const userList = Object.values(users);
+            if (userList.length > 0) {
+                io.emit('updateGuestList', userList); // Emituj sve korisnike
+            }
         };
 
         // Ažuriranje stila korisnika
         socket.on('updateStyle', (newStyles) => {
             if (users[userId]) {
                 users[userId].styles = { ...users[userId].styles, ...newStyles }; // Ažuriraj samo promene
+                updateGuestList(); // Ažuriraj listu nakon promene stila
             }
-            updateGuestList(); // Ažuriraj listu nakon promene stila
         });
 
         // Kada se korisnik odjavi
         socket.on('disconnect', () => {
-            console.log(`Korisnik ${users[userId].nickname} se odjavio.`);
-            delete users[userId]; // Ukloni korisnika iz liste
-            updateGuestList(); // Ažuriraj listu nakon odjave
+            if (users[userId]) {
+                console.log(`Korisnik ${users[userId].nickname} se odjavio.`);
+                delete users[userId]; // Ukloni korisnika iz liste
+                updateGuestList(); // Ažuriraj listu nakon odjave
+            }
         });
     });
 };
