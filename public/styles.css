@@ -109,14 +109,3 @@ body {
 #authContainer input {
     margin-right: 5px; /* Razmak između input polja i dugmadi */
 }
-body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    background-image: url('path_to_your_image.jpg');
-    background-position: right center;
-    background-size: cover;
-}
-
