@@ -4,6 +4,7 @@ const socketIo = require('socket.io');
 const { connectDB, User } = require('./mongo');
 const bcrypt = require('bcrypt');
 const { spawn } = require('child_process');
+const session = require("express-session");
 require('dotenv').config();
 
 const app = express();
@@ -18,6 +19,16 @@ let assignedNumbers = new Set(); // Skup brojeva koji su već dodeljeni
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
+
+// Konfiguracija sesije
+app.use(session({
+    secret: process.env.SECRET_KEY, // Koristi varijablu okruženja
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 3 // 3 sata
+    }
+}));
 
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
