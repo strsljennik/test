@@ -43,11 +43,10 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     .then(response => {
         if (response.ok) {
             alert('Prijava uspešna');
-console.log(`Događaj za prijavu emitovan za korisnika: ${username}`);
+            console.log(`Događaj za prijavu emitovan za korisnika: ${username}`);
 
-socket.emit('userLoggedIn', username); // Emituj događaj sa korisničkim imenom
+            socket.emit('userLoggedIn', username); // Emituj događaj sa korisničkim imenom
             this.reset(); // Isprazni formu
-            // Ovdje možeš dodati dodatnu logiku, kao što je preusmeravanje na chat
         } else {
             alert('Nevažeći podaci za prijavu');
         }
@@ -56,4 +55,15 @@ socket.emit('userLoggedIn', username); // Emituj događaj sa korisničkim imenom
         console.error('Error:', error);
         alert('Došlo je do greške. Pokušajte ponovo.');
     });
+});
+
+// Dodavanje gosta u listu (ako je korisnik gost)
+document.getElementById('guestForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Spreči podnošenje forme
+
+    const guestNickname = this.querySelector('input[type="text"]').value;
+
+    // Emituj događaj za gosta
+    socket.emit('guestLoggedIn', guestNickname); // guestNickname je ime gosta, a ne objekat
+    this.reset(); // Isprazni formu
 });
