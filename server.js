@@ -13,7 +13,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-app.set('trust proxy', true);  za ip
+app.set('trust proxy', true); 
 
 
 // Poveži se sa bazom podataka
