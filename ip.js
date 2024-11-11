@@ -1,12 +1,15 @@
-// ip.js
 let connectedIps = []; // Ovdje čuvamo sve povezane IP adrese
 let messages = []; // Ovdje čuvamo poruke sa pripadajućim IP adresama
 
 module.exports = (app) => {
+    // Omogućavamo da Express prepozna stvarnu IP adresu iza proxy servera
+    app.set('trust proxy', true); 
+
     // Middleware koji prati dolazne IP adrese i dodaje ih u listu
     app.use((req, res, next) => {
-        const ip = req.ip;
-        
+        // Koristimo 'x-forwarded-for' da bismo dobili stvarnu IP adresu korisnika
+        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
         // Dodajemo IP adresu ako nije već u listi
         if (!connectedIps.includes(ip)) {
             connectedIps.push(ip);
