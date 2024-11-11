@@ -1,9 +1,9 @@
 // Registracija korisnika
 document.getElementById('registerForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Spreči podnošenje forme
+    event.preventDefault();
 
-    const username = this.querySelector('input[type="text"]').value;
-    const password = this.querySelector('input[type="password"]').value;
+    const username = document.getElementById('registerUsername').value;
+    const password = document.getElementById('registerPassword').value;
 
     fetch('/register', {
         method: 'POST',
@@ -15,7 +15,7 @@ document.getElementById('registerForm').addEventListener('submit', function(even
     .then(response => {
         if (response.ok) {
             alert('Registracija uspešna');
-            this.reset(); // Isprazni formu
+            this.reset();
         } else {
             alert('Greška pri registraciji');
         }
@@ -28,26 +28,24 @@ document.getElementById('registerForm').addEventListener('submit', function(even
 
 // Prijava korisnika
 document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Spreči podnošenje forme
+    event.preventDefault();
 
-    const username = this.querySelector('input[type="text"]').value;
-    const password = this.querySelector('input[type="password"]').value;
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
 
     fetch('/login', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'x-socket-id': socket.id  // Dodajemo socket ID u header
         },
         body: JSON.stringify({ username, password })
     })
     .then(response => {
         if (response.ok) {
             alert('Prijava uspešna');
-console.log(`Događaj za prijavu emitovan za korisnika: ${username}`);
-
-socket.emit('userLoggedIn', username); // Emituj događaj sa korisničkim imenom
-            this.reset(); // Isprazni formu
-            // Ovdje možeš dodati dodatnu logiku, kao što je preusmeravanje na chat
+            socket.emit('userLoggedIn', username);
+            this.reset();
         } else {
             alert('Nevažeći podaci za prijavu');
         }
@@ -57,3 +55,27 @@ socket.emit('userLoggedIn', username); // Emituj događaj sa korisničkim imenom
         alert('Došlo je do greške. Pokušajte ponovo.');
     });
 });
+
+// Kada server pošalje događaj 'userLoggedIn' sa rodom
+socket.on('userLoggedIn', (data) => {
+    console.log("Prijavljeni korisnik:", data.username);
+    console.log("Rola korisnika:", data.role);
+
+    if (data.role === 'admin') {
+        enableAdminFeatures();
+    } else {
+        enableGuestFeatures();
+    }
+});
+
+// Funkcija za omogućavanje admin funkcionalnosti
+function enableAdminFeatures() {
+    console.log("Admin funkcionalnosti omogućene!");
+    // Kod za omogućavanje admin funkcionalnosti
+}
+
+// Funkcija za omogućavanje gost funkcionalnosti
+function enableGuestFeatures() {
+    console.log("Gost funkcionalnosti omogućene!");
+    // Kod za omogućavanje gost funkcionalnosti
+}
