@@ -67,31 +67,17 @@ socket.on('chatMessage', function(data) {
     messageArea.scrollTop = 0; // Automatsko skrolovanje
 });
 
-// Kada nov gost dođe
-socket.on('newGuest', function(data) {
-    const guestList = document.getElementById('guestList');
-    const newGuest = document.createElement('div');
-    newGuest.className = 'guest';
-    newGuest.style.fontWeight = data.bold ? 'bold' : 'normal';
-    newGuest.style.fontStyle = data.italic ? 'italic' : 'normal';
-    newGuest.style.color = data.color || '#FFFFFF'; // Koristi default boju ako nema
-    newGuest.textContent = data.nickname || 'gost';
-    guestList.appendChild(newGuest);
-});
-
-// Ažuriranje liste gostiju
+// Ažuriranje liste gostiju sa bojom sa servera
 socket.on('updateGuestList', function(users) {
     const guestList = document.getElementById('guestList');
     guestList.innerHTML = ''; // Očisti trenutnu listu
     
-    // Dodaj ostale goste
+    // Dodaj goste sa bojom sa servera
     users.forEach(user => {
         const newGuest = document.createElement('div');
         newGuest.className = 'guest';
         newGuest.textContent = user.nickname || 'gost';
-        newGuest.style.fontWeight = user.bold ? 'bold' : 'normal';
-        newGuest.style.fontStyle = user.italic ? 'italic' : 'normal';
-        newGuest.style.color = user.color || '#FFFFFF'; // Koristi default boju
+        newGuest.style.color = user.color || '#FFFFFF'; // Primeni boju sa servera, ili podrazumevano belu
         guestList.appendChild(newGuest);
     });
 });
