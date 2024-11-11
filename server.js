@@ -18,6 +18,8 @@ connectDB();
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
+app.set('trust proxy', true);  za ip
+
 
 // Pokreni ip.js modul koji sadrži tvoje rute
 ipModule(app);
