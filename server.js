@@ -6,17 +6,24 @@ const { connectDB, User } = require('./mongo');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 const banModule = require("./banModule");
+const bodyParser = require('body-parser');
 const ipModule = require('./ip');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+app.set('trust proxy', true); 
+
+
 // Poveži se sa bazom podataka
 connectDB();
 
 app.use(express.json());
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public'))
+
+// Pokreni ip.js modul koji sadrži tvoje rute
+ipModule(app);
 
 // Proverava da li korisnik treba da bude admin ili gost
 async function checkAdminRole(username) {
