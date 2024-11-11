@@ -18,8 +18,6 @@ connectDB();
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
-// Omogućiti parsiranje JSON podataka
-app.use(bodyParser.json());
 
 // Pokreni ip.js modul koji sadrži tvoje rute
 ipModule(app);
