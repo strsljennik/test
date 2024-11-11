@@ -13,13 +13,14 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+app.set('trust proxy', true);  za ip
+
+
 // Poveži se sa bazom podataka
 connectDB();
 
 app.use(express.json());
-app.use(express.static(__dirname + '/public'));
-app.set('trust proxy', true);  za ip
-
+app.use(express.static(__dirname + '/public'))
 
 // Pokreni ip.js modul koji sadrži tvoje rute
 ipModule(app);
