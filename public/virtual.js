@@ -1,10 +1,17 @@
 const virtualGuests = [
-    { nickname: 'cuceklika 1', messages: ['Poz Svima', 'jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'deepskyblue' },
-    { nickname: 'cuceklika 2', messages: ['Zdravo Sarinenge', 'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'purple' },
-    { nickname: 'cuceklika 3', messages: ['Selami sarinenge', 'tooOOOOOOOOOOOOOOOOOOOOOOO'], color: 'red' },
-    { nickname: 'cuceklika 1', messages: ['*__X__* Mangava tu ❤️'], color: 'deepskyblue' },
-    { nickname: 'cuceklika 2', messages: ['Nas olestar cuceklike 1, Merava tuke *__X__* ❤️💋'], color: 'purple' },
-    { nickname: 'cuceklika 3', messages: ['Dzabe tumen cupinen pe taro bala OV TANO SAMO MLO'], color: 'red' },
+    { nickname: 'Cuceklika 1', messages: ['Poz Svima', 'jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'],
+ color: 'deepskyblue' },
+    { nickname: 'Cuceklika 2', messages: ['Zdravo Sarinenge', 'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'purple' },
+
+    { nickname: 'Cuceklika 3', messages: ['Selami sarinenge', 'tooOOOOOOOOOOOOOOOOOOOOOOO'], color: 'red' },
+
+
+
+    { nickname: 'Cuceklika 1', messages: ['*__X__* Mangava tu ❤️'], color: 'deepskyblue' },
+
+    { nickname: 'Cuceklika 2', messages: ['Nas olestar cuceklike 1, Merava tuke *__X__* ❤️💋'], color: 'purple' },
+
+    { nickname: 'Cuceklika 3', messages: ['Dzabe tumen cupinen pe taro bala OV TANO SAMO MLO'], color: 'red' },
 ];
 
 function sendMessageToChat(guest, message) {
@@ -42,10 +49,10 @@ function startVirtualGuests() {
     const messageTimings = [
         { guestIndex: 0, messageIndex: 0, time: 0 },    // cuceklika 1: Poz Svima
         { guestIndex: 0, messageIndex: 1, time: 5 },    // cuceklika 1: jasaaaaaaaaaaaaaaaaa
-        { guestIndex: 1, messageIndex: 0, time: 60 },   // cuceklika 2: Zdravo Sarinenge
+        { guestIndex: 1, messageIndex: 0, time: 60 },   // cuceklika 2: tooooooooooooooooooooo
         { guestIndex: 1, messageIndex: 1, time: 65 },   // cuceklika 2: opaaaaaaaaaaaaaaaaaaa
-        { guestIndex: 2, messageIndex: 0, time: 120 },  // cuceklika 3: Selami sarinenge
-        { guestIndex: 2, messageIndex: 1, time: 125 },  // cuceklika 3: tooOOOOOOOOOOOOOOOOOOO
+        { guestIndex: 2, messageIndex: 0, time: 120 },  // cuceklika 3: jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        { guestIndex: 2, messageIndex: 1, time: 125 },  // cuceklika 3: saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
         { guestIndex: 0, messageIndex: 0, time: 180 },  // cuceklika 1: *__X__* Mangava tu ❤️
         { guestIndex: 1, messageIndex: 1, time: 200 },  // cuceklika 2: Nas olestar cuceklike 1...
         { guestIndex: 2, messageIndex: 1, time: 220 },  // cuceklika 3: Dzabe tumen cupinen...
