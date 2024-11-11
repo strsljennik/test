@@ -63,26 +63,18 @@ socket.on('chatMessage', function(data) {
     messageArea.scrollTop = 0; // Automatsko skrolovanje
 });
 
-
 // Kada nov gost dođe
 socket.on('newGuest', function (nickname) {
     const guestList = document.getElementById('guestList');
     const newGuest = document.createElement('div');
     newGuest.textContent = nickname;
-    // Dodaj novog gosta ispod DJ-a
-    guestList.appendChild(newGuest);
+    guestList.appendChild(newGuest); // Dodaj novog gosta
 });
 
 // Ažuriranje liste gostiju
 socket.on('updateGuestList', function (users) {
     const guestList = document.getElementById('guestList');
     guestList.innerHTML = ''; // Očisti trenutnu listu
-    // Ponovo dodaj DJ-a
-    const dj = document.createElement('div');
-    dj.className = 'guest';
-    dj.id = 'djNickname';
-    dj.textContent = 'Radio Galaksija';
-    guestList.appendChild(dj);
     
     // Dodaj ostale goste
     users.forEach(user => {
@@ -104,4 +96,3 @@ function deleteChat() {
 document.getElementById('openModal').onclick = function() {
     deleteChat(); // Pozivamo funkciju za brisanje chata
 };
-
