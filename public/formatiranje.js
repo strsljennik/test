@@ -2,8 +2,8 @@ const socket = io();
 
 let isBold = false;
 let isItalic = false;
-let currentColor = '#FFFFFF';
-let nickname = 'gost'; // Postavi ime gosta ovde
+let currentColor = '#FFFFFF'; // Početna boja dok gost ne odabere drugu
+let nickname = 'gost'; // Pretpostavljeno ime gosta
 
 // Funkcija za BOLD formatiranje
 document.getElementById('boldBtn').addEventListener('click', function() {
@@ -46,9 +46,9 @@ document.getElementById('chatInput').addEventListener('keydown', function(event)
             text: message,
             bold: isBold,
             italic: isItalic,
-            color: currentColor,
+            color: currentColor, // Šaljemo odabranu boju
             nickname: nickname,
-            time: new Date().toLocaleTimeString() // Dodaj vreme
+            time: new Date().toLocaleTimeString()
         });
         this.value = ''; // Isprazni polje za unos
     }
@@ -67,29 +67,17 @@ socket.on('chatMessage', function(data) {
     messageArea.scrollTop = 0; // Automatsko skrolovanje
 });
 
-// Ažuriranje liste gostiju sa bojom sa servera
+// Ažuriranje liste gostiju sa bojama koje su gosti odabrali
 socket.on('updateGuestList', function(users) {
     const guestList = document.getElementById('guestList');
     guestList.innerHTML = ''; // Očisti trenutnu listu
     
-    // Dodaj goste sa bojom sa servera
+    // Dodaj goste sa bojama koje su sami odabrali
     users.forEach(user => {
         const newGuest = document.createElement('div');
         newGuest.className = 'guest';
-        newGuest.textContent = user.nickname || 'gost';
-        newGuest.style.color = user.color || '#FFFFFF'; // Primeni boju sa servera, ili podrazumevano belu
+        newGuest.textContent = user.nickname || 'gost'; // Ostavlja originalno ime sa servera
+        newGuest.style.color = user.color || '#FFFFFF'; // Primeni boju koju je gost odabrao, ili podrazumevano belu
         guestList.appendChild(newGuest);
     });
 });
-
-// Funkcija za brisanje chata
-function deleteChat() {
-    const messageArea = document.getElementById('messageArea');
-    messageArea.innerHTML = ''; // Očisti sve poruke
-    socket.emit('clearChat'); // Obaveštava server da se očisti chat
-}
-
-// Osluškivanje klika na dugme "D"
-document.getElementById('openModal').onclick = function() {
-    deleteChat(); // Pozivamo funkciju za brisanje chata
-};
