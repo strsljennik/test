@@ -1,9 +1,9 @@
 const virtualGuests = [
-    { nickname: 'Cuceklika 1', messages: ['Poz Svima', 'jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'],
+    { nickname: 'Cuceklika 1', messages: ['Poz Svima', 'jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa Romalen'],
  color: 'deepskyblue' },
-    { nickname: 'Cuceklika 2', messages: ['Zdravo Sarinenge', 'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'purple' },
+    { nickname: 'Cuceklika 2', messages: ['Zdravo Sarinenge', 'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, ajmo💋 *__X__* 💋samo me em tu te kela'], color: 'purple' },
 
-    { nickname: 'Cuceklika 3', messages: ['Selami sarinenge', 'tooOOOOOOOOOOOOOOOOOOOOOOO'], color: 'red' },
+    { nickname: 'Cuceklika 3', messages: ['Selami sarinenge', 'toooooooooooooooooooooooooooo,  X mangav tu ❤️*__X__*❤️'], color: 'red' },
 
 
 
