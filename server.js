@@ -50,11 +50,11 @@ io.on('connection', (socket) => {
     console.log(`${nickname} se povezao.`);
 
     socket.broadcast.emit('newGuest', nickname);
-    io.emit('updateGuestList', Object.values(guests));
+    emitUpdatedGuestList(); // Emituj prvobitnu listu gostiju
 
     socket.on('userLoggedIn', (username) => {
         guests[guestId] = username;
-        io.emit('updateGuestList', Object.values(guests));
+        emitUpdatedGuestList(); // Emituj ažuriranu listu gostiju
     });
 
     socket.on('chatMessage', (msgData) => {
@@ -75,9 +75,15 @@ io.on('connection', (socket) => {
         assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));
         delete guests[guestId];
         connectedIps = connectedIps.filter((userIp) => userIp !== ip);
-        io.emit('updateGuestList', Object.values(guests));
+        emitUpdatedGuestList(); // Emituj ažuriranu listu gostiju
     });
 });
+
+// Funkcija za emitovanje ažurirane liste korisnika
+function emitUpdatedGuestList() {
+    const updatedGuestList = Object.values(guests);
+    io.emit('updateGuestList', updatedGuestList); // Emituj novu listu korisnika
+}
 
 // Generisanje jedinstvenog broja za goste
 function generateUniqueNumber() {
@@ -88,6 +94,7 @@ function generateUniqueNumber() {
     assignedNumbers.add(number);
     return number;
 }
+
 // Postavljanje socket događaja iz banmodule.js
 setupSocketEvents(io);
 
