@@ -5,11 +5,9 @@ const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava'); // Uvozimo register i login funkcije
 const { setupSocketEvents } = require('./banModule'); // Uvoz setupSocketEvents funkcije za banovanje
-// const konobarica = require('./konobaricamodul'); // Uklonio sam ovaj uvoz jer se modul ne koristi
 require('dotenv').config();
-const { readDataFromFile, writeDataToFile } = require('./poruke');  // Uvozimo eksterni fajl za rad sa fajlom
 
-
+// Uklonili smo sve što se odnosi na fajl za čitanje i upisivanje podataka
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
@@ -35,12 +33,6 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-// Globalne promenljive
-let guests = {}; // Objekt koji čuva korisnike
-let assignedNumbers = new Set();
-let connectedIps = new Set(); // Koristi Set umesto Array za efikasnije provere IP-a
-let userSettings = {}; // Novi objekat za čuvanje postavki korisnika (nickname, boja)
-
 // Socket.io događaji
 setupSocketEvents(io);
 
@@ -48,18 +40,9 @@ io.on('connection', (socket) => {
     console.log('Novi gost je povezan sa socket ID:', socket.id);
 
     const guestId = socket.id;
-    const ip = socket.handshake.address; // Promenio sam ovo na socket.handshake.address
-    console.log(`Gost sa IP adresom ${ip} se povezao.`);
-
-    // Dodavanje IP adrese u listu povezanih ako već nije dodata
-    connectedIps.add(ip);
 
     // Generisanje korisničkog imena
     socket.username = socket.handshake.query.username || `Gost-${generateUniqueNumber()}`;
-    guests[guestId] = socket.username;
-
-    // Inicijalizacija postavki za novog gosta
-    userSettings[guestId] = { nickname: socket.username, color: "#808080" }; // Početna boja je siva
     console.log(`${socket.username} se povezao.`);
 
     // Emitovanje događaja za povezivanje novog gosta
@@ -108,7 +91,6 @@ io.on('connection', (socket) => {
         assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));
         delete guests[guestId];
         delete userSettings[guestId]; // Uklanjanje postavki korisnika pri disconnectu
-        connectedIps.delete(ip); // Uklanjanje IP-a iz povezanih
         io.emit('updateGuestList', Object.values(guests));
         io.emit('updateSettings', userSettings); // Ažuriraj sve korisnike sa novim postavkama
     });
