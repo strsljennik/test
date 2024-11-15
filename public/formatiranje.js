@@ -157,13 +157,3 @@ function deleteChat() {
 document.getElementById('openModal').onclick = function() {
     deleteChat(); // Pozivamo funkciju za brisanje chata
 };
-
-// Kada se server pošalje postavke svih korisnika
-socket.on('updateSettings', function(userSettings) {
-    // Ažuriraj UI sa novim postavkama (nickname i boja)
-    console.log(userSettings);
-});
-
-// Kada korisnik menja boju
-socket.emit('changeColor', '#FF5733'); // Novi kod boje
-
