@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
     guests[guestId] = socket.username;
 
     // Inicijalizacija postavki za novog gosta
-    userSettings[guestId] = { nickname: socket.username, color: "#000000" }; // Početna boja je crna
+    userSettings[guestId] = { nickname: socket.username, color: "#808080" }; // Početna boja je siva
     console.log(`${socket.username} se povezao.`);
 
     // Emitovanje događaja za povezivanje novog gosta
