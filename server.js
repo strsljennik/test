@@ -95,7 +95,7 @@ function emitUpdatedGuestList() {
         number: guest.number
     }));
 
-    // Emituj samo vrednosti potrebne za prikaz, bez objekta
+    // Emitovanje samo vrednosti: nickname, color, number
     io.emit('updateGuestList', updatedGuestList);
 }
 
