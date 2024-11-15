@@ -94,7 +94,9 @@ function emitUpdatedGuestList() {
         color: guest.color,
         number: guest.number
     }));
-    io.emit('updateGuestList', updatedGuestList); // Emituj novu listu korisnika
+
+    // Emituj samo vrednosti potrebne za prikaz, bez objekta
+    io.emit('updateGuestList', updatedGuestList);
 }
 
 // Generisanje jedinstvenog broja za goste
