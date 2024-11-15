@@ -7,6 +7,8 @@ const { register, login } = require('./prijava'); // Uvozimo register i login fu
 const { setupSocketEvents } = require('./banModule'); // Uvoz setupSocketEvents funkcije za banovanje
 // const konobarica = require('./konobaricamodul'); // Uklonio sam ovaj uvoz jer se modul ne koristi
 require('dotenv').config();
+const { readDataFromFile, writeDataToFile } = require('./poruke');  // Uvozimo eksterni fajl za rad sa fajlom
+
 
 const app = express();
 const server = http.createServer(app);
