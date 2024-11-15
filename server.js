@@ -1,37 +1,41 @@
+// server.js
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
-const { register, login } = require('./prijava');  // Uvozimo register i login funkcije
+const { register, login } = require('./prijava'); // Uvozimo register i login funkcije
+const { setupSocketEvents } = require('./banModule'); // Uvoz setupSocketEvents funkcije za banovanje
 require('dotenv').config();
-const { setupSocketEvents } = require('./banmodule'); // Putanja do banmodule.js
-const konobarica = require('./konobaricamodul');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server); // Definišemo io ovde
+const io = socketIo(server);
 
-// Poveži se sa bazom podataka
+// Povezivanje sa bazom podataka
 connectDB();
 
+// Middleware za parsiranje JSON-a i statičkih fajlova
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
 // Ruta za registraciju korisnika
-app.post('/register', (req, res) => register(req, res, io));  // Prosleđujemo io kao argument
+app.post('/register', (req, res) => register(req, res, io));
 
 // Ruta za prijavu korisnika
-app.post('/login', (req, res) => login(req, res, io));  // Prosleđujemo io kao argument
+app.post('/login', (req, res) => login(req, res, io));
 
 // Endpoint za glavnu stranicu
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-// Konekcija sa socket-om za rad sa događajima na strani klijenta
+// Globalne promenljive
 let guests = {};
 let assignedNumbers = new Set();
 let connectedIps = [];
+
+// Socket.io događaji
+setupSocketEvents(io);
 
 io.on('connection', (socket) => {
     console.log('Novi gost je povezan sa socket ID:', socket.id);
@@ -40,31 +44,30 @@ io.on('connection', (socket) => {
     const ip = socket.request.connection.remoteAddress;
     console.log(`Gost sa IP adresom ${ip} se povezao.`);
 
+    // Dodavanje IP adrese u listu povezanih ako već nije dodata
     if (!connectedIps.includes(ip)) {
         connectedIps.push(ip);
     }
 
-    const uniqueNumber = generateUniqueNumber();
-    const nickname = `Gost-${uniqueNumber}`;
-    const color = 'defaultColor';  // Početna boja
+    // Generisanje korisničkog imena
+    socket.username = socket.handshake.query.username || `Gost-${generateUniqueNumber()}`;
+    guests[guestId] = socket.username;
+    console.log(`${socket.username} se povezao.`);
 
-    // Čuvamo sve relevantne podatke za gosta
-    guests[guestId] = { nickname: nickname, color: color, number: uniqueNumber };
-    console.log(`${nickname} se povezao.`);
+    // Emitovanje događaja za povezivanje novog gosta
+    socket.broadcast.emit('newGuest', socket.username);
+    io.emit('updateGuestList', Object.values(guests));
 
-    socket.broadcast.emit('newGuest', nickname);
-    emitUpdatedGuestList(); // Emituj prvobitnu listu gostiju
-
+    // Rukovanje događajem kada se korisnik prijavi
     socket.on('userLoggedIn', (username) => {
-        guests[guestId].nickname = username;
-        emitUpdatedGuestList(); // Emituj ažuriranu listu gostiju
+        if (username) {
+            console.log(`Korisnik ${guests[guestId]} promenjen na ${username}`);
+            guests[guestId] = username;
+            io.emit('updateGuestList', Object.values(guests));
+        }
     });
 
-    socket.on('changeColor', (newColor) => {
-        guests[guestId].color = newColor;  // Menjanje boje
-        emitUpdatedGuestList(); // Emituj ažuriranu listu gostiju
-    });
-
+    // Rukovanje chat porukama
     socket.on('chatMessage', (msgData) => {
         const time = new Date().toLocaleTimeString();
         const messageToSend = {
@@ -72,32 +75,21 @@ io.on('connection', (socket) => {
             bold: msgData.bold,
             italic: msgData.italic,
             color: msgData.color,
-            nickname: guests[guestId].nickname,
+            nickname: guests[guestId],
             time: time
         };
         io.emit('chatMessage', messageToSend);
     });
 
+    // Rukovanje odjavom korisnika
     socket.on('disconnect', () => {
-        console.log(`${guests[guestId].nickname} se odjavio.`);
-        assignedNumbers.delete(guests[guestId].number); // Ukloni broj iz dodeljenih brojeva
+        console.log(`${guests[guestId]} se odjavio.`);
+        assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));
         delete guests[guestId];
         connectedIps = connectedIps.filter((userIp) => userIp !== ip);
-        emitUpdatedGuestList(); // Emituj ažuriranu listu gostiju
+        io.emit('updateGuestList', Object.values(guests));
     });
 });
-
-// Funkcija za emitovanje ažurirane liste korisnika
-function emitUpdatedGuestList() {
-    const updatedGuestList = Object.values(guests).map(guest => ({
-        nickname: guest.nickname,
-        color: guest.color,
-        number: guest.number
-    }));
-
-    // Emitovanje samo vrednosti: nickname, color, number
-    io.emit('updateGuestList', updatedGuestList);
-}
 
 // Generisanje jedinstvenog broja za goste
 function generateUniqueNumber() {
@@ -109,12 +101,7 @@ function generateUniqueNumber() {
     return number;
 }
 
-// Postavljanje socket događaja iz banmodule.js
-setupSocketEvents(io);
-
-konobarica(io);
-
-// Slušanje na određenom portu
+// Pokretanje servera
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server je pokrenut na portu ${PORT}`);
