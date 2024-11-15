@@ -30,9 +30,10 @@ app.get('/', (req, res) => {
 });
 
 // Globalne promenljive
-let guests = {};
+let guests = {}; // Objekt koji čuva korisnike
 let assignedNumbers = new Set();
 let connectedIps = [];
+let userSettings = {}; // Novi objekat za čuvanje postavki korisnika (nickname, boja)
 
 // Socket.io događaji
 setupSocketEvents(io);
@@ -52,18 +53,34 @@ io.on('connection', (socket) => {
     // Generisanje korisničkog imena
     socket.username = socket.handshake.query.username || `Gost-${generateUniqueNumber()}`;
     guests[guestId] = socket.username;
+
+    // Inicijalizacija postavki za novog gosta
+    userSettings[guestId] = { nickname: socket.username, color: "#000000" }; // Početna boja je crna
     console.log(`${socket.username} se povezao.`);
 
     // Emitovanje događaja za povezivanje novog gosta
     socket.broadcast.emit('newGuest', socket.username);
     io.emit('updateGuestList', Object.values(guests));
 
-    // Rukovanje događajem kada se korisnik prijavi
+    // Pošaljemo postavke svim korisnicima na konekciju
+    socket.emit('updateSettings', userSettings);
+
+    // Rukovanje događajem kada se korisnik prijavi (menja nickname)
     socket.on('userLoggedIn', (username) => {
         if (username) {
             console.log(`Korisnik ${guests[guestId]} promenjen na ${username}`);
             guests[guestId] = username;
+            userSettings[guestId].nickname = username; // Ažuriraj nickname u postavkama
             io.emit('updateGuestList', Object.values(guests));
+            io.emit('updateSettings', userSettings); // Pošaljemo sve postavke
+        }
+    });
+
+    // Rukovanje promenom boje za korisnika
+    socket.on('changeColor', (color) => {
+        if (color) {
+            userSettings[guestId].color = color; // Ažuriraj boju korisnika
+            io.emit('updateSettings', userSettings); // Pošaljemo sve postavke
         }
     });
 
@@ -86,8 +103,10 @@ io.on('connection', (socket) => {
         console.log(`${guests[guestId]} se odjavio.`);
         assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));
         delete guests[guestId];
+        delete userSettings[guestId]; // Uklanjanje postavki korisnika pri disconnectu
         connectedIps = connectedIps.filter((userIp) => userIp !== ip);
         io.emit('updateGuestList', Object.values(guests));
+        io.emit('updateSettings', userSettings); // Ažuriraj sve korisnike sa novim postavkama
     });
 });
 
