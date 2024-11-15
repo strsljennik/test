@@ -14,6 +14,9 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+// Inicijalizacija Set-a za praćenje dodeljenih brojeva
+const assignedNumbers = new Set();
+
 // Povezivanje sa bazom podataka
 connectDB().catch((err) => {
     console.error("Greška prilikom povezivanja sa bazom podataka:", err);
