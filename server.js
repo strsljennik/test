@@ -46,14 +46,22 @@ io.on('connection', (socket) => {
 
     const uniqueNumber = generateUniqueNumber();
     const nickname = `Gost-${uniqueNumber}`;
-    guests[guestId] = nickname;
+    const color = 'defaultColor';  // Početna boja
+
+    // Čuvamo sve relevantne podatke za gosta
+    guests[guestId] = { nickname: nickname, color: color, number: uniqueNumber };
     console.log(`${nickname} se povezao.`);
 
     socket.broadcast.emit('newGuest', nickname);
     emitUpdatedGuestList(); // Emituj prvobitnu listu gostiju
 
     socket.on('userLoggedIn', (username) => {
-        guests[guestId] = username;
+        guests[guestId].nickname = username;
+        emitUpdatedGuestList(); // Emituj ažuriranu listu gostiju
+    });
+
+    socket.on('changeColor', (newColor) => {
+        guests[guestId].color = newColor;  // Menjanje boje
         emitUpdatedGuestList(); // Emituj ažuriranu listu gostiju
     });
 
@@ -64,15 +72,15 @@ io.on('connection', (socket) => {
             bold: msgData.bold,
             italic: msgData.italic,
             color: msgData.color,
-            nickname: guests[guestId],
+            nickname: guests[guestId].nickname,
             time: time
         };
         io.emit('chatMessage', messageToSend);
     });
 
     socket.on('disconnect', () => {
-        console.log(`${guests[guestId]} se odjavio.`);
-        assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));
+        console.log(`${guests[guestId].nickname} se odjavio.`);
+        assignedNumbers.delete(guests[guestId].number); // Ukloni broj iz dodeljenih brojeva
         delete guests[guestId];
         connectedIps = connectedIps.filter((userIp) => userIp !== ip);
         emitUpdatedGuestList(); // Emituj ažuriranu listu gostiju
@@ -81,7 +89,11 @@ io.on('connection', (socket) => {
 
 // Funkcija za emitovanje ažurirane liste korisnika
 function emitUpdatedGuestList() {
-    const updatedGuestList = Object.values(guests);
+    const updatedGuestList = Object.values(guests).map(guest => ({
+        nickname: guest.nickname,
+        color: guest.color,
+        number: guest.number
+    }));
     io.emit('updateGuestList', updatedGuestList); // Emituj novu listu korisnika
 }
 
