@@ -7,7 +7,9 @@ const { register, login } = require('./prijava'); // Uvozimo register i login fu
 const { setupSocketEvents } = require('./banModule'); // Uvoz setupSocketEvents funkcije za banovanje
 require('dotenv').config();
 
-// Uklonili smo sve što se odnosi na fajl za čitanje i upisivanje podataka
+// Uvozimo funkcije za poruke
+const { saveMessage, getMessages } = require('./poruke');
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
@@ -72,7 +74,7 @@ io.on('connection', (socket) => {
     });
 
     // Rukovanje chat porukama
-    socket.on('chatMessage', (msgData) => {
+    socket.on('chatMessage', async (msgData) => {
         const time = new Date().toLocaleTimeString();
         const messageToSend = {
             text: msgData.text,
@@ -82,6 +84,11 @@ io.on('connection', (socket) => {
             nickname: guests[guestId],
             time: time
         };
+
+        // Čuvanje poruke u bazi
+        await saveMessage(messageToSend);
+
+        // Emitovanje poruke svim korisnicima
         io.emit('chatMessage', messageToSend);
     });
 
