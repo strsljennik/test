@@ -17,6 +17,10 @@ const io = socketIo(server);
 // Inicijalizacija Set-a za praćenje dodeljenih brojeva
 const assignedNumbers = new Set();
 
+// Inicijalizacija objekata za goste i postavke korisnika
+const guests = {}; // Ovdje čuvamo sve goste sa njihovim socket ID-evima
+const userSettings = {}; // Ovdje čuvamo postavke svakog korisnika, kao što su boja i nadimak
+
 // Povezivanje sa bazom podataka
 connectDB().catch((err) => {
     console.error("Greška prilikom povezivanja sa bazom podataka:", err);
@@ -49,6 +53,10 @@ io.on('connection', (socket) => {
     // Generisanje korisničkog imena
     socket.username = socket.handshake.query.username || `Gost-${generateUniqueNumber()}`;
     console.log(`${socket.username} se povezao.`);
+
+    // Dodajemo gosta u listu gostiju i postavke
+    guests[guestId] = socket.username;
+    userSettings[guestId] = { nickname: socket.username, color: '#000000' }; // Postavke sa početnim vrednostima
 
     // Emitovanje događaja za povezivanje novog gosta
     socket.broadcast.emit('newGuest', socket.username);
