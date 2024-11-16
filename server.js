@@ -6,7 +6,7 @@ const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava'); // Uvozimo register i login funkcije
 const { setupSocketEvents } = require('./banModule'); // Uvoz setupSocketEvents funkcije za banovanje
 const { saveMessage, getMessages } = require('./poruke');
-const { saveUser, getUserByNickname } = require('./userModel'); // Uvozimo funkcije za rad sa bazom
+const { saveUser, getUserByNickname } = require('./poruke'); // Uvozimo funkcije za rad sa bazom
 require('dotenv').config();
 
 const app = express();
@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
 
     // Dodajemo gosta u listu gostiju i postavke
     guests[guestId] = socket.username;
-    userSettings[guestId] = { nickname: socket.username, color: '#000000' }; // Postavke sa početnim vrednostima
+    userSettings[guestId] = { nickname: socket.username, color: '#800000' }; // Postavke sa početnim vrednostima
 
     // Emitovanje događaja za povezivanje novog gosta
     socket.broadcast.emit('newGuest', socket.username);
