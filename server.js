@@ -5,8 +5,8 @@ const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava'); // Uvozimo register i login funkcije
 const { setupSocketEvents } = require('./banModule'); // Uvoz setupSocketEvents funkcije za banovanje
-const { saveMessage, getMessages } = require('./poruke');
-const { saveUser, getUserBySession, loadAllUsers } = require('./poruke'); // Uvozimo funkcije za rad sa bazom
+const { saveMessage, loadAllUsers, saveUser, getUserBySession } = require('./poruke');
+
 require('dotenv').config();
 
 const app = express();
