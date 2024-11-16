@@ -8,9 +8,6 @@ const { setupSocketEvents } = require('./banModule'); // Uvoz setupSocketEvents 
 const { saveMessage, getMessages } = require('./poruke');
 require('dotenv').config();
 
-// Uvozimo funkcije za poruke
-const { saveMessage, getMessages } = require('./poruke');
-
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
