@@ -1,27 +1,15 @@
 const mongoose = require('mongoose');
 
-// MongoDB Atlas URI
-const mongoURI = 'mongodb+srv://angeldobric:zizu100-@cluster0.kc4m1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-
-// Povezivanje sa bazom podataka
-if (mongoose.connection.readyState === 0) {
-  mongoose.connect(mongoURI)
-    .then(() => console.log('Povezivanje sa bazom uspešno.'))
-    .catch(err => console.error('Greška pri povezivanju sa bazom:', err));
-} else {
-  console.log('Već je uspostavljena konekcija sa bazom.');
-}
-
 // Definisanje modela za korisnika
 const userSchema = new mongoose.Schema({
   nickname: { type: String, required: true, unique: true },
   color: { type: String, required: true },
-  sessionId: { type: String, unique: true }, // Jedinstveni ID za sesiju
+  sessionId: { type: String, unique: true },
 });
 
-const User = mongoose.models.User || mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
 
-// Funkcija za čuvanje ili ažuriranje korisnika
+// Funkcija za čuvanje korisnika
 const saveUser = async (nickname, color, sessionId) => {
   try {
     await User.updateOne(
@@ -35,17 +23,7 @@ const saveUser = async (nickname, color, sessionId) => {
   }
 };
 
-// Funkcija za preuzimanje korisnika po sesiji
-const getUserBySession = async (sessionId) => {
-  try {
-    const user = await User.findOne({ sessionId });
-    return user;
-  } catch (err) {
-    console.error('Greška pri preuzimanju korisnika:', err);
-  }
-};
-
-// Funkcija za učitavanje svih korisnika pri pokretanju servera
+// Funkcija za učitavanje svih korisnika prilikom startovanja servera
 const loadAllUsers = async () => {
   try {
     const users = await User.find({});
@@ -69,4 +47,15 @@ const initializeUsers = async (guests, userSettings) => {
   });
 };
 
-module.exports = { saveUser, getUserBySession, initializeUsers };
+// Spajanje na MongoDB
+mongoose.connect('mongodb://localhost:27017/your_database_name', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log('Povezivanje sa bazom uspešno.');
+}).catch(err => {
+  console.error('Greška pri povezivanju sa bazom:', err);
+});
+
+// Korišćenje modula za konekciju
+module.exports = { saveUser, loadAllUsers, initializeUsers };
