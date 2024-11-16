@@ -36,4 +36,14 @@ const getUserBySession = async (sessionId) => {
   }
 };
 
-module.exports = { saveUser, getUserBySession };
+// Funkcija za preuzimanje korisnika po nickname-u
+const getUserByNickname = async (nickname) => {
+  try {
+    const user = await User.findOne({ nickname });
+    return user;
+  } catch (err) {
+    console.error('Greška pri preuzimanju korisnika po nickname-u:', err);
+  }
+};
+
+module.exports = { saveUser, getUserBySession, getUserByNickname };
