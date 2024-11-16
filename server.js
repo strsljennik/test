@@ -12,9 +12,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Inicijalizacija Set-a za praćenje dodeljenih brojeva
-const assignedNumbers = new Set();
-
 // Inicijalizacija objekata za goste i postavke korisnika
 const guests = {}; // Ovdje čuvamo sve goste sa njihovim socket ID-evima
 const userSettings = {}; // Ovdje čuvamo postavke svakog korisnika, kao što su boja i nadimak
@@ -63,6 +60,9 @@ io.on('connection', (socket) => {
     // Pošaljemo postavke svim korisnicima na konekciju
     socket.emit('updateSettings', userSettings);
 
+    // Dodajemo funkcionalnost za setovanje korisničkog imena i povezivanje sa sessionId
+    handleSocketConnection(socket);
+
     // Rukovanje događajem kada se korisnik prijavi (menja nickname)
     socket.on('userLoggedIn', (username) => {
         if (username) {
@@ -104,7 +104,6 @@ io.on('connection', (socket) => {
     // Rukovanje odjavom korisnika
     socket.on('disconnect', () => {
         console.log(`${guests[guestId]} se odjavio.`);
-        assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));
         delete guests[guestId];
         delete userSettings[guestId]; // Uklanjanje postavki korisnika pri disconnectu
         io.emit('updateGuestList', Object.values(guests));
@@ -117,10 +116,25 @@ function generateUniqueNumber() {
     let number;
     do {
         number = Math.floor(Math.random() * 8889) + 1111;
-    } while (assignedNumbers.has(number));
-    assignedNumbers.add(number);
+    } while (Object.values(guests).includes(`Gost-${number}`));
     return number;
 }
+
+// Funkcija za povezivanje korisničkog imena sa sessionId
+const handleSocketConnection = (socket) => {
+  socket.on('setUsername', async (nickname, color) => {
+    try {
+      const existingUser = await getUserByNickname(nickname);
+      if (!existingUser) {
+        const sessionId = socket.id; // Koristimo socket.id kao sessionId
+        await saveUser(nickname, color, sessionId); // Sačuvaj korisnika u bazi
+      }
+      socket.emit('usernameSet', nickname); // Pošaljemo korisniku potvrdu
+    } catch (err) {
+      console.error(err);
+    }
+  });
+};
 
 // Pokretanje servera
 const PORT = process.env.PORT || 3000;
