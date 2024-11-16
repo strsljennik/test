@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
 
-// Povezivanje sa bazom
-mongoose.connect('mongodb+srv://angeldobric:zizu100-@cluster0.kc4m1.mongodb.net/your_database', { 
-  
-})
-.then(() => console.log('Povezan sa MongoDB!'))
-.catch(err => console.error('Greška pri povezivanju sa MongoDB:', err));
+// Proveri da li je već uspostavljena konekcija sa bazom
+if (mongoose.connection.readyState === 0) {
+  mongoose.connect('mongodb+srv://angeldobric:zizu100-@cluster0.kc4m1.mongodb.net/your_database', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+    .then(() => console.log('Povezan sa MongoDB!'))
+    .catch(err => console.error('Greška pri povezivanju sa MongoDB:', err));
+} else {
+  console.log('Veza sa MongoDB već postoji!');
+}
 
 // Definisanje modela za korisnika
 const userSchema = new mongoose.Schema({
