@@ -7,8 +7,8 @@ const userSchema = new mongoose.Schema({
   sessionId: { type: String, unique: true }, // Jedinstveni ID za sesiju
 });
 
-// Model za korisnika
-const User = mongoose.model('User', userSchema);
+// Provera da li je model već definisan
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 // Funkcija za upisivanje korisnika u bazu
 const saveUser = async (nickname, color, sessionId) => {
