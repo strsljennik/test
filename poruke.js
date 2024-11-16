@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   sessionId: { type: String, unique: true }, // Jedinstveni ID za sesiju
 });
 
-// Provera da li je model već definisan
+// Provera da li je model već definisan kako bi izbegli grešku
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 // Funkcija za upisivanje korisnika u bazu
