@@ -1,10 +1,5 @@
 const mongoose = require('mongoose');
 
-// Povezivanje sa bazom podataka bez nepotrebnih opcija
-mongoose.connect('mongodb://localhost:27017/your_database_name')
-  .then(() => console.log('Povezivanje s bazom uspešno.'))
-  .catch(err => console.error('Greška pri povezivanju s bazom:', err));
-
 // Definisanje modela za korisnika
 const userSchema = new mongoose.Schema({
   nickname: { type: String, required: true, unique: true },
