@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
 
     // Dodajemo gosta u listu gostiju i postavke
     guests[guestId] = socket.username;
-    userSettings[guestId] = { nickname: socket.username, color: '#800000' }; // Postavke sa početnim vrednostima
+    userSettings[guestId] = { nickname: socket.username, color: '#808080' }; // Postavke sa početnim vrednostima
 
     // Emitovanje događaja za povezivanje novog gosta
     socket.broadcast.emit('newGuest', socket.username);
