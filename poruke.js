@@ -1,26 +1,30 @@
 const mongoose = require('mongoose');
 
-// Definisanje modela za korisnika (gosta ili registrovanog korisnika)
+// Povezivanje sa bazom podataka
+mongoose.connect('mongodb://localhost:27017/your_database_name', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => console.log('Povezivanje s bazom uspešno.'))
+  .catch(err => console.error('Greška pri povezivanju s bazom:', err));
+
+// Definisanje modela za korisnika
 const userSchema = new mongoose.Schema({
   nickname: { type: String, required: true, unique: true },
   color: { type: String, required: true },
   sessionId: { type: String, unique: true }, // Jedinstveni ID za sesiju
 });
 
-// Provera da li je model već definisan
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
-// Funkcija za upisivanje korisnika u bazu
+// Funkcija za čuvanje ili ažuriranje korisnika
 const saveUser = async (nickname, color, sessionId) => {
   try {
-    const user = new User({
-      nickname,
-      color,
-      sessionId, // Sesija koja je dodeljena pri povezivanju
-    });
-
-    await user.save();
-    console.log('Korisnik je sačuvan u bazi');
+    await User.updateOne(
+      { sessionId },
+      { $set: { nickname, color } },
+      { upsert: true } // Kreira novi unos ako ne postoji
+    );
+    console.log(`Korisnik ${nickname} sačuvan ili ažuriran u bazi.`);
   } catch (err) {
     console.error('Greška pri čuvanju korisnika:', err);
   }
@@ -36,14 +40,28 @@ const getUserBySession = async (sessionId) => {
   }
 };
 
-// Funkcija za preuzimanje korisnika po nickname-u
-const getUserByNickname = async (nickname) => {
+// Funkcija za učitavanje svih korisnika pri pokretanju servera
+const loadAllUsers = async () => {
   try {
-    const user = await User.findOne({ nickname });
-    return user;
+    const users = await User.find({});
+    console.log('Korisnici su uspešno učitani iz baze.');
+    return users; // Vraća sve korisnike iz baze
   } catch (err) {
-    console.error('Greška pri preuzimanju korisnika po nickname-u:', err);
+    console.error('Greška pri učitavanju korisnika iz baze:', err);
+    return [];
   }
 };
 
-module.exports = { saveUser, getUserBySession, getUserByNickname };
+// Funkcija za inicijalizaciju podataka nakon restarta servera
+const initializeUsers = async (guests, userSettings) => {
+  const users = await loadAllUsers();
+  users.forEach(user => {
+    guests[user.sessionId] = user.nickname;
+    userSettings[user.sessionId] = {
+      nickname: user.nickname,
+      color: user.color,
+    };
+  });
+};
+
+module.exports = { saveUser, getUserBySession, initializeUsers };
