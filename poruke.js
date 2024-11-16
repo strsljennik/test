@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
 
-// Povezivanje sa bazom podataka
-mongoose.connect('mongodb://localhost:27017/your_database_name', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log('Povezivanje s bazom uspešno.'))
+// Povezivanje sa bazom podataka bez nepotrebnih opcija
+mongoose.connect('mongodb://localhost:27017/your_database_name')
+  .then(() => console.log('Povezivanje s bazom uspešno.'))
   .catch(err => console.error('Greška pri povezivanju s bazom:', err));
 
 // Definisanje modela za korisnika
