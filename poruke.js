@@ -1,5 +1,17 @@
 const mongoose = require('mongoose');
 
+// MongoDB Atlas URI
+const mongoURI = 'mongodb+srv://angeldobric:zizu100-@cluster0.kc4m1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
+// Povezivanje sa bazom podataka
+if (mongoose.connection.readyState === 0) {
+  mongoose.connect(mongoURI)
+    .then(() => console.log('Povezivanje sa bazom uspešno.'))
+    .catch(err => console.error('Greška pri povezivanju sa bazom:', err));
+} else {
+  console.log('Već je uspostavljena konekcija sa bazom.');
+}
+
 // Definisanje modela za korisnika
 const userSchema = new mongoose.Schema({
   nickname: { type: String, required: true, unique: true },
