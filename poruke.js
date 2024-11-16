@@ -7,8 +7,6 @@ const userSchema = new mongoose.Schema({
   sessionId: { type: String, unique: true },
 });
 
-const User = mongoose.model('User', userSchema);
-
 // Funkcija za čuvanje korisnika
 const saveUser = async (nickname, color, sessionId) => {
   try {
