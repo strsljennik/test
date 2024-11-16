@@ -5,8 +5,8 @@ const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava'); // Uvozimo register i login funkcije
 const { setupSocketEvents } = require('./banModule'); // Uvoz setupSocketEvents funkcije za banovanje
-const { saveMessage, loadAllUsers, saveUser, getUserBySession } = require('./poruke');
-
+const { saveMessage, getMessages } = require('./poruke');
+const { saveUser, getUserByNickname } = require('./poruke'); // Uvozimo funkcije za rad sa bazom
 require('dotenv').config();
 
 const app = express();
@@ -15,7 +15,6 @@ const io = socketIo(server);
 
 // Inicijalizacija objekata za goste i postavke korisnika
 const guests = {}; // Ovdje čuvamo sve goste sa njihovim socket ID-evima
-const User = require('./models/User'); // Ako koristiš model za korisnike
 const userSettings = {}; // Ovdje čuvamo postavke svakog korisnika, kao što su boja i nadimak
 
 // Povezivanje sa bazom podataka
@@ -42,7 +41,7 @@ app.get('/', (req, res) => {
 // Socket.io događaji
 setupSocketEvents(io);
 
-io.on('connection', async (socket) => {
+io.on('connection', (socket) => {
     console.log('Novi gost je povezan sa socket ID:', socket.id);
 
     const guestId = socket.id;
@@ -54,16 +53,6 @@ io.on('connection', async (socket) => {
     // Dodajemo gosta u listu gostiju i postavke
     guests[guestId] = socket.username;
     userSettings[guestId] = { nickname: socket.username, color: '#800000' }; // Postavke sa početnim vrednostima
-
-    // Inicijalizuj sve korisnike sa podacima iz baze nakon restarta servera
-    const users = await loadAllUsers(); // Učitavamo sve korisnike iz baze
-    users.forEach(user => {
-        guests[user.sessionId] = user.nickname;
-        userSettings[user.sessionId] = {
-            nickname: user.nickname,
-            color: user.color,
-        };
-    });
 
     // Emitovanje događaja za povezivanje novog gosta
     socket.broadcast.emit('newGuest', socket.username);
@@ -96,7 +85,7 @@ io.on('connection', async (socket) => {
 
     // Rukovanje chat porukama
     socket.on('chatMessage', async (msgData) => {
-        const time = new Date().toLocaleTimeString('en-US', { timeZone: 'Europe/Berlin' });
+        const time = new Date().toLocaleTimeString();
         const messageToSend = {
             text: msgData.text,
             bold: msgData.bold,
@@ -134,18 +123,18 @@ function generateUniqueNumber() {
 
 // Funkcija za povezivanje korisničkog imena sa sessionId
 const handleSocketConnection = (socket) => {
-    socket.on('setUsername', async (nickname, color) => {
-        try {
-            const existingUser = await getUserBySession(socket.id);
-            if (!existingUser) {
-                const sessionId = socket.id; // Koristimo socket.id kao sessionId
-                await saveUser(nickname, color, sessionId); // Sačuvaj korisnika u bazi
-            }
-            socket.emit('usernameSet', nickname); // Pošaljemo korisniku potvrdu
-        } catch (err) {
-            console.error(err);
-        }
-    });
+  socket.on('setUsername', async (nickname, color) => {
+    try {
+      const existingUser = await getUserByNickname(nickname);
+      if (!existingUser) {
+        const sessionId = socket.id; // Koristimo socket.id kao sessionId
+        await saveUser(nickname, color, sessionId); // Sačuvaj korisnika u bazi
+      }
+      socket.emit('usernameSet', nickname); // Pošaljemo korisniku potvrdu
+    } catch (err) {
+      console.error(err);
+    }
+  });
 };
 
 // Pokretanje servera
