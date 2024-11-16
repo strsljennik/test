@@ -6,6 +6,7 @@ const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava'); // Uvozimo register i login funkcije
 const { setupSocketEvents } = require('./banModule'); // Uvoz setupSocketEvents funkcije za banovanje
 const { saveMessage, getMessages } = require('./poruke');
+const { saveUser, getUserByNickname } = require('./userModel'); // Uvozimo funkcije za rad sa bazom
 require('dotenv').config();
 
 const app = express();
