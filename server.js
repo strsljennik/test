@@ -5,7 +5,9 @@ const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava'); // Uvozimo register i login funkcije
 const { setupSocketEvents } = require('./banModule'); // Uvoz setupSocketEvents funkcije za banovanje
-require('dotenv').config();
+require('dotenv').config();7
+require('./konobaricamodul')(io);
+
 
 const app = express();
 const server = http.createServer(app);
