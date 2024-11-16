@@ -45,15 +45,5 @@ const initializeUsers = async (guests, userSettings) => {
   });
 };
 
-// Spajanje na MongoDB
-mongoose.connect('mongodb://localhost:27017/your_database_name', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('Povezivanje sa bazom uspešno.');
-}).catch(err => {
-  console.error('Greška pri povezivanju sa bazom:', err);
-});
-
 // Korišćenje modula za konekciju
 module.exports = { saveUser, loadAllUsers, initializeUsers };
