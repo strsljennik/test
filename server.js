@@ -15,6 +15,7 @@ const io = socketIo(server);
 
 // Inicijalizacija objekata za goste i postavke korisnika
 const guests = {}; // Ovdje čuvamo sve goste sa njihovim socket ID-evima
+const User = require('./models/User'); // Ako koristiš model za korisnike
 const userSettings = {}; // Ovdje čuvamo postavke svakog korisnika, kao što su boja i nadimak
 
 // Povezivanje sa bazom podataka
