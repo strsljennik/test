@@ -1,52 +1,49 @@
 const mongoose = require('mongoose');
 
-// Definisanje modela za korisnika
+// Definisanje modela za korisnika (gosta ili registrovanog korisnika)
 const userSchema = new mongoose.Schema({
   nickname: { type: String, required: true, unique: true },
   color: { type: String, required: true },
-  sessionId: { type: String, unique: true },
+  sessionId: { type: String, unique: true }, // Jedinstveni ID za sesiju
 });
 
-// Kreiranje modela na osnovu šeme
-const User = mongoose.model('User', userSchema);
+// Provera da li je model već definisan
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
-// Funkcija za čuvanje korisnika
+// Funkcija za upisivanje korisnika u bazu
 const saveUser = async (nickname, color, sessionId) => {
   try {
-    await User.updateOne(
-      { sessionId },
-      { $set: { nickname, color } },
-      { upsert: true } // Kreira novi unos ako ne postoji
-    );
-    console.log(`Korisnik ${nickname} sačuvan ili ažuriran u bazi.`);
+    const user = new User({
+      nickname,
+      color,
+      sessionId, // Sesija koja je dodeljena pri povezivanju
+    });
+
+    await user.save();
+    console.log('Korisnik je sačuvan u bazi');
   } catch (err) {
     console.error('Greška pri čuvanju korisnika:', err);
   }
 };
 
-// Funkcija za učitavanje svih korisnika prilikom startovanja servera
-const loadAllUsers = async () => {
+// Funkcija za preuzimanje korisnika po sesiji
+const getUserBySession = async (sessionId) => {
   try {
-    const users = await User.find({});
-    console.log('Korisnici su uspešno učitani iz baze.');
-    return users; // Vraća sve korisnike iz baze
+    const user = await User.findOne({ sessionId });
+    return user;
   } catch (err) {
-    console.error('Greška pri učitavanju korisnika iz baze:', err);
-    return [];
+    console.error('Greška pri preuzimanju korisnika:', err);
   }
 };
 
-// Funkcija za inicijalizaciju podataka nakon restarta servera
-const initializeUsers = async (guests, userSettings) => {
-  const users = await loadAllUsers();
-  users.forEach(user => {
-    guests[user.sessionId] = user.nickname;
-    userSettings[user.sessionId] = {
-      nickname: user.nickname,
-      color: user.color,
-    };
-  });
+// Funkcija za preuzimanje korisnika po nickname-u
+const getUserByNickname = async (nickname) => {
+  try {
+    const user = await User.findOne({ nickname });
+    return user;
+  } catch (err) {
+    console.error('Greška pri preuzimanju korisnika po nickname-u:', err);
+  }
 };
 
-// Korišćenje modula za konekciju
-module.exports = { saveMessage, loadAllUsers, saveUser, getUserBySession };
+module.exports = { saveUser, getUserBySession, getUserByNickname };
