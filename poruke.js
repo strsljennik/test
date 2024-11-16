@@ -49,4 +49,4 @@ const initializeUsers = async (guests, userSettings) => {
 };
 
 // Korišćenje modula za konekciju
-module.exports = { saveUser, loadAllUsers, initializeUsers };
+module.exports = { saveMessage, loadAllUsers, saveUser, getUserBySession };
