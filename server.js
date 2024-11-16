@@ -85,7 +85,7 @@ io.on('connection', (socket) => {
 
     // Rukovanje chat porukama
     socket.on('chatMessage', async (msgData) => {
-        const time = new Date().toLocaleTimeString();
+        const time = new Date().toLocaleTimeString('en-US', { timeZone: 'Europe/Berlin' });
         const messageToSend = {
             text: msgData.text,
             bold: msgData.bold,
