@@ -1,44 +1,26 @@
 const mongoose = require('mongoose');
 
-// Definisanje modela poruke
-const messageSchema = new mongoose.Schema({
-  nickname: String,
-  text: String,
-  bold: Boolean,
-  italic: Boolean,
-  color: String,
-  time: String,
+// Kreiraj model za Nikove i Boje
+const userSchema = new mongoose.Schema({
+  nickname: { type: String, required: true, unique: true }, // Nik korisnika
+  color: { type: String, required: true }, // Boja koju korisnik izabere
 });
 
-const Message = mongoose.model('Message', messageSchema);
+const User = mongoose.model('User', userSchema);
 
-// Funkcija za upisivanje poruka u bazu
-const saveMessage = async (messageData) => {
-  const newMessage = new Message({
-    nickname: messageData.nickname,
-    text: messageData.text,
-    bold: messageData.bold,
-    italic: messageData.italic,
-    color: messageData.color,
-    time: messageData.time,
+// Funkcija za upisivanje korisnika sa nikom i bojom
+const saveUser = async (nickname, color) => {
+  const newUser = new User({
+    nickname,
+    color,
   });
 
   try {
-    await newMessage.save();
+    await newUser.save(); // Spasi korisnika u bazu
+    console.log('Korisnik sa nikom i bojom je uspešno sačuvan');
   } catch (err) {
-    console.error('Greška pri čuvanju poruke:', err);
+    console.error('Greška pri čuvanju korisnika:', err);
   }
 };
 
-// Funkcija za preuzimanje svih poruka
-const getAllMessages = async () => {
-  try {
-    const messages = await Message.find();
-    return messages;
-  } catch (err) {
-    console.error('Greška pri preuzimanju poruka:', err);
-    return [];
-  }
-};
-
-module.exports = { saveMessage, getAllMessages };
+module.exports = { saveUser };
