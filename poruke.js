@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 // Putanja do JSON fajla
-const filePath = './korisnici.json';
+const filePath = './poruke.json';
 
 // Funkcija za učitavanje podataka iz JSON fajla
 function loadGuests() {
