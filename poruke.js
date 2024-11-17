@@ -1,30 +1,33 @@
-// poruke.js
+const http = require('http');
+const socketIo = require('socket.io');
+const poruke = require('./poruke');  // Uvoz poruke.js modula
 
-let trenutniKorisnici = {};  // Čuvanje podataka samo za trenutne korisnike
+const server = http.createServer();
+const io = socketIo(server);
 
-// Funkcija za dodavanje korisnika i njihovih podataka
-const dodajKorisnika = (userId, podaci) => {
-  trenutniKorisnici[userId] = podaci;
-};
+io.on('connection', (socket) => {
+    const guestId = socket.id;  // Definiši guestId kao socket.id
+    console.log('Novi gost je povezan sa socket ID:', guestId);
 
-// Funkcija za dobijanje podataka o korisniku
-const getKorisnikaPodaci = (userId) => {
-  return trenutniKorisnici[userId];
-};
+    // Početni podaci korisnika
+    const pocetniPodaci = poruke.pocetniPodaci();
 
-// Funkcija za brisanje podataka korisnika
-const ukloniKorisnika = (userId) => {
-  delete trenutniKorisnici[userId];
-};
+    // Dodajemo korisnika u memoriju
+    poruke.dodajKorisnika(guestId, pocetniPodaci);  
 
-// Funkcija za dobijanje svih podataka (ako je potrebno)
-const getSviKorisniciPodaci = () => {
-  return trenutniKorisnici;
-};
+    // Kada korisnik menja podatke
+    socket.on('updateUserData', (userColor, userNick, userNumber) => {
+        const updatedUserData = { boja: userColor, nik: userNick, broj: userNumber };
+        poruke.dodajKorisnika(guestId, updatedUserData);  // Ažuriramo podatke korisnika
+    });
 
-module.exports = {
-  dodajKorisnika,
-  getKorisnikaPodaci,
-  ukloniKorisnika,
-  getSviKorisniciPodaci,
-};
+    // Kada korisnik isključi vezu
+    socket.on('disconnect', () => {
+        poruke.ukloniKorisnika(guestId);  // Brišemo korisnika kad izađe
+    });
+});
+
+// Pokreni server
+server.listen(3000, () => {
+  console.log('Server je pokrenut na portu 3000');
+});
