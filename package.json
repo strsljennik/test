@@ -1,5 +1,5 @@
 {
-  "name": "galaksija2",
+  "name": "galaksija",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
@@ -21,7 +21,8 @@
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.1",
     "morgan": "^1.10.0",
-    "socket.io": "^4.8.0"
+    "socket.io": "^4.8.0",
+    "redis": "^4.0.0"  // Dodaj ovu liniju
   },
   "devDependencies": {
     "jest": "^29.7.0"
