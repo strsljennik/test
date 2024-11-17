@@ -131,8 +131,8 @@ socket.on('updateGuestList', function(users) {
 
         // Zadržavanje postojećih stilova iz `guestsData`
         if (!guestsData[guestId]) {
-            guestsData[guestId] = { color: '#800000', isBold: true, isItalic: true };
-        }
+         guestsData[guestId] = { color: 'currentColor', isBold: true, isItalic: true };
+     }
 
         newGuest.style.color = guestsData[guestId].color;
         newGuest.style.fontWeight = guestsData[guestId].isBold ? 'bold' : 'normal';
