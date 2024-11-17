@@ -22,24 +22,9 @@ socket.on('message', (data) => {
     // Dodajemo poruku u area poruka
     messageArea.appendChild(messageElement);
     
-    // Skrolujemo na poslednju poruku
-    messageArea.scrollTop = messageArea.scrollHeight;
 });
 
-// Kada se konobarica poveže, dodajemo je u listu gostiju
-socket.on('add_conobarica', () => {
-    const guestList = document.getElementById('guestList'); // Pretpostavljamo da imaš listu gostiju u HTML-u
-    const conobaricaItem = document.createElement('li');
     
     // Dodajemo Konobaricu sa klasom 'guest-konobarica'
     conobaricaItem.classList.add('guest-konobarica');
     conobaricaItem.innerHTML = 'Konobarica'; // Dodajemo samo tekst bez tagova
-    
-    // Dodajemo je u sredinu liste
-    const guests = guestList.getElementsByTagName('li');
-    const middleIndex = Math.floor(guests.length / 2);
-    guestList.insertBefore(conobaricaItem, guests[middleIndex]);
-
-    // Skrolujemo listu ako je potrebno
-    guestList.scrollTop = guestList.scrollHeight;
-});
