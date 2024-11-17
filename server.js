@@ -6,6 +6,8 @@ const { register, login } = require('./prijava');  // Uvozimo register i login f
 require('dotenv').config();
 const { setupSocketEvents } = require('./banModule'); // Putanja do banmodule.js
 const konobarica = require('./konobaricamodul');
+const poruke = require('./poruke');  // Uvoz poruke.js modula
+
 
 const app = express();
 const server = http.createServer(app);
@@ -35,6 +37,12 @@ let connectedIps = [];
 
 io.on('connection', (socket) => {
     console.log('Novi gost je povezan sa socket ID:', socket.id);
+
+    poruke.dodajKorisnika(userId, pocetniPodaci);  // Dodaj korisnika u memoriju
+    poruke.dodajKorisnika(userId, updatedUserData);  // Ažuriraj podatke korisnika
+    poruke.ukloniKorisnika(userId);  // Briši podatke kada korisnik izađe
+
+
 
     const guestId = socket.id;
     const ip = socket.request.connection.remoteAddress;
