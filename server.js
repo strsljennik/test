@@ -6,6 +6,8 @@ const { register, login } = require('./prijava');  // Uvozimo register i login f
 require('dotenv').config();
 const { setupSocketEvents } = require('./banModule'); // Putanja do banmodule.js
 const konobarica = require('./konobaricamodul');
+const { setUserData, getUserData, deleteUserData } = require('./redis');
+
 
 const app = express();
 const server = http.createServer(app);
