@@ -8,7 +8,6 @@ const { setupSocketEvents } = require('./banModule'); // Putanja do banmodule.js
 const konobarica = require('./konobaricamodul');
 const poruke = require('./poruke');  // Uvoz poruke.js modula
 
-
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server); // Definišemo io ovde
@@ -31,44 +30,31 @@ app.get('/', (req, res) => {
 });
 
 // Konekcija sa socket-om za rad sa događajima na strani klijenta
-let guests = {};
-let assignedNumbers = new Set();
-let connectedIps = [];
+let guests = {};  // Svi gosti sa njihovim podacima
+let assignedNumbers = new Set();  // Set za dodeljene brojeve
+let connectedIps = [];  // Lista povezanih IP adresa
 
 io.on('connection', (socket) => {
     console.log('Novi gost je povezan sa socket ID:', socket.id);
 
-// Endpoint za dodavanje novog gosta (korisnika)
-app.post('/dodaj-gosta', (req, res) => {
-    const { nick, color, number } = req.body;
-
-    if (!nick || !color || !number) {
-        return res.status(400).send('Nedostaju podaci!');
-    }
-
-    poruke.addGuest(nick, color, number);  // Dodaj gosta koristeći modul
-    res.send('Gost je sačuvan!');
-});
-
-// Endpoint za dobijanje svih korisnika
-app.get('/gosti', (req, res) => {
-    const guests = poruke.getGuests();  // Učitaj sve korisnike
-    res.json(guests);
-});
-
+    // Generisanje jedinstvenog broja za svakog gosta
     const uniqueNumber = generateUniqueNumber();
+    const guestId = socket.id;  // Koristimo socket.id kao guestId
     const nickname = `Gost-${uniqueNumber}`;
-    guests[guestId] = nickname;
+    
+    guests[guestId] = nickname;  // Dodajemo novog gosta sa njegovim nickom
     console.log(`${nickname} se povezao.`);
 
     socket.broadcast.emit('newGuest', nickname);
-    emitUpdatedGuestList(); // Emituj prvobitnu listu gostiju
+    emitUpdatedGuestList();  // Emituj listu gostiju
 
+    // Kada se korisnik prijavi sa svojim username-om
     socket.on('userLoggedIn', (username) => {
-        guests[guestId] = username;
-        emitUpdatedGuestList(); // Emituj ažuriranu listu gostiju
+        guests[guestId] = username;  // Ažuriramo nickname
+        emitUpdatedGuestList();  // Emituj ažuriranu listu gostiju
     });
 
+    // Handling chat messages
     socket.on('chatMessage', (msgData) => {
         const time = new Date().toLocaleTimeString();
         const messageToSend = {
@@ -82,19 +68,37 @@ app.get('/gosti', (req, res) => {
         io.emit('chatMessage', messageToSend);
     });
 
+    // Kada se korisnik odjavi
     socket.on('disconnect', () => {
         console.log(`${guests[guestId]} se odjavio.`);
-        assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));
-        delete guests[guestId];
-        connectedIps = connectedIps.filter((userIp) => userIp !== ip);
-        emitUpdatedGuestList(); // Emituj ažuriranu listu gostiju
+        assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));  // Oslobađanje broja
+        delete guests[guestId];  // Brisanje gosta iz liste
+        emitUpdatedGuestList();  // Emituj ažuriranu listu gostiju
     });
+});
+
+// Endpoint za dodavanje novog gosta (korisnika)
+app.post('/dodaj-gosta', (req, res) => {
+    const { nick, color, number } = req.body;
+
+    if (!nick || !color || !number) {
+        return res.status(400).send('Nedostaju podaci!');
+    }
+
+    poruke.addGuest(nick, color, number);  // Dodaj gosta koristeći poruke.js
+    res.send('Gost je sačuvan!');
+});
+
+// Endpoint za dobijanje svih korisnika
+app.get('/gosti', (req, res) => {
+    const guestsData = poruke.getGuests();  // Učitaj sve korisnike
+    res.json(guestsData);
 });
 
 // Funkcija za emitovanje ažurirane liste korisnika
 function emitUpdatedGuestList() {
     const updatedGuestList = Object.values(guests);
-    io.emit('updateGuestList', updatedGuestList); // Emituj novu listu korisnika
+    io.emit('updateGuestList', updatedGuestList);  // Emituj novu listu korisnika
 }
 
 // Generisanje jedinstvenog broja za goste
@@ -102,7 +106,7 @@ function generateUniqueNumber() {
     let number;
     do {
         number = Math.floor(Math.random() * 8889) + 1111;
-    } while (assignedNumbers.has(number));
+    } while (assignedNumbers.has(number));  // Proveri da li je broj već dodeljen
     assignedNumbers.add(number);
     return number;
 }
