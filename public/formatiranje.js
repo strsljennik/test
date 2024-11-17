@@ -80,15 +80,13 @@ function addGuestStyles(guestElement, guestId) {
     const boldButton = document.createElement('button');
     boldButton.textContent = 'B';
     boldButton.addEventListener('click', function() {
-        guestElement.style.fontWeight = guestElement.style.fontWeight === 'bold' ? 'normal' : 'bold';
-        guestsData[guestId].isBold = guestElement.style.fontWeight === 'bold';
+        
     });
 
     const italicButton = document.createElement('button');
     italicButton.textContent = 'I';
     italicButton.addEventListener('click', function() {
-        guestElement.style.fontStyle = guestElement.style.fontStyle === 'italic' ? 'normal' : 'italic';
-        guestsData[guestId].isItalic = guestElement.style.fontStyle === 'italic';
+       
     });
 
     guestElement.appendChild(colorPickerButton);
