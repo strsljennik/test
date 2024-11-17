@@ -46,7 +46,7 @@ poruke.pocetniPodaci();
     // Kada korisnik menja podatke
     socket.on('updateUserData', (userColor, userNick, userNumber) => {
         const updatedUserData = { boja: userColor, nik: userNick, broj: userNumber };
-        poruke.dodajKorisnika(gue    const guestId = socket.id;
+        poruke.dodajKorisnika(const guestId = socket.id;
     const ip = socket.request.connection.remoteAddress;
     console.log(`Gost sa IP adresom ${ip} se povezao.`);
  // Početni podaci korisnika (pozivanje funkcije)
