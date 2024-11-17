@@ -38,16 +38,22 @@ let connectedIps = [];
 io.on('connection', (socket) => {
     console.log('Novi gost je povezan sa socket ID:', socket.id);
 
-    const guestId = socket.id;
+poruke.pocetniPodaci();
+
+    // Dodajemo korisnika u memoriju
+    poruke.dodajKorisnika(guestId, pocetniPodaci);  
+
+    // Kada korisnik menja podatke
+    socket.on('updateUserData', (userColor, userNick, userNumber) => {
+        const updatedUserData = { boja: userColor, nik: userNick, broj: userNumber };
+        poruke.dodajKorisnika(gue    const guestId = socket.id;
     const ip = socket.request.connection.remoteAddress;
     console.log(`Gost sa IP adresom ${ip} se povezao.`);
+ // Početni podaci korisnika (pozivanje funkcije)
+    const pocetniPodaci = stId, updatedUserData);  // Ažuriramo podatke korisnika
+    });
 
-    poruke.dodajKorisnika(guestId, pocetniPodaci);  // Dodaj korisnika u memoriju
-    poruke.dodajKorisnika(guestId, updatedUserData);  // Ažuriraj podatke korisnika
-    poruke.ukloniKorisnika(guestId);  // Briši podatke kada korisnik izađe
-
-
-    if (!connectedIps.includes(ip)) {
+  if (!connectedIps.includes(ip)) {
         connectedIps.push(ip);
     }
 
