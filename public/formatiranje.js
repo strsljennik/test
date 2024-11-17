@@ -5,6 +5,18 @@ let currentColor = '#808080';  // Početna boja je siva
 // Objekat za čuvanje podataka o gostima
 const guestsData = {};
 
+// Funkcija za BOLD formatiranje
+document.getElementById('boldBtn').addEventListener('click', function() {
+    isBold = !isBold;
+    updateInputStyle();
+});
+
+// Funkcija za ITALIC formatiranje
+document.getElementById('italicBtn').addEventListener('click', function() {
+    isItalic = !isItalic;
+    updateInputStyle();
+});
+
 // Funkcija za biranje boje
 document.getElementById('colorBtn').addEventListener('click', function() {
     document.getElementById('colorPicker').click();
