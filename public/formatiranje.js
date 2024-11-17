@@ -1,7 +1,7 @@
 const socket = io();
 
-let isBold = false;
-let isItalic = false;
+let isBold = true;
+let isItalic = true;
 let currentColor = '#FFFFFF';
 
 // Objekat za čuvanje podataka o gostima
@@ -71,7 +71,7 @@ function addGuestStyles(guestElement, guestId) {
     const colorPickerButton = document.createElement('input');
     colorPickerButton.type = 'color';
     colorPickerButton.classList.add('colorPicker');
-     guestsData[guestId] = { color: '#808080', isBold: true, isItalic: true };
+     guestsData[guestId] = { color: 'currentColor', isBold: true, isItalic: true };
      colorPickerButton.addEventListener('input', function() {
         guestElement.style.color = this.value;
         guestsData[guestId].color = this.value; // Ažuriraj boju u objektu
@@ -90,8 +90,7 @@ function addGuestStyles(guestElement, guestId) {
     });
 
     guestElement.appendChild(colorPickerButton);
-    guestElement.appendChild(boldButton);
-    guestElement.appendChild(italicButton);
+    
 }
 
 // Kada nov gost dođe
