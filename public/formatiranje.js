@@ -2,7 +2,7 @@ const socket = io();
 
 let isBold = false;
 let isItalic = false;
-let currentColor = '#FFFFFF';
+let currentColor = '#808080';
 
 // Objekat za čuvanje podataka o gostima
 const guestsData = {};
