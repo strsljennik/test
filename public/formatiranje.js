@@ -73,23 +73,7 @@ function addGuestStyles(guestElement, guestId) {
         guestsData[guestId].color = this.value;  // Ažuriraj boju u objektu
     });
 
-    const boldButton = document.createElement('button');
-    boldButton.textContent = 'B';
-    boldButton.addEventListener('click', function() {
-        guestElement.style.fontWeight = guestElement.style.fontWeight === 'bold' ? 'normal' : 'bold';
-        guestsData[guestId].isBold = guestElement.style.fontWeight === 'bold';
-    });
-
-    const italicButton = document.createElement('button');
-    italicButton.textContent = 'I';
-    italicButton.addEventListener('click', function() {
-        guestElement.style.fontStyle = guestElement.style.fontStyle === 'italic' ? 'normal' : 'italic';
-        guestsData[guestId].isItalic = guestElement.style.fontStyle === 'italic';
-    });
-
     guestElement.appendChild(colorPickerButton);
-    guestElement.appendChild(boldButton);
-    guestElement.appendChild(italicButton);
 }
 
 // Kada nov gost dođe
@@ -102,13 +86,11 @@ socket.on('newGuest', function(nickname) {
 
     // Dodaj novog gosta u guestsData ako ne postoji
     if (!guestsData[guestId]) {
-        guestsData[guestId] = { color: '#808080', isBold: false, isItalic: false };  // Početni podaci
+        guestsData[guestId] = { color: '#808080' };  // Početna boja siva
     }
 
     // Primeni postojeće stilove ako ih ima
     newGuest.style.color = guestsData[guestId].color;
-    newGuest.style.fontWeight = guestsData[guestId].isBold ? 'bold' : 'normal';
-    newGuest.style.fontStyle = guestsData[guestId].isItalic ? 'italic' : 'normal';
 
     addGuestStyles(newGuest, guestId);  // Dodaj stilove
 
@@ -127,12 +109,10 @@ socket.on('updateGuestList', function(users) {
         newGuest.textContent = nickname;
 
         if (!guestsData[guestId]) {
-            guestsData[guestId] = { color: '#808080', isBold: true, isItalic: true };  // Početni podaci
+            guestsData[guestId] = { color: '#808080' };  // Početna boja siva
         }
 
         newGuest.style.color = guestsData[guestId].color;
-        newGuest.style.fontWeight = guestsData[guestId].isBold ? 'bold' : 'normal';
-        newGuest.style.fontStyle = guestsData[guestId].isItalic ? 'italic' : 'normal';
 
         addGuestStyles(newGuest, guestId);  // Dodaj stilove
         guestList.appendChild(newGuest);  // Dodaj u listu
