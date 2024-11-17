@@ -6,7 +6,6 @@ const { register, login } = require('./prijava');  // Uvozimo register i login f
 require('dotenv').config();
 const { setupSocketEvents } = require('./banModule'); // Putanja do banmodule.js
 const konobarica = require('./konobaricamodul');
-const poruke = require('./poruke');  // Uvoz poruke.js modula
 
 const app = express();
 const server = http.createServer(app);
@@ -75,25 +74,6 @@ io.on('connection', (socket) => {
         delete guests[guestId];  // Brisanje gosta iz liste
         emitUpdatedGuestList();  // Emituj ažuriranu listu gostiju
     });
-});
-
-// Endpoint za dodavanje novog gosta (korisnika)
-app.post('/dodaj-gosta', (req, res) => {
-    const { nick, color, number } = req.body;
-
-    if (!nick || !color || !number) {
-        return res.status(400).send('Nedostaju podaci!');
-    }
-
-    poruke.addGuest(nick, color, number);  // Dodaj gosta koristeći poruke.js
-    res.send('Gost je sačuvan!');
-});
-
-// Endpoint za dobijanje svih korisnika
-app.get('/gosti', (req, res) => {
-    const guestsData = poruke.getGuests();  // Učitaj sve korisnike
-    res.json(guestsData);
-});
 
 // Funkcija za emitovanje ažurirane liste korisnika
 function emitUpdatedGuestList() {
