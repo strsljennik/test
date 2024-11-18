@@ -30,6 +30,16 @@ const saveUserData = (username, id) => {
     }
 };
 
+// Ažuriraj boju korisnika
+const updateUserColor = (username, newColor) => {
+    const users = loadUserData();
+    const userIndex = users.findIndex(user => user.username === username);
+    if (userIndex !== -1) {
+        users[userIndex].color = newColor;
+        fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj promenjenu boju
+    }
+};
+
 // Pronađi korisnika po username-u
 const getUserById = (id) => {
     const users = loadUserData();
@@ -54,5 +64,4 @@ handleUserJoin('guest-5555');  // Ovo će sačuvati korisnika sa ID 'guest-5555'
 handleUserJoin('guest-5555');  // Ovo će učitati prethodni podaci za korisnika
 handleUserJoin('guest-7777');  // Novi korisnik, biće dodeljen nik 'gost-7777'
 
-module.exports = { loadUserData, saveUserData, updateUserColor };
-
+module.exports = { loadUserData, saveUserData, updateUserColor, getUserById };
