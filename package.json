@@ -24,7 +24,8 @@
     "socket.io": "^4.8.0",
     "redis": "^4.0.0",
     "pg": "^8.10.0",
-    "pg-promise": "^10.10.2"
+    "pg-promise": "^10.10.2",
+    "node-persist": "^3.0.0"
   },
   "devDependencies": {
     "jest": "^29.7.0"
