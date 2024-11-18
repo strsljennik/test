@@ -40,7 +40,8 @@ io.on('connection', (socket) => {
     console.log(`${username} se povezao.`);
 
     socket.broadcast.emit('newGuest', username);
-    io.emit('updateGuestList', Object.values(guests));
+    io.emit('updateGuestList', Object.values(guests).map(guest => guest.username));
+
 
     // Provera da li je korisnik ovlašćen
     socket.on('userLoggedIn', (username) => {
@@ -51,7 +52,8 @@ io.on('connection', (socket) => {
             guests[socket.id].username = username;
             console.log(`${username} se prijavio kao gost.`);
         }
-        io.emit('updateGuestList', Object.values(guests));
+        io.emit('updateGuestList', Object.values(guests).map(guest => guest.username));
+
     });
 
     socket.on('chatMessage', (msgData) => {
@@ -70,14 +72,16 @@ io.on('connection', (socket) => {
     socket.on('changeColor', (newColor) => {
         guests[socket.id].color = newColor;
         updateUserColor(guests[socket.id].username, newColor);  // Ažuriraj boju u JSON fajlu
-        io.emit('updateGuestList', Object.values(guests));
+    io.emit('updateGuestList', Object.values(guests).map(guest => guest.username));
+
     });
 
     socket.on('disconnect', () => {
         console.log(`${guests[socket.id].username} se odjavio.`);
         assignedNumbers.delete(parseInt(guests[socket.id].username.split('-')[1], 10));
         delete guests[socket.id];
-        io.emit('updateGuestList', Object.values(guests));
+        io.emit('updateGuestList', Object.values(guests).map(guest => guest.username));
+
     });
 
     // Događaj za banovanje korisnika
