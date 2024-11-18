@@ -1,13 +1,11 @@
 const fs = require('fs');
 const path = './users.json';
 
-// Set za praćenje dodeljenih brojeva
-const assignedNumbers = new Set();
-
 // Funkcija za dodelu boje na osnovu ID-a (ili broja)
 const getColorById = (id) => {
+    const idStr = String(id);  // Osigurajmo da je ID uvek string
     const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
-    const colorIndex = parseInt(id.split('-')[1]) % colors.length;
+    const colorIndex = parseInt(idStr.split('-')[1]) % colors.length;
     return colors[colorIndex];
 };
 
@@ -38,16 +36,6 @@ const saveUserData = (users) => {
     }
 };
 
-// Generiši jedinstven broj
-function generateUniqueNumber() {
-    let number;
-    do {
-        number = Math.floor(Math.random() * 8889) + 1111;
-    } while (assignedNumbers.has(number));
-    assignedNumbers.add(number);
-    return number;
-}
-
 // Sačuvaj novog korisnika
 const addNewUser = (id) => {
     const users = loadUserData();  // Učitaj korisnike sa diska
@@ -66,15 +54,9 @@ const addNewUser = (id) => {
 };
 
 // Korišćenje funkcije za dodavanje i učitavanje korisnika
-const handleUserJoin = () => {
-    const uniqueNumber = generateUniqueNumber();  // Generišemo jedinstveni broj
-    console.log(`Generisani broj: guest-${uniqueNumber}`);
-    addNewUser(uniqueNumber);  // Dodajemo korisnika sa tim brojem
+const handleUserJoin = (id) => {
+    console.log(`Korisnik sa ID-om ${id} ulazi.`);
+    addNewUser(id);  // Dodajemo korisnika sa tim brojem
 };
-
-// Test primer generisanja i dodavanja korisnika
-handleUserJoin();  // Novi korisnik sa jedinstvenim brojem
-handleUserJoin();  // Novi korisnik sa jedinstvenim brojem
-handleUserJoin();  // Novi korisnik sa jedinstvenim brojem
 
 module.exports = { loadUserData, saveUserData, getColorById, handleUserJoin };
