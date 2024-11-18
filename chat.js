@@ -1,4 +1,3 @@
-// chat.js
 const { Client } = require('pg'); // Uvezi pg
 const pgp = require('pg-promise')(); // Uvezi pg-promise
 
@@ -52,17 +51,30 @@ const getGuests = async () => {
     }
 };
 
+// Učitavanje gostiju prilikom startovanja servera
+const loadGuestsOnStart = async () => {
+    const guests = await getGuests();
+    // Ovde je logika za dodavanje gostiju u chat div
+    for (const guest of guests) {
+        addGuestToChat(guest.nickname, guest.number, guest.color);
+    }
+    console.log('Guests loaded:', guests);
+};
+
+// Funkcija za dodavanje gosta u chat div
+const addGuestToChat = (nickname, number, color) => {
+    // Prikazuje goste u div
+    const guestListDiv = document.getElementById('guest-list'); // Zameni sa pravim ID-om 
+    const guestDiv = document.createElement('div');
+    guestDiv.textContent = `${nickname} - broj: ${number}`;
+    guestDiv.style.color = color; // Dodeljuje boju
+    guestListDiv.appendChild(guestDiv);
+};
+
 // Izvoz funkcija
 module.exports = {
     saveGuest,
     getGuests,
-};
-
-// Ako želiš da se svi gosti učitaju na serveru nakon restarta:
-const loadGuestsOnStart = async () => {
-    const guests = await getGuests();
-    // Ovde možeš implementirati logiku da nastaviš chat sa učitanim gostima
-    console.log('Guests loaded:', guests);
 };
 
 // Učitaj tabelu "guest" i goste prilikom starta
