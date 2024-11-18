@@ -1,39 +1,10 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const { connectDB } = require('./mongo');
-const { register, login } = require('./prijava');
-const { loadUserData, saveUserData, updateUserColor } = require('./userData');  // Povezivanje sa userData.js
-require('dotenv').config();
-
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
-
-connectDB();
-
-app.use(express.json());
-app.use(express.static(__dirname + '/public'));
-
-app.post('/register', (req, res) => register(req, res, io));
-app.post('/login', (req, res) => login(req, res, io));
-
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
-});
-
-// Niz sa ovlašćenim korisnicima
-const authorizedUsers = new Set(['Radio Galaksija', 'ZI ZU', '__X__']);
-const bannedUsers = new Set(); // Banovani korisnici
-let guests = {};
-let assignedNumbers = new Set();
-
 io.on('connection', (socket) => {
     const users = loadUserData();  // Učitaj sve korisnike
-    const uniqueNumber = users.length ? users.length + 1 : 1111;  // Jedinstven broj
+    const uniqueNumber = generateUniqueNumber();  // Koristi funkciju za generisanje broja
     const username = `Gost-${uniqueNumber}`;
     const userColor = '#FF0000';  // Početna boja (možeš promeniti)
 
+    // Dodaj korisnika u goste sa svim podacima
     guests[socket.id] = { username, color: userColor };
     saveUserData(username, userColor);  // Spremi novog korisnika u JSON fajl
 
@@ -45,10 +16,10 @@ io.on('connection', (socket) => {
     // Provera da li je korisnik ovlašćen
     socket.on('userLoggedIn', (username) => {
         if (authorizedUsers.has(username)) {
-            guests[socket.id] = `${username} (Admin)`;
+            guests[socket.id].username = `${username} (Admin)`;  // Ažuriraj objekat
             console.log(`${username} je autentifikovan kao admin.`);
         } else {
-            guests[socket.id] = username;
+            guests[socket.id].username = username;  // Ažuriraj objekat
             console.log(`${username} se prijavio kao gost.`);
         }
         io.emit('updateGuestList', Object.values(guests));
@@ -105,19 +76,4 @@ io.on('connection', (socket) => {
             console.log(`Korisnik ${userIdToUnban} je oslobođen od strane ${guests[socket.id].username}.`);
         }
     });
-
-});
-
-function generateUniqueNumber() {
-    let number;
-    do {
-        number = Math.floor(Math.random() * 8889) + 1111;
-    } while (assignedNumbers.has(number));
-    assignedNumbers.add(number);
-    return number;
-}
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server je pokrenut na portu ${PORT}`);
 });
