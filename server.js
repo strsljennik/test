@@ -4,6 +4,8 @@ const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');  // Uvozimo register i login funkcije
 require('dotenv').config();
+const { saveGuestData, loadGuestData, loadAllGuests, removeGuestData } = require('./guestStorage');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -86,6 +88,30 @@ function generateUniqueNumber() {
     assignedNumbers.add(number);
     return number;
 }
+// Spremi podatke o gostu
+saveGuestData(guestId, nickname, color);
+
+// Ažuriraj podatke kad se korisnik prijavi sa imenom
+socket.on('userLoggedIn', (username) => {
+    guests[guestId] = username;
+    saveGuestData(guestId, username, color);  // Ažuriraj podatke o imenu
+    io.emit('updateGuestList', Object.values(guests));
+});
+
+// Brisanje podataka prilikom odjave
+socket.on('disconnect', () => {
+    console.log(`${guests[guestId]} se odjavio.`);
+    assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));
+    delete guests[guestId];
+    connectedIps = connectedIps.filter((userIp) => userIp !== ip);
+
+    // Brisanje podataka o gostu prilikom odjave
+    removeGuestData(guestId);
+
+    io.emit('updateGuestList', Object.values(guests));
+});
+
+
 
 // Slušanje na određenom portu
 const PORT = process.env.PORT || 3000;
