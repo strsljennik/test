@@ -2,58 +2,52 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
-const { register, login } = require('./prijava');  // Uvozimo register i login funkcije
+const { register, login } = require('./prijava');
 require('dotenv').config();
-const { setupSocketEvents } = require('./banModule'); // Putanja do banmodule.js
-const konobarica = require('./konobaricamodul');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server); // Definišemo io ovde
+const io = socketIo(server);
 
-// Poveži se sa bazom podataka
 connectDB();
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
-// Ruta za registraciju korisnika
-app.post('/register', (req, res) => register(req, res, io));  // Prosleđujemo io kao argument
+app.post('/register', (req, res) => register(req, res, io));
+app.post('/login', (req, res) => login(req, res, io));
 
-// Ruta za prijavu korisnika
-app.post('/login', (req, res) => login(req, res, io));  // Prosleđujemo io kao argument
-
-// Endpoint za glavnu stranicu
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-// Konekcija sa socket-om za rad sa događajima na strani klijenta
-let guests = {};  // Svi gosti sa njihovim podacima
-let assignedNumbers = new Set();  // Set za dodeljene brojeve
-let connectedIps = [];  // Lista povezanih IP adresa
+// Niz sa ovlašćenim korisnicima
+const authorizedUsers = new Set(['Radio Galaksija', 'ZI ZU', '__X__']);
+const bannedUsers = new Set(); // Banovani korisnici
+let guests = {};
+let assignedNumbers = new Set();
 
 io.on('connection', (socket) => {
-    console.log('Novi gost je povezan sa socket ID:', socket.id);
-
-    // Generisanje jedinstvenog broja za svakog gosta
     const uniqueNumber = generateUniqueNumber();
-    const guestId = socket.id;  // Koristimo socket.id kao guestId
     const nickname = `Gost-${uniqueNumber}`;
-    
-    guests[guestId] = nickname;  // Dodajemo novog gosta sa njegovim nickom
+    guests[socket.id] = nickname;
     console.log(`${nickname} se povezao.`);
 
     socket.broadcast.emit('newGuest', nickname);
-    emitUpdatedGuestList();  // Emituj listu gostiju
+    io.emit('updateGuestList', Object.values(guests));
 
-    // Kada se korisnik prijavi sa svojim username-om
+    // Provera da li je korisnik ovlašćen
     socket.on('userLoggedIn', (username) => {
-        guests[guestId] = username;  // Ažuriramo nickname
-        emitUpdatedGuestList();  // Emituj ažuriranu listu gostiju
+        if (authorizedUsers.has(username)) {
+            guests[socket.id] = `${username} (Admin)`;
+            console.log(`${username} je autentifikovan kao admin.`);
+        } else {
+            guests[socket.id] = username;
+            console.log(`${username} se prijavio kao gost.`);
+        }
+        io.emit('updateGuestList', Object.values(guests));
     });
 
-    // Handling chat messages
     socket.on('chatMessage', (msgData) => {
         const time = new Date().toLocaleTimeString();
         const messageToSend = {
@@ -61,42 +55,56 @@ io.on('connection', (socket) => {
             bold: msgData.bold,
             italic: msgData.italic,
             color: msgData.color,
-            nickname: guests[guestId],
+            nickname: guests[socket.id],
             time: time
         };
         io.emit('chatMessage', messageToSend);
     });
 
-    // Kada se korisnik odjavi
     socket.on('disconnect', () => {
-        console.log(`${guests[guestId]} se odjavio.`);
-        assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));  // Oslobađanje broja
-        delete guests[guestId];  // Brisanje gosta iz liste
-        emitUpdatedGuestList();  // Emituj ažuriranu listu gostiju
+        console.log(`${guests[socket.id]} se odjavio.`);
+        assignedNumbers.delete(parseInt(guests[socket.id].split('-')[1], 10));
+        delete guests[socket.id];
+        io.emit('updateGuestList', Object.values(guests));
     });
 
-// Funkcija za emitovanje ažurirane liste korisnika
-function emitUpdatedGuestList() {
-    const updatedGuestList = Object.values(guests);
-    io.emit('updateGuestList', updatedGuestList);  // Emituj novu listu korisnika
-}
+    // Događaj za banovanje korisnika
+    socket.on('banUser', (userIdToBan) => {
+        if (!authorizedUsers.has(guests[socket.id].split(' ')[0])) {
+            socket.emit('error', 'Nemate ovlašćenje za banovanje korisnika.');
+            return;
+        }
+        if (!bannedUsers.has(userIdToBan)) {
+            bannedUsers.add(userIdToBan);
+            io.emit('userBanned', userIdToBan);
+            console.log(`Korisnik ${userIdToBan} je banovan od strane ${guests[socket.id]}.`);
+        }
+    });
 
-// Generisanje jedinstvenog broja za goste
+    // Događaj za odbanovanje korisnika
+    socket.on('unbanUser', (userIdToUnban) => {
+        if (!authorizedUsers.has(guests[socket.id].split(' ')[0])) {
+            socket.emit('error', 'Nemate ovlašćenje za odbanovanje korisnika.');
+            return;
+        }
+        if (bannedUsers.has(userIdToUnban)) {
+            bannedUsers.delete(userIdToUnban);
+            io.emit('userUnbanned', userIdToUnban);
+            console.log(`Korisnik ${userIdToUnban} je oslobođen od strane ${guests[socket.id]}.`);
+        }
+    });
+
+});
+
 function generateUniqueNumber() {
     let number;
     do {
         number = Math.floor(Math.random() * 8889) + 1111;
-    } while (assignedNumbers.has(number));  // Proveri da li je broj već dodeljen
+    } while (assignedNumbers.has(number));
     assignedNumbers.add(number);
     return number;
 }
 
-// Postavljanje socket događaja iz banmodule.js
-setupSocketEvents(io);
-
-konobarica(io);
-
-// Slušanje na određenom portu
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server je pokrenut na portu ${PORT}`);
