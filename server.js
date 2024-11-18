@@ -3,7 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
-const { loadUserData, saveUserData, getUserById, getColorById } = require('./utils/userData');  // Ispravan import
+const { loadUserData, saveUserData, updateUserColor } = require('./userData');  // Importovanje userData.js
 require('dotenv').config();
 
 const app = express();
@@ -31,23 +31,17 @@ let assignedNumbers = new Set();
 io.on('connection', (socket) => {
     const users = loadUserData();  // Učitaj podatke o korisnicima iz users.json
     const uniqueNumber = generateUniqueNumber();
-    let username = `Gost-${uniqueNumber}`;
-    let userColor = getColorById(username);  // Dodeli boju na osnovu ID-a
-
-    // Pokušaj da nađeš korisnika u učitanim podacima, ako postoji
-    const existingUser = users.find(user => user.id === socket.id);
-    if (existingUser) {
-        username = existingUser.username;
-        userColor = existingUser.color;
-    }
+    const username = `Gost-${uniqueNumber}`;
+    const userColor = '#FF0000';  // Početna boja (možeš promeniti)
 
     guests[socket.id] = { username, color: userColor };
-    saveUserData(username, socket.id, userColor);  // Sačuvaj novog korisnika u JSON fajl
+    saveUserData(username, userColor);  // Sačuvaj novog korisnika u JSON fajl
 
     console.log(`${username} se povezao.`);
 
     socket.broadcast.emit('newGuest', username);
     io.emit('updateGuestList', Object.values(guests).map(guest => guest.username));
+
 
     // Provera da li je korisnik ovlašćen
     socket.on('userLoggedIn', (username) => {
@@ -59,6 +53,7 @@ io.on('connection', (socket) => {
             console.log(`${username} se prijavio kao gost.`);
         }
         io.emit('updateGuestList', Object.values(guests).map(guest => guest.username));
+
     });
 
     socket.on('chatMessage', (msgData) => {
@@ -76,8 +71,9 @@ io.on('connection', (socket) => {
 
     socket.on('changeColor', (newColor) => {
         guests[socket.id].color = newColor;
-        saveUserData(guests[socket.id].username, socket.id, newColor);  // Ažuriraj boju u JSON fajlu
-        io.emit('updateGuestList', Object.values(guests).map(guest => guest.username));
+        updateUserColor(guests[socket.id].username, newColor);  // Ažuriraj boju u JSON fajlu
+    io.emit('updateGuestList', Object.values(guests).map(guest => guest.username));
+
     });
 
     socket.on('disconnect', () => {
@@ -85,6 +81,7 @@ io.on('connection', (socket) => {
         assignedNumbers.delete(parseInt(guests[socket.id].username.split('-')[1], 10));
         delete guests[socket.id];
         io.emit('updateGuestList', Object.values(guests).map(guest => guest.username));
+
     });
 
     // Događaj za banovanje korisnika
