@@ -6,6 +6,7 @@ const loadUserData = () => {
     try {
         return JSON.parse(fs.readFileSync(path, 'utf-8'));
     } catch (err) {
+        console.log('Fajl nije pronađen, kreiraćemo novi.');
         return [];  // Ako fajl ne postoji, vrati prazan niz
     }
 };
@@ -13,7 +14,9 @@ const loadUserData = () => {
 // Sačuvaj nove podatke u users.json
 const saveUserData = (username, color) => {
     const users = loadUserData();  // Učitaj postojeće podatke
+    console.log('Trenutni podaci:', users);  // Prikazivanje trenutnog stanja
     users.push({ username, color });  // Dodaj novog korisnika
+    console.log('Dodati korisnik:', { username, color });
     fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj u fajl
 };
 
@@ -24,6 +27,9 @@ const updateUserColor = (username, newColor) => {
     if (userIndex !== -1) {
         users[userIndex].color = newColor;
         fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj promenjenu boju
+        console.log(`Boja korisnika ${username} ažurirana na ${newColor}`);
+    } else {
+        console.log(`Korisnik ${username} nije pronađen.`);
     }
 };
 
