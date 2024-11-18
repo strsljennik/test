@@ -3,6 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
+const { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests } = require('./storageManager');
 require('dotenv').config();
 
 const app = express();
@@ -104,6 +105,21 @@ function generateUniqueNumber() {
     assignedNumbers.add(number);
     return number;
 }
+
+// Sačuvaj gosta
+await saveGuestData('guest1', 'Gost1', '#ff0000');
+
+// Učitaj podatke gosta
+const guestData = await loadGuestData('guest1');
+console.log(guestData); // { nickname: 'Gost1', color: '#ff0000' }
+
+// Obriši gosta
+await deleteGuestData('guest1');
+
+// Učitaj sve goste
+const allGuests = await loadAllGuests();
+console.log(allGuests);
+
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
