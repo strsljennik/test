@@ -12,23 +12,35 @@ const getColorById = (id) => {
 // Učitaj podatke iz users.json fajla
 const loadUserData = () => {
     try {
-        return JSON.parse(fs.readFileSync(path, 'utf-8'));
+        if (fs.existsSync(path)) {
+            const data = fs.readFileSync(path, 'utf-8');
+            console.log("Podaci učitani sa fajla:", data); // Logujemo učitane podatke
+            return JSON.parse(data);
+        } else {
+            console.log("Fajl ne postoji, vraćamo prazan niz.");
+            return [];  // Ako fajl ne postoji, vraćamo prazan niz
+        }
     } catch (err) {
-        console.log("Fajl nije pronađen ili je prazan, vraćam prazan niz.");
-        return [];  // Ako fajl ne postoji ili je prazan, vraćamo prazan niz
+        console.error("Greška pri učitavanju podataka:", err);
+        return [];  // Ako dođe do greške, vraćamo prazan niz
     }
 };
 
 // Sačuvaj podatke u users.json
 const saveUserData = (username, id) => {
     const users = loadUserData();  // Učitaj korisnike sa diska
+    console.log("Trenutni korisnici pre upisa:", users);
 
     // Proveri da li već postoji korisnik sa istim username-om (ID)
     if (!users.some(user => user.username === username)) {
         const color = getColorById(id);  // Dodeli boju na osnovu ID-a
         users.push({ username, id, color });
-        fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj u fajl
-        console.log(`Korisnik ${username} sa ID-om ${id} sačuvan u fajlu.`);
+        try {
+            fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj u fajl
+            console.log(`Korisnik ${username} sa ID-om ${id} sačuvan u fajlu.`);
+        } catch (err) {
+            console.error("Greška pri upisu u fajl:", err);
+        }
     } else {
         console.log(`Korisnik ${username} već postoji, neće biti dupliran.`);
     }
@@ -40,8 +52,12 @@ const updateUserColor = (username, newColor) => {
     const userIndex = users.findIndex(user => user.username === username);
     if (userIndex !== -1) {
         users[userIndex].color = newColor;
-        fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj promenjenu boju
-        console.log(`Boja korisnika ${username} ažurirana na ${newColor}.`);
+        try {
+            fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj promenjenu boju
+            console.log(`Boja korisnika ${username} ažurirana na ${newColor}.`);
+        } catch (err) {
+            console.error("Greška pri upisu u fajl:", err);
+        }
     } else {
         console.log(`Korisnik ${username} nije pronađen za ažuriranje boje.`);
     }
