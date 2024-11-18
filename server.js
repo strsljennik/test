@@ -6,7 +6,6 @@ const { register, login } = require('./prijava');  // Uvozimo register i login f
 require('dotenv').config();
 const { saveGuestData, loadGuestData, loadAllGuests, removeGuestData } = require('./storage');
 
-
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server); // Definišemo io ovde
@@ -44,16 +43,21 @@ io.on('connection', (socket) => {
         connectedIps.push(ip);
     }
 
+    // Generisanje jedinstvenog broja za gosta
     const uniqueNumber = generateUniqueNumber();
     const nickname = `Gost-${uniqueNumber}`;
     guests[guestId] = nickname;
     console.log(`${nickname} se povezao.`);
+
+    // Spremi podatke o gostu
+    saveGuestData(guestId, nickname, 'default');
 
     socket.broadcast.emit('newGuest', nickname);
     io.emit('updateGuestList', Object.values(guests));
 
     socket.on('userLoggedIn', (username) => {
         guests[guestId] = username;
+        saveGuestData(guestId, username, 'default');  // Ažuriraj podatke o imenu
         io.emit('updateGuestList', Object.values(guests));
     });
 
@@ -75,6 +79,10 @@ io.on('connection', (socket) => {
         assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));
         delete guests[guestId];
         connectedIps = connectedIps.filter((userIp) => userIp !== ip);
+
+        // Brisanje podataka o gostu prilikom odjave
+        removeGuestData(guestId);
+
         io.emit('updateGuestList', Object.values(guests));
     });
 });
@@ -88,30 +96,6 @@ function generateUniqueNumber() {
     assignedNumbers.add(number);
     return number;
 }
-// Spremi podatke o gostu
-saveGuestData(guestId, nickname, color);
-
-// Ažuriraj podatke kad se korisnik prijavi sa imenom
-socket.on('userLoggedIn', (username) => {
-    guests[guestId] = username;
-    saveGuestData(guestId, username, color);  // Ažuriraj podatke o imenu
-    io.emit('updateGuestList', Object.values(guests));
-});
-
-// Brisanje podataka prilikom odjave
-socket.on('disconnect', () => {
-    console.log(`${guests[guestId]} se odjavio.`);
-    assignedNumbers.delete(parseInt(guests[guestId].split('-')[1], 10));
-    delete guests[guestId];
-    connectedIps = connectedIps.filter((userIp) => userIp !== ip);
-
-    // Brisanje podataka o gostu prilikom odjave
-    removeGuestData(guestId);
-
-    io.emit('updateGuestList', Object.values(guests));
-});
-
-
 
 // Slušanje na određenom portu
 const PORT = process.env.PORT || 3000;
