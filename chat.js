@@ -15,10 +15,28 @@ client.connect()
 
 const db = pgp(connectionString);
 
+// Kreiraj tabelu guest ako ne postoji
+const createTable = async () => {
+    const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS guest (
+        id SERIAL PRIMARY KEY,
+        nickname VARCHAR(255),
+        number VARCHAR(50),
+        color VARCHAR(50)
+    );`;
+
+    try {
+        await db.none(createTableQuery);
+        console.log('Tabela "guest" je kreirana ili već postoji.');
+    } catch (error) {
+        console.error('Greška prilikom kreiranja tabele:', error);
+    }
+};
+
 // Funkcija za čuvanje gosta u bazi
 const saveGuest = async (nickname, number, color) => {
     try {
-        await db.none('INSERT INTO guests(nickname, number, color) VALUES($1, $2, $3)', [nickname, number, color]);
+        await db.none('INSERT INTO guest(nickname, number, color) VALUES($1, $2, $3)', [nickname, number, color]);
     } catch (error) {
         console.error('Error saving guest:', error);
     }
@@ -27,7 +45,7 @@ const saveGuest = async (nickname, number, color) => {
 // Funkcija za dohvat svih gostiju iz baze
 const getGuests = async () => {
     try {
-        const guests = await db.any('SELECT * FROM guests');
+        const guests = await db.any('SELECT * FROM guest');
         return guests;
     } catch (error) {
         console.error('Error retrieving guests:', error);
@@ -47,5 +65,10 @@ const loadGuestsOnStart = async () => {
     console.log('Guests loaded:', guests);
 };
 
-// Učitaj goste prilikom starta
-loadGuestsOnStart();
+// Učitaj tabelu "guest" i goste prilikom starta
+const initializeDatabase = async () => {
+    await createTable();
+    await loadGuestsOnStart();
+};
+
+initializeDatabase();
