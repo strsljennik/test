@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = './users.json';
 
+// Set za praćenje dodeljenih brojeva
+const assignedNumbers = new Set();
+
 // Funkcija za dodelu boje na osnovu ID-a (ili broja)
 const getColorById = (id) => {
     const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
@@ -35,57 +38,43 @@ const saveUserData = (users) => {
     }
 };
 
-// Sačuvaj novog korisnika
-const addNewUser = (username, id) => {
-    const users = loadUserData();  // Učitaj korisnike sa diska
+// Generiši jedinstven broj
+function generateUniqueNumber() {
+    let number;
+    do {
+        number = Math.floor(Math.random() * 8889) + 1111;
+    } while (assignedNumbers.has(number));
+    assignedNumbers.add(number);
+    return number;
+}
 
-    // Proveri da li već postoji korisnik sa istim username-om (ID)
-    if (!users.some(user => user.username === username)) {
+// Sačuvaj novog korisnika
+const addNewUser = (id) => {
+    const users = loadUserData();  // Učitaj korisnike sa diska
+    const username = `guest-${id}`;  // Dodeljujemo ime 'guest-ID' ako je novi korisnik
+
+    // Proveri da li već postoji korisnik sa tim ID-om
+    if (!users.some(user => user.id === id)) {
         const color = getColorById(id);  // Dodeli boju na osnovu ID-a
         const newUser = { username, id, color };
         users.push(newUser);
         saveUserData(users);  // Upisuj nove podatke u fajl
         console.log(`Korisnik ${username} sa ID-om ${id} sačuvan u fajlu.`);
     } else {
-        console.log(`Korisnik ${username} već postoji, neće biti dupliran.`);
+        console.log(`Korisnik ${username} već postoji.`);
     }
 };
 
-// Ažuriraj boju korisnika
-const updateUserColor = (username, newColor) => {
-    const users = loadUserData();
-    const userIndex = users.findIndex(user => user.username === username);
-    if (userIndex !== -1) {
-        users[userIndex].color = newColor;
-        saveUserData(users);  // Upisuj promenjenu boju
-        console.log(`Boja korisnika ${username} ažurirana na ${newColor}.`);
-    } else {
-        console.log(`Korisnik ${username} nije pronađen za ažuriranje boje.`);
-    }
+// Korišćenje funkcije za dodavanje i učitavanje korisnika
+const handleUserJoin = () => {
+    const uniqueNumber = generateUniqueNumber();  // Generišemo jedinstveni broj
+    console.log(`Generisani broj: guest-${uniqueNumber}`);
+    addNewUser(uniqueNumber);  // Dodajemo korisnika sa tim brojem
 };
 
-// Pronađi korisnika po ID-u
-const getUserById = (id) => {
-    const users = loadUserData();
-    return users.find(user => user.id === id);  // Vrati korisnika sa datim ID-om
-};
+// Test primer generisanja i dodavanja korisnika
+handleUserJoin();  // Novi korisnik sa jedinstvenim brojem
+handleUserJoin();  // Novi korisnik sa jedinstvenim brojem
+handleUserJoin();  // Novi korisnik sa jedinstvenim brojem
 
-// Korišćenje funkcija za dodavanje i učitavanje korisnika
-const handleUserJoin = (id) => {
-    const user = getUserById(id);
-
-    if (user) {
-        console.log(`Korisnik sa ID-om ${id} vraća se sa nikom ${user.username} i bojom ${user.color}`);
-    } else {
-        const username = `gost-${id}`;  // Dodeljujemo ime 'gost-ID' ako je novi korisnik
-        addNewUser(username, id);
-        console.log(`Korisnik sa ID-om ${id} ulazi kao ${username} sa bojom ${getColorById(id)}`);
-    }
-};
-
-// Primer upisa korisnika i učitavanja pri ulasku
-handleUserJoin('guest-5555');  // Ovo će sačuvati korisnika sa ID 'guest-5555'
-handleUserJoin('guest-5555');  // Ovo će učitati prethodni podaci za korisnika
-handleUserJoin('guest-7777');  // Novi korisnik, biće dodeljen nik 'gost-7777'
-
-module.exports = { loadUserData, saveUserData, updateUserColor, getUserById };
+module.exports = { loadUserData, saveUserData, getColorById, handleUserJoin };
