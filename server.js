@@ -3,6 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');  // Uvozimo register i login funkcije
+const { saveUser, getUsers } = require('./chat'); // Uvezi chat modul
 require('dotenv').config();
 
 const app = express();
@@ -89,14 +90,18 @@ function generateUniqueNumber() {
     assignedNumbers.add(number);
     return number;
 }
-app.post('/add-user', (req, res) => {
-  const { username, ipAddress } = req.body;
-  const color = getColorById(username);  // Dodaj boju prema username-u
-  addUserToDatabase(username, color, ipAddress)
-    .then(() => res.status(200).send('Korisnik je uspešno dodat'))
-    .catch(err => res.status(500).send('Došlo je do greške'));
+// Ruta za čuvanje korisnika
+app.post('/saveUser', async (req, res) => {
+    const { nickname, number, color } = req.body;
+    await saveUser(nickname, number, color);
+    res.send('User saved successfully');
 });
 
+// Ruta za dohvat svih korisnika
+app.get('/users', async (req, res) => {
+    const users = await getUsers();
+    res.json(users);
+});
 
 
 // Slušanje na određenom portu
