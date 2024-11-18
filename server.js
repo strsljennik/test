@@ -16,9 +16,6 @@ connectDB();
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
-import express from 'express';
-import { getColorById, addUserToDatabase, getAllUsers, banUser } from './post.js';
-
 // Ruta za registraciju korisnika
 app.post('/register', (req, res) => register(req, res, io));  // Prosleđujemo io kao argument
 
