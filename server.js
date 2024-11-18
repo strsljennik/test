@@ -3,6 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
+const { loadUserData, saveUserData, updateUserColor } = require('./userData');  // Importovanje userData.js
 require('dotenv').config();
 
 const app = express();
@@ -24,25 +25,30 @@ app.get('/', (req, res) => {
 // Niz sa ovlašćenim korisnicima
 const authorizedUsers = new Set(['Radio Galaksija', 'ZI ZU', '__X__']);
 const bannedUsers = new Set(); // Banovani korisnici
-let guests = {};
+let guests = {};  // Držimo korisnike u memoriji
 let assignedNumbers = new Set();
 
 io.on('connection', (socket) => {
+    const users = loadUserData();  // Učitaj podatke o korisnicima iz users.json
     const uniqueNumber = generateUniqueNumber();
-    const nickname = `Gost-${uniqueNumber}`;
-    guests[socket.id] = nickname;
-    console.log(`${nickname} se povezao.`);
+    const username = `Gost-${uniqueNumber}`;
+    const userColor = '#FF0000';  // Početna boja (možeš promeniti)
 
-    socket.broadcast.emit('newGuest', nickname);
+    guests[socket.id] = { username, color: userColor };
+    saveUserData(username, userColor);  // Sačuvaj novog korisnika u JSON fajl
+
+    console.log(`${username} se povezao.`);
+
+    socket.broadcast.emit('newGuest', username);
     io.emit('updateGuestList', Object.values(guests));
 
     // Provera da li je korisnik ovlašćen
     socket.on('userLoggedIn', (username) => {
         if (authorizedUsers.has(username)) {
-            guests[socket.id] = `${username} (Admin)`;
+            guests[socket.id] = { username: `${username} (Admin)`, color: guests[socket.id].color };
             console.log(`${username} je autentifikovan kao admin.`);
         } else {
-            guests[socket.id] = username;
+            guests[socket.id].username = username;
             console.log(`${username} se prijavio kao gost.`);
         }
         io.emit('updateGuestList', Object.values(guests));
@@ -55,45 +61,50 @@ io.on('connection', (socket) => {
             bold: msgData.bold,
             italic: msgData.italic,
             color: msgData.color,
-            nickname: guests[socket.id],
+            nickname: guests[socket.id].username,
             time: time
         };
         io.emit('chatMessage', messageToSend);
     });
 
+    socket.on('changeColor', (newColor) => {
+        guests[socket.id].color = newColor;
+        updateUserColor(guests[socket.id].username, newColor);  // Ažuriraj boju u JSON fajlu
+        io.emit('updateGuestList', Object.values(guests));
+    });
+
     socket.on('disconnect', () => {
-        console.log(`${guests[socket.id]} se odjavio.`);
-        assignedNumbers.delete(parseInt(guests[socket.id].split('-')[1], 10));
+        console.log(`${guests[socket.id].username} se odjavio.`);
+        assignedNumbers.delete(parseInt(guests[socket.id].username.split('-')[1], 10));
         delete guests[socket.id];
         io.emit('updateGuestList', Object.values(guests));
     });
 
     // Događaj za banovanje korisnika
     socket.on('banUser', (userIdToBan) => {
-        if (!authorizedUsers.has(guests[socket.id].split(' ')[0])) {
+        if (!authorizedUsers.has(guests[socket.id].username.split(' ')[0])) {
             socket.emit('error', 'Nemate ovlašćenje za banovanje korisnika.');
             return;
         }
         if (!bannedUsers.has(userIdToBan)) {
             bannedUsers.add(userIdToBan);
             io.emit('userBanned', userIdToBan);
-            console.log(`Korisnik ${userIdToBan} je banovan od strane ${guests[socket.id]}.`);
+            console.log(`Korisnik ${userIdToBan} je banovan od strane ${guests[socket.id].username}.`);
         }
     });
 
     // Događaj za odbanovanje korisnika
     socket.on('unbanUser', (userIdToUnban) => {
-        if (!authorizedUsers.has(guests[socket.id].split(' ')[0])) {
+        if (!authorizedUsers.has(guests[socket.id].username.split(' ')[0])) {
             socket.emit('error', 'Nemate ovlašćenje za odbanovanje korisnika.');
             return;
         }
         if (bannedUsers.has(userIdToUnban)) {
             bannedUsers.delete(userIdToUnban);
             io.emit('userUnbanned', userIdToUnban);
-            console.log(`Korisnik ${userIdToUnban} je oslobođen od strane ${guests[socket.id]}.`);
+            console.log(`Korisnik ${userIdToUnban} je oslobođen od strane ${guests[socket.id].username}.`);
         }
     });
-
 });
 
 function generateUniqueNumber() {
