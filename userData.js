@@ -12,9 +12,9 @@ const loadUserData = () => {
 
 // Sačuvaj nove podatke u users.json
 const saveUserData = (username, color) => {
-    const users = loadUserData();
-    users.push({ username, color });
-    fs.writeFileSync(path, JSON.stringify(users, null, 2));
+    const users = loadUserData();  // Učitaj postojeće podatke
+    users.push({ username, color });  // Dodaj novog korisnika
+    fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj u fajl
 };
 
 // Ažuriraj boju korisnika
@@ -23,7 +23,7 @@ const updateUserColor = (username, newColor) => {
     const userIndex = users.findIndex(u => u.username === username);
     if (userIndex !== -1) {
         users[userIndex].color = newColor;
-        fs.writeFileSync(path, JSON.stringify(users, null, 2));
+        fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj promenjenu boju
     }
 };
 
