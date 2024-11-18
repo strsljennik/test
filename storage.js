@@ -59,5 +59,6 @@ async function loadAllGuests() {
 // Inicijalizacija storage-a pri pokretanju
 initializeStorage();
 
-// Izvoz funkcija za upotrebu u drugim delovima aplikacije
-module.exports = { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests };
+// storage.js
+export { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests };
+
