@@ -2,6 +2,7 @@
   "name": "galaksija",
   "version": "1.0.0",
   "main": "server.js",
+  "type": "module",          
   "scripts": {
     "test": "jest",
     "start": "node server.js"
@@ -23,8 +24,8 @@
     "morgan": "^1.10.0",
     "socket.io": "^4.8.0",
     "redis": "^4.0.0",
-    "pg": "^8.10.0",        
-    "pg-promise": "^10.10.2" 
+    "pg": "^8.10.0",
+    "pg-promise": "^10.10.2"
   },
   "devDependencies": {
     "jest": "^29.7.0"
