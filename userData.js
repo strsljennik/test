@@ -1,5 +1,4 @@
-const fs = require('fs');
-const path = './users.json';
+const path = './guests.json';  // Promeni ime fajla ako je potrebno
 
 // Funkcija za dodelu boje na osnovu ID-a (ili broja)
 const getColorById = (id) => {
@@ -9,8 +8,8 @@ const getColorById = (id) => {
     return colors[colorIndex];
 };
 
-// Učitaj podatke iz users.json fajla
-const loadUserData = () => {
+// Učitaj podatke iz guests.json fajla
+const loadGuestData = () => {
     try {
         if (fs.existsSync(path)) {
             const data = fs.readFileSync(path, 'utf-8');
@@ -26,37 +25,38 @@ const loadUserData = () => {
     }
 };
 
-// Sačuvaj podatke u users.json
-const saveUserData = (users) => {
+// Sačuvaj podatke u guests.json
+const saveGuestData = (guests) => {
     try {
-        fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj u fajl
+        console.log("Spremam goste u fajl:", guests);  // Logujemo pre upisa u fajl
+        fs.writeFileSync(path, JSON.stringify(guests, null, 2));  // Upisuj u fajl
         console.log("Podaci uspešno sačuvani u fajl.");
     } catch (err) {
         console.error("Greška pri upisu u fajl:", err);
     }
 };
 
-// Sačuvaj novog korisnika
-const addNewUser = (id) => {
-    const users = loadUserData();  // Učitaj korisnike sa diska
-    const username = `guest-${id}`;  // Dodeljujemo ime 'guest-ID' ako je novi korisnik
+// Sačuvaj novog gosta
+const addNewGuest = (id) => {
+    const guests = loadGuestData();  // Učitaj goste sa diska
+    const guestname = `guest-${id}`;  // Dodeljujemo ime 'guest-ID' ako je novi gost
 
-    // Proveri da li već postoji korisnik sa tim ID-om
-    if (!users.some(user => user.id === id)) {
+    // Proveri da li već postoji gost sa tim ID-om
+    if (!guests.some(guest => guest.id === id)) {
         const color = getColorById(id);  // Dodeli boju na osnovu ID-a
-        const newUser = { username, id, color };
-        users.push(newUser);
-        saveUserData(users);  // Upisuj nove podatke u fajl
-        console.log(`Korisnik ${username} sa ID-om ${id} sačuvan u fajlu.`);
+        const newGuest = { guestname, id, color };
+        guests.push(newGuest);
+        saveGuestData(guests);  // Upisuj nove podatke u fajl
+        console.log(`Gost ${guestname} sa ID-om ${id} sačuvan u fajlu.`);
     } else {
-        console.log(`Korisnik ${username} već postoji.`);
+        console.log(`Gost ${guestname} već postoji.`);
     }
 };
 
-// Korišćenje funkcije za dodavanje i učitavanje korisnika
-const handleUserJoin = (id) => {
-    console.log(`Korisnik sa ID-om ${id} ulazi.`);
-    addNewUser(id);  // Dodajemo korisnika sa tim brojem
+// Korišćenje funkcije za dodavanje i učitavanje gostiju
+const handleGuestJoin = (id) => {
+    console.log(`Gost sa ID-om ${id} ulazi.`);
+    addNewGuest(id);  // Dodajemo gosta sa tim brojem
 };
 
-module.exports = { loadUserData, saveUserData, getColorById, handleUserJoin };
+module.exports = { loadGuestData, saveGuestData, getColorById, handleGuestJoin };
