@@ -54,5 +54,5 @@ handleUserJoin('guest-5555');  // Ovo će sačuvati korisnika sa ID 'guest-5555'
 handleUserJoin('guest-5555');  // Ovo će učitati prethodni podaci za korisnika
 handleUserJoin('guest-7777');  // Novi korisnik, biće dodeljen nik 'gost-7777'
 
-module.exports = { loadUserData, saveUserData, getUserById };
+module.exports = { loadUserData, saveUserData, updateUserColor };
 
