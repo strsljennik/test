@@ -4,7 +4,7 @@ const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');  // Uvozimo register i login funkcije
 require('dotenv').config();
-const { saveGuestData, loadGuestData, loadAllGuests, removeGuestData } = require('./guestStorage');
+const { saveGuestData, loadGuestData, loadAllGuests, removeGuestData } = require('./storage');
 
 
 const app = express();
