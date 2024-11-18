@@ -3,7 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
-const { loadUserData, saveUserData, updateUserColor } = require('./userData');  // Importovanje userData.js
+const { loadUserData, saveUserData, getUserById } = require('./utils/userData');
 require('dotenv').config();
 
 const app = express();
