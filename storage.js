@@ -19,14 +19,24 @@ async function initializeStorage() {
             return storage.getItem(guestId);
         }
 
-// Brisanje podataka gosta
-function deleteGuestData(guestId) {
-    storage.removeItem(guestId);
+        // Brisanje podataka gosta
+        function deleteGuestData(guestId) {
+            storage.removeItem(guestId);
+        }
+
+        // Učitavanje svih podataka o gostima
+        function loadAllGuests() {
+            return storage.values();
+        }
+
+        // Ovdje se završava funkcija initializeStorage
+    } catch (err) {
+        console.error('Greška prilikom inicijalizacije storage-a:', err);
+    }
 }
 
-// Učitavanje svih podataka o gostima
-function loadAllGuests() {
-    return storage.values();
-}
+// Pozivanje funkcije za inicijalizaciju storage-a
+initializeStorage();
 
+// Izvoz funkcija
 module.exports = { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests };
