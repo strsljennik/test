@@ -3,9 +3,8 @@ const path = './users.json';  // Putanja do JSON fajla
 
 // Funkcija za dodelu boje na osnovu ID-a (ili broja)
 const getColorById = (id) => {
-    const idStr = String(id);  // Osigurajmo da je ID uvek string
+    const colorIndex = parseInt(id) % 6; // Direktno koristi broj ID-a
     const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
-    const colorIndex = parseInt(idStr.split('-')[1]) % colors.length;
     return colors[colorIndex];
 };
 
@@ -60,4 +59,4 @@ const handleUserJoin = (id) => {
 };
 
 // Testiranje
-handleUserJoin('guest-7758'); // Testiraj sa nekim ID-om
+handleUserJoin('7758'); // Testiraj sa ID-om kao broj
