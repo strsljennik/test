@@ -15,37 +15,37 @@ client.connect()
 
 const db = pgp(connectionString);
 
-// Funkcija za čuvanje korisnika u bazi
-const saveUser = async (nickname, number, color) => {
+// Funkcija za čuvanje gosta u bazi
+const saveGuest = async (nickname, number, color) => {
     try {
-        await db.none('INSERT INTO users(nickname, number, color) VALUES($1, $2, $3)', [nickname, number, color]);
+        await db.none('INSERT INTO guests(nickname, number, color) VALUES($1, $2, $3)', [nickname, number, color]);
     } catch (error) {
-        console.error('Error saving user:', error);
+        console.error('Error saving guest:', error);
     }
 };
 
-// Funkcija za dohvat svih korisnika iz baze
-const getUsers = async () => {
+// Funkcija za dohvat svih gostiju iz baze
+const getGuests = async () => {
     try {
-        const users = await db.any('SELECT * FROM users');
-        return users;
+        const guests = await db.any('SELECT * FROM guests');
+        return guests;
     } catch (error) {
-        console.error('Error retrieving users:', error);
+        console.error('Error retrieving guests:', error);
     }
 };
 
 // Izvoz funkcija
 module.exports = {
-    saveUser,
-    getUsers,
+    saveGuest,
+    getGuests,
 };
 
-// Ako želiš da se svi korisnici učitaju na serveru nakon restarta:
-const loadUsersOnStart = async () => {
-    const users = await getUsers();
-    // Ovde možeš implementirati logiku da nastaviš chat sa učitanim korisnicima
-    console.log('Users loaded:', users);
+// Ako želiš da se svi gosti učitaju na serveru nakon restarta:
+const loadGuestsOnStart = async () => {
+    const guests = await getGuests();
+    // Ovde možeš implementirati logiku da nastaviš chat sa učitanim gostima
+    console.log('Guests loaded:', guests);
 };
 
-// Učitaj korisnike prilikom starta
-loadUsersOnStart();
+// Učitaj goste prilikom starta
+loadGuestsOnStart();
