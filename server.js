@@ -89,6 +89,15 @@ function generateUniqueNumber() {
     assignedNumbers.add(number);
     return number;
 }
+app.post('/add-user', (req, res) => {
+  const { username, ipAddress } = req.body;
+  const color = getColorById(username);  // Dodaj boju prema username-u
+  addUserToDatabase(username, color, ipAddress)
+    .then(() => res.status(200).send('Korisnik je uspešno dodat'))
+    .catch(err => res.status(500).send('Došlo je do greške'));
+});
+
+
 
 // Slušanje na određenom portu
 const PORT = process.env.PORT || 3000;
