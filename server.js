@@ -3,7 +3,6 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
-const { loadUserData, saveUserData, updateUserColor } = require('./userData');  // Importovanje userData.js
 require('dotenv').config();
 
 const app = express();
@@ -27,17 +26,6 @@ const authorizedUsers = new Set(['Radio Galaksija', 'ZI ZU', '__X__']);
 const bannedUsers = new Set(); // Banovani korisnici
 let guests = {};  // Držimo korisnike u memoriji
 let assignedNumbers = new Set();
-
-io.on('connection', (socket) => {
-    const users = loadUserData();  // Učitaj podatke o korisnicima iz users.json
-    const uniqueNumber = generateUniqueNumber();
-    const username = `Gost-${uniqueNumber}`;
-    const userColor = '#FF0000';  // Početna boja (možeš promeniti)
-
-    guests[socket.id] = { username, color: userColor };
-    saveUserData(username, userColor);  // Sačuvaj novog korisnika u JSON fajl
-
-    console.log(`${username} se povezao.`);
 
     socket.broadcast.emit('newGuest', username);
     io.emit('updateGuestList', Object.values(guests).map(guest => guest.username));
