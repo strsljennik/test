@@ -1,6 +1,14 @@
 const fs = require('fs');
 const path = './users.json';
 
+// Funkcija za dodelu boje na osnovu ID-a (ili broja)
+const getColorById = (id) => {
+    const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
+    // Dodeljujemo boju na osnovu broja (koristi jednostavan hash funkciju)
+    const colorIndex = parseInt(id.split('-')[1]) % colors.length;
+    return colors[colorIndex];
+};
+
 // Učitaj podatke iz users.json fajla
 const loadUserData = () => {
     try {
@@ -13,15 +21,16 @@ const loadUserData = () => {
 // Sačuvaj podatke u users.json
 const saveUserData = (username, id) => {
     const users = loadUserData();
-    
-    // Proveri da li već postoji korisnik sa istim ID-om, pa ga ne dodaj ponovo
-    if (!users.some(user => user.id === id)) {
-        users.push({ username, id });
+
+    // Proveri da li već postoji korisnik sa istim username-om (ID)
+    if (!users.some(user => user.username === username)) {
+        const color = getColorById(id);  // Dodeli boju na osnovu ID-a
+        users.push({ username, id, color });
         fs.writeFileSync(path, JSON.stringify(users, null, 2));  // Upisuj u fajl
     }
 };
 
-// Pronađi korisnika po ID-u
+// Pronađi korisnika po username-u
 const getUserById = (id) => {
     const users = loadUserData();
     return users.find(user => user.id === id);  // Vrati korisnika sa datim ID-om
@@ -32,18 +41,15 @@ const handleUserJoin = (id) => {
     const user = getUserById(id);
 
     if (user) {
-        console.log(`Korisnik sa ID-om ${id} vraća se sa nikom ${user.username}`);
+        console.log(`Korisnik sa ID-om ${id} vraća se sa nikom ${user.username} i bojom ${user.color}`);
     } else {
-        // Ako je korisnik nov, dodeli mu novi ID i ime
-        const username = `gost-${id}`;  // Primer kako možeš dodeliti naziv za gosta
+        const username = `gost-${id}`;  // Dodeljujemo ime 'gost-ID' ako je novi korisnik
         saveUserData(username, id);
-        console.log(`Korisnik sa ID-om ${id} ulazi kao ${username}`);
+        console.log(`Korisnik sa ID-om ${id} ulazi kao ${username} sa bojom ${getColorById(id)}`);
     }
 };
 
 // Primer upisa korisnika i učitavanja pri ulasku
 handleUserJoin('guest-5555');  // Ovo će sačuvati korisnika sa ID 'guest-5555'
-
-// Ovo simulira da server ponovo pokreće i učitava korisnike
 handleUserJoin('guest-5555');  // Ovo će učitati prethodni podaci za korisnika
 handleUserJoin('guest-7777');  // Novi korisnik, biće dodeljen nik 'gost-7777'
