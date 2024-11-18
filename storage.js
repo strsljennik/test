@@ -1,33 +1,32 @@
 const storage = require('node-persist');
 
-// Asinhrona inicijalizacija storage-a
+// Inicijalizacija storage-a sa prilagođenim direktorijumom (opciono)
 async function initializeStorage() {
     try {
-        await storage.init(); // Inicijalizacija
+        await storage.init({
+            dir: './data', // Folder gde će se podaci čuvati
+        });
         console.log('Storage je uspešno inicijalizovan.');
     } catch (err) {
         console.error('Greška prilikom inicijalizacije storage-a:', err);
     }
 }
 
-// Asinhrono čuvanje podataka gosta
+// Sačuvaj podatke gosta
 async function saveGuestData(guestId, nickname, color = 'default') {
     try {
-        const guestData = {
-            nickname: nickname,
-            color: color,
-        };
-        await storage.setItem(guestId, guestData); // Čuvanje u skladište
-        console.log(`Podaci za gosta ${guestId} su uspešno sačuvani.`);
+        const guestData = { nickname, color };
+        await storage.setItem(guestId, guestData); // Asinhrono čuvanje
+        console.log(`Podaci za gosta ${guestId} su sačuvani.`);
     } catch (err) {
         console.error(`Greška prilikom čuvanja podataka za gosta ${guestId}:`, err);
     }
 }
 
-// Asinhrono učitavanje podataka gosta
+// Učitaj podatke gosta
 async function loadGuestData(guestId) {
     try {
-        const guestData = await storage.getItem(guestId); // Učitavanje iz skladišta
+        const guestData = await storage.getItem(guestId); // Asinhrono učitavanje
         if (!guestData) {
             console.warn(`Podaci za gosta ${guestId} nisu pronađeni.`);
         }
@@ -37,28 +36,28 @@ async function loadGuestData(guestId) {
     }
 }
 
-// Asinhrono brisanje podataka gosta
+// Obriši podatke gosta
 async function deleteGuestData(guestId) {
     try {
-        await storage.removeItem(guestId); // Brisanje iz skladišta
-        console.log(`Podaci za gosta ${guestId} su uspešno obrisani.`);
+        await storage.removeItem(guestId); // Asinhrono brisanje
+        console.log(`Podaci za gosta ${guestId} su obrisani.`);
     } catch (err) {
         console.error(`Greška prilikom brisanja podataka za gosta ${guestId}:`, err);
     }
 }
 
-// Asinhrono učitavanje svih podataka o gostima
+// Učitaj sve goste
 async function loadAllGuests() {
     try {
-        const allGuests = await storage.values(); // Dobavljanje svih vrednosti
+        const allGuests = await storage.values(); // Učitavanje svih vrednosti
         return allGuests;
     } catch (err) {
         console.error('Greška prilikom učitavanja svih gostiju:', err);
     }
 }
 
-// Inicijalizacija storage-a prilikom pokretanja
+// Inicijalizacija storage-a pri pokretanju
 initializeStorage();
 
-// Izvoz funkcija
+// Izvoz funkcija za upotrebu u drugim delovima aplikacije
 module.exports = { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests };
