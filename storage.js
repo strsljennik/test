@@ -11,7 +11,7 @@ async function initializeStorage() {
     try {
         await storage.init({
             dir: path.join(__dirname, 'gosti'), 
-            fileName: 'gosti.json',
+            fileName: 'gosti.js',
             stringify: JSON.stringify, 
             parse: JSON.parse 
         });
