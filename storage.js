@@ -2,7 +2,7 @@ const storage = require('node-persist');
 const path = require('path');
 
 // Osiguraj da je storage inicijalizovan pre nego što koristiš bilo koje funkcije
-async function initializeStorage() {
+async function  {
     try {
         await storage.init({
             dir: path.join(__dirname, 'data'), // Folder gde će se podaci čuvati
