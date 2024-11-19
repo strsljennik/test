@@ -29,6 +29,5 @@
   },
   "devDependencies": {
     "jest": "^29.7.0"
-  },
-  
-
+  }
+}
