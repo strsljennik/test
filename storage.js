@@ -9,7 +9,7 @@ async function initializeStorage() {
     
   try {
         await storage.init({
-            dir: path.join(__dirname, 'gosti'), // Promeni 'data' u 'gosti'
+            dir: path.join(__dirname, 'gosti'), 
             fileName: 'gosti.json',
             stringify: JSON.stringify, 
             parse: JSON.parse 
@@ -55,33 +55,33 @@ async function deleteGuestData(guestId) {
     }
 }
 
-// Učitaj sve goste
-async function loadAllGuests() {
+
+async function loadAllGuest() {
     try {
         const allGuestKeys = await storage.keys(); // Učitaj ključeve svih gostiju
-        const allGuests = {};
+        const allGuest = {};
 
         // Za svaku ključu, učitaj podatke
         for (const key of allGuestKeys) {
-            allGuests[key] = await storage.getItem(key);
+            allGuest[key] = await storage.getItem(key);
         }
 
-        return allGuests; // Vraća sve goste kao objekat
+        return allGuest; // Vraća sve goste kao objekat
     } catch (err) {
         console.error('Greška prilikom učitavanja svih gostiju:', err);
     }
 }
 
 // Prikaz svih gostiju kada se server pokrene
-async function displayAllGuests() {
+async function displayAllGuest() {
     const guests = await loadAllGuests();
-    console.log('Svi gosti:', guests);
+    console.log('Svi gosti:', guest);
 }
 
 // Inicijalizacija storage-a pre korišćenja drugih funkcija
 initializeStorage().then(() => {
     // Prikaz svih gostiju nakon inicijalizacije
-    displayAllGuests();
+    displayAllGuest();
 }).catch(err => {
     console.error('Greška pri inicijalizaciji storage-a:', err);
 });
