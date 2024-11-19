@@ -35,24 +35,18 @@ async function saveGuestData(nickname = null, color = null) {
             nickname = `gost-${Math.floor(1000 + Math.random() * 9000)}`;
         }
 
-        // Dohvati postojeće podatke za ovog gosta
-        let existingData = await storage.getItem(nickname);
+        // Kreiraj objekat s novim vrednostima
+        const guestData = {
+            nik: nickname,
+            color: color || 'default',
+        };
 
-        if (existingData) {
-            // Ažuriraj `color` ako je prosleđen novi
-            if (color) {
-                existingData.color = color;
-            }
-        } else {
-            // Kreiraj novi unos za gosta
-            const newGuestData = { color: color || 'default' };
-            existingData = newGuestData; 
-            console.log(`[INFO] Kreiran novi gost: ${nickname}`, newGuestData);
-        }
-
-        // Sačuvaj ažurirane podatke
-        await storage.setItem(nickname, existingData);
-        console.log(`[INFO] Podaci za gosta ${nickname} su ažurirani:`, existingData);
+        // Sačuvaj ažurirane podatke (u ovom slučaju, uvek će se prepisivati)
+        await storage.setItem(nickname, guestData);
+        console.log(`[INFO] Podaci za gosta ${nickname} su sačuvani:`, guestData);
+        
+        // Opcionalno, možete prikazati sve goste nakon ažuriranja
+        await displayAllGuests();
     } catch (err) {
         console.error(`[ERROR] Greška prilikom čuvanja podataka za gosta ${nickname}:`, err);
     }
