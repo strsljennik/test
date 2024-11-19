@@ -11,7 +11,7 @@ async function initializeStorage() {
         // Ako direktorijum ne postoji, kreiraj ga
         if (!fs.existsSync(storageDir)) {
             console.log('Direktorijum "cuvati" ne postoji. Kreiramo ga...');
-            fs.mkdirSync(storageDir, { recursive: true });  // Ova linija kreira direktorijum
+            fs.mkdirSync(storageDir, { recursive: true });  // Kreira direktorijum ako ne postoji
         }
 
         // Inicijalizacija skladišta sa direktorijumom
@@ -112,3 +112,4 @@ module.exports = {
     displayAllGuests,
     initializeStorage,
 };
+
