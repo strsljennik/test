@@ -10,8 +10,8 @@ async function initializeStorage() {
 
     try {
         await storage.init({
-            dir: path.join(__dirname, 'gosti'), 
-            fileName: 'gosti.js',
+            dir: path.join(__dirname, 'cuvati'), 
+            fileName: 'gosti.json',
             stringify: JSON.stringify, 
             parse: JSON.parse 
         });
