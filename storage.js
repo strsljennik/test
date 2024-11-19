@@ -1,6 +1,6 @@
 const storage = require('node-persist');
 
-// Inicijalizacija storage-a
+// Inicijalizacija storage-a sa prilagođenim direktorijumom (opciono)
 async function initializeStorage() {
     try {
         await storage.init({
@@ -56,8 +56,11 @@ async function loadAllGuests() {
     }
 }
 
-// Inicijalizacija storage-a pri pokretanju
-initializeStorage();
-
-// Izvoz funkcija za korišćenje u drugim fajlovima
-module.exports = { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests };
+// Izvoz funkcija
+module.exports = {
+    saveGuestData,
+    loadGuestData,
+    deleteGuestData,
+    loadAllGuests,
+    initializeStorage
+};
