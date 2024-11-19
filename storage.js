@@ -6,10 +6,9 @@ async function initializeStorage() {
     try {
         await storage.init({
             dir: path.join(__dirname, 'data'), // Folder gde će se podaci čuvati
-            // Postavi naziv datoteke
             fileName: 'gosti.json',
-            stringify: JSON.stringify, // Kako čuvamo podatke pravimo JSON string
-            parse: JSON.parse // Kako učitavamo podatke pretvaramo JSON string u objekat
+            stringify: JSON.stringify, 
+            parse: JSON.parse 
         });
         console.log('Storage je uspešno inicijalizovan.');
     } catch (err) {
@@ -21,7 +20,7 @@ async function initializeStorage() {
 async function saveGuestData(guestId, nickname, color = 'default') {
     try {
         const guestData = { nickname, color };
-        await storage.setItem(guestId, guestData); // Asinhrono čuvanje
+        await storage.setItem(guestId, guestData); 
         console.log(`Podaci za gosta ${guestId} su sačuvani.`);
     } catch (err) {
         console.error(`Greška prilikom čuvanja podataka za gosta ${guestId}:`, err);
@@ -31,7 +30,7 @@ async function saveGuestData(guestId, nickname, color = 'default') {
 // Učitaj podatke gosta
 async function loadGuestData(guestId) {
     try {
-        const guestData = await storage.getItem(guestId); // Asinhrono učitavanje
+        const guestData = await storage.getItem(guestId); 
         if (!guestData) {
             console.warn(`Podaci za gosta ${guestId} nisu pronađeni.`);
         }
@@ -44,7 +43,7 @@ async function loadGuestData(guestId) {
 // Obriši podatke gosta
 async function deleteGuestData(guestId) {
     try {
-        await storage.removeItem(guestId); // Asinhrono brisanje
+        await storage.removeItem(guestId); 
         console.log(`Podaci za gosta ${guestId} su obrisani.`);
     } catch (err) {
         console.error(`Greška prilikom brisanja podataka za gosta ${guestId}:`, err);
@@ -54,8 +53,15 @@ async function deleteGuestData(guestId) {
 // Učitaj sve goste
 async function loadAllGuests() {
     try {
-        const allGuests = await storage.getAll(); // Učitavanje svih vrednosti
-        return allGuests;
+        const allGuestKeys = await storage.keys(); // Učitaj ključeve svih gostiju
+        const allGuests = {};
+
+        // Za svaku ključu, učitaj podatke
+        for (const key of allGuestKeys) {
+            allGuests[key] = await storage.getItem(key);
+        }
+
+        return allGuests; // Vraća sve goste kao objekat
     } catch (err) {
         console.error('Greška prilikom učitavanja svih gostiju:', err);
     }
