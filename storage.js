@@ -39,7 +39,7 @@ async function saveGuestData(nickname = null, color = null) {
         }
 
         // Dohvati postojeće podatke za ovog gosta
-        const existingData = await storage.getItem(nickname);
+        let existingData = await storage.getItem(nickname);
 
         if (existingData) {
             // Ažuriraj `color` ako je prosleđen novi
@@ -49,9 +49,8 @@ async function saveGuestData(nickname = null, color = null) {
         } else {
             // Kreiraj novi unos za gosta
             const newGuestData = { color: color || 'default' }; // Default boja ako nije prosleđena
-            await storage.setItem(nickname, newGuestData);
+            existingData = newGuestData; // Dodajte podatke za novog gosta u promenljivu
             console.log(`Kreiran novi gost: ${nickname}`, newGuestData);
-            return;
         }
 
         // Sačuvaj ažurirane podatke
@@ -74,10 +73,14 @@ async function displayAllGuests() {
         }
 
         console.log('Svi gosti:');
-        for (const key of keys) {
+        // Korišćenje Promise.all da paralelno dohvati sve goste
+        const guestPromises = keys.map(async key => {
             const guestData = await storage.getItem(key);
             console.log(`${key}:`, guestData);
-        }
+        });
+
+        // Čekaj da svi gosti budu dohvaceni
+        await Promise.all(guestPromises);
     } catch (err) {
         console.error('Greška prilikom prikaza svih gostiju:', err);
     }
@@ -93,14 +96,18 @@ async function testServer() {
 }
 
 // Pokreni test i server
-initializeStorage()
-    .then(() => {
+async function startServer() {
+    try {
+        await initializeStorage(); // Inicijalizujte skladište
         console.log('Server je spreman!');
-        return testServer(); // Testiranje nakon inicijalizacije
-    })
-    .catch(err => {
+        await testServer(); // Testiranje nakon inicijalizacije
+    } catch (err) {
         console.error('Greška pri pokretanju servera:', err);
-    });
+    }
+}
+
+// Pokreni server
+startServer();
 
 // Izvoz funkcija za dodatnu upotrebu
 module.exports = {
@@ -108,3 +115,4 @@ module.exports = {
     displayAllGuests,
     initializeStorage,
 };
+
