@@ -16,11 +16,11 @@ async function initializeStorage() {
 
         // Inicijalizacija skladišta sa direktorijumom
         await storage.init({
-            dir: storageDir,
-            forgiveParseErrors: true,
+            dir: storageDir, // koristi lokalni direktorijum 'cuvati'
+            forgiveParseErrors: true, // ignoriši greške prilikom parsiranja podataka
         });
         console.log('[INFO] Skladište je uspešno inicijalizovano.');
-        console.log(`[INFO] Skladište se nalazi u direktorijumu: ${storageDir}`); // Dodan log za putanju
+        console.log(`[INFO] Skladište se nalazi u direktorijumu: ${storageDir}`);
     } catch (error) {
         console.error('[ERROR] Greška pri inicijalizaciji skladišta:', error);
     }
@@ -31,17 +31,20 @@ async function saveGuestData(nickname, color) {
     try {
         await initializeStorage();
 
-        // Uveri se da je nickname jedinstven
-        if (!nickname) {
-            console.error('[ERROR] Nickname mora biti prosleđen!');
+        // Provera da li je nickname validan
+        if (!nickname || typeof nickname !== 'string') {
+            console.error('[ERROR] Nickname mora biti prosleđen i mora biti tipa string!');
             return;
         }
 
         // Kreiraj objekat s novim vrednostima
         const guestData = {
             nik: nickname,
-            color: color || 'default',
+            color: color || 'default',  // Ako boja nije prosleđena, koristi 'default'
         };
+
+        // Logovanje podataka pre nego što ih sačuvamo
+        console.log(`[INFO] Sačuvaj podatke za gosta ${nickname}:`, guestData);
 
         // Sačuvaj ažurirane podatke
         await storage.setItem(nickname, guestData);
@@ -61,9 +64,16 @@ async function loadAllGuests() {
             return;
         }
 
-        console.log('[INFO] Svi gosti nakon restarta:');
+        console.log(`[INFO] Nađeno ${keys.length} gostiju:`, keys);
+
         const guestPromises = keys.map(async (key) => {
             const guestData = await storage.getItem(key);
+
+            if (!guestData) {
+                console.warn(`[WARN] Podaci za gosta ${key} nisu pronađeni ili su nevalidni.`);
+                return;
+            }
+
             console.log(`${key}:`, guestData);
         });
 
@@ -96,3 +106,4 @@ module.exports = {
     loadAllGuests,
     initializeStorage,
 };
+
