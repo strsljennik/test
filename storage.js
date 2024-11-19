@@ -4,42 +4,38 @@ const fs = require('fs');
 
 let isStorageInitialized = false;
 
-// Funkcija za generisanje podrazumevanog `nickname`
-function generateDefaultNickname() {
-    return `gost-${Math.floor(1000 + Math.random() * 9000)}`; // Format: gost-<broj>
-}
-
-// Inicijalizacija skladišta
+// Automatska inicijalizacija skladišta
 async function initializeStorage() {
-    if (isStorageInitialized) return;
+    if (isStorageInitialized) return; // Ako je već inicijalizovano, ne ponavljaj.
 
     const storageDir = path.join(__dirname, 'cuvati');
 
-    // Automatski kreiraj direktorijum ako ne postoji
+    // Provera da li direktorijum postoji, ako ne kreiramo ga.
     if (!fs.existsSync(storageDir)) {
+        console.log('Direktorijum "cuvati" ne postoji. Kreiramo ga...');
         fs.mkdirSync(storageDir, { recursive: true });
     }
 
     try {
         await storage.init({
             dir: storageDir,
-            forgiveParseErrors: true // Ignoriši greške pri parsiranju
+            forgiveParseErrors: true, // Ignoriši greške pri parsiranju
         });
-        isStorageInitialized = true;
+        isStorageInitialized = true; // Postavi skladište kao inicijalizovano
         console.log('Skladište je uspešno inicijalizovano.');
     } catch (error) {
         console.error('Greška pri inicijalizaciji skladišta:', error);
     }
 }
 
-// Sačuvaj podatke gosta
+// Funkcija za čuvanje podataka gosta
 async function saveGuestData(nickname = null, color = null) {
     try {
-        await initializeStorage();
+        await initializeStorage(); // Osiguraj da je skladište inicijalizovano.
 
         // Generiši `nickname` ako nije prosleđen
         if (!nickname) {
-            nickname = generateDefaultNickname();
+            nickname = `gost-${Math.floor(1000 + Math.random() * 9000)}`;
         }
 
         // Dohvati postojeće podatke za ovog gosta
@@ -52,7 +48,7 @@ async function saveGuestData(nickname = null, color = null) {
             }
         } else {
             // Kreiraj novi unos za gosta
-            const newGuestData = { color: color || 'default' };
+            const newGuestData = { color: color || 'default' }; // Default boja ako nije prosleđena
             await storage.setItem(nickname, newGuestData);
             console.log(`Kreiran novi gost: ${nickname}`, newGuestData);
             return;
@@ -66,32 +62,18 @@ async function saveGuestData(nickname = null, color = null) {
     }
 }
 
-// Učitaj podatke za jednog gosta
-async function getGuestData(nickname) {
-    try {
-        await initializeStorage();
-        const guestData = await storage.getItem(nickname);
-        if (guestData) {
-            console.log(`Podaci za gosta ${nickname}:`, guestData);
-        } else {
-            console.log(`Gost ${nickname} ne postoji.`);
-        }
-        return guestData;
-    } catch (err) {
-        console.error(`Greška prilikom učitavanja podataka za gosta ${nickname}:`, err);
-        return null;
-    }
-}
-
-// Prikaz svih gostiju
+// Funkcija za prikaz svih gostiju
 async function displayAllGuests() {
     try {
-        await initializeStorage();
-        const keys = await storage.keys();
+        await initializeStorage(); // Osiguraj da je skladište inicijalizovano.
+        const keys = await storage.keys(); // Dohvati sve ključeve (gost-1234, gost-5678, itd.)
+
         if (keys.length === 0) {
             console.log('Nema gostiju. Dodajte goste!');
             return;
         }
+
+        console.log('Svi gosti:');
         for (const key of keys) {
             const guestData = await storage.getItem(key);
             console.log(`${key}:`, guestData);
@@ -101,26 +83,28 @@ async function displayAllGuests() {
     }
 }
 
-// Testiranje - inicijalizacija, dodavanje i prikaz gostiju
-initializeStorage().then(async () => {
-    console.log('=== Prikaz trenutnih gostiju ===');
-    await displayAllGuests();
+// Testiranje servera
+async function testServer() {
+    console.log('=== Testiranje servera ===');
+    await saveGuestData(null, 'blue'); // Automatski nickname, boja "blue"
+    await saveGuestData('gost-1234', 'green'); // Ručno dodavanje
+    await saveGuestData('gost-1234', 'yellow'); // Ažuriranje boje
+    await displayAllGuests(); // Prikaz svih gostiju
+}
 
-    console.log('\n=== Dodavanje novih gostiju ===');
-    await saveGuestData(null, 'red'); // Dodaje gosta sa automatskim nickname i bojom "red"
-    await saveGuestData('gost-1234', 'blue'); // Dodaje gosta sa specifikovanim nickname i bojom "blue"
-    await saveGuestData('gost-1234', 'green'); // Ažurira boju postojećeg gosta
+// Pokreni test i server
+initializeStorage()
+    .then(() => {
+        console.log('Server je spreman!');
+        return testServer(); // Testiranje nakon inicijalizacije
+    })
+    .catch(err => {
+        console.error('Greška pri pokretanju servera:', err);
+    });
 
-    console.log('\n=== Prikaz gostiju nakon izmene ===');
-    await displayAllGuests();
-}).catch(err => {
-    console.error('Greška pri inicijalizaciji storage-a:', err);
-});
-
-// Izvoz funkcija
+// Izvoz funkcija za dodatnu upotrebu
 module.exports = {
     saveGuestData,
-    getGuestData,
     displayAllGuests,
-    initializeStorage
+    initializeStorage,
 };
