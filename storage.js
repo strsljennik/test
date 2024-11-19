@@ -2,26 +2,23 @@ const storage = require('node-persist');
 const path = require('path');
 const fs = require('fs');
 
-let isStorageInitialized = false;
+// Putanja do direktorijuma u kojem će biti sačuvani podaci
+const storageDir = path.join(__dirname, 'cuvati');
 
 // Automatska inicijalizacija skladišta
 async function initializeStorage() {
-    if (isStorageInitialized) return; // Ako je već inicijalizovano, ne ponavljaj.
-
-    const storageDir = path.join(__dirname, 'cuvati');
-
-    // Provera da li direktorijum postoji, ako ne kreiramo ga.
-    if (!fs.existsSync(storageDir)) {
-        console.log('Direktorijum "cuvati" ne postoji. Kreiramo ga...');
-        fs.mkdirSync(storageDir, { recursive: true });
-    }
-
     try {
+        // Ako direktorijum ne postoji, kreiraj ga
+        if (!fs.existsSync(storageDir)) {
+            console.log('Direktorijum "cuvati" ne postoji. Kreiramo ga...');
+            fs.mkdirSync(storageDir, { recursive: true });
+        }
+
+        // Inicijalizacija skladišta sa direktorijumom
         await storage.init({
-            dir: storageDir,
-            forgiveParseErrors: true, // Ignoriši greške pri parsiranju
+            dir: storageDir,  // Putanja do direktorijuma
+            forgiveParseErrors: true,  // Ignoriši greške pri parsiranju
         });
-        isStorageInitialized = true; // Postavi skladište kao inicijalizovano
         console.log('Skladište je uspešno inicijalizovano.');
     } catch (error) {
         console.error('Greška pri inicijalizaciji skladišta:', error);
@@ -115,4 +112,3 @@ module.exports = {
     displayAllGuests,
     initializeStorage,
 };
-
