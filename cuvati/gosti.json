@@ -1,0 +1,10 @@
+{
+    "gost1": {
+        "nickname": "JaneDoe",
+        "color": "red"
+    },
+    "gost2": {
+        "nickname": "JohnDoe",
+        "color": "blue"
+    }
+}
