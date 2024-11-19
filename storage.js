@@ -1,8 +1,7 @@
 const storage = require('node-persist');
+
 // Osiguraj da je storage inicijalizovan pre nego što koristiš bilo koje funkcije
-initializeStorage().then(() => {
-// Inicijalizacija storage-a sa prilagođenim direktorijumom (opciono)
-async function 
+async function initializeStorage() {
     try {
         await storage.init({
             dir: './data', // Folder gde će se podaci čuvati
@@ -56,6 +55,15 @@ async function loadAllGuests() {
         console.error('Greška prilikom učitavanja svih gostiju:', err);
     }
 }
+
+// Inicijalizacija storage-a pre korišćenja drugih funkcija
+initializeStorage().then(() => {
+    // Kada se storage inicijalizuje, možete pozvati druge funkcije
+    // Na primer:
+    // saveGuestData('guest1', 'JohnDoe');
+}).catch(err => {
+    console.error('Greška pri inicijalizaciji storage-a:', err);
+});
 
 // Izvoz funkcija
 module.exports = {
