@@ -1,7 +1,8 @@
 const storage = require('node-persist');
-
+// Osiguraj da je storage inicijalizovan pre nego što koristiš bilo koje funkcije
+initializeStorage().then(() => {
 // Inicijalizacija storage-a sa prilagođenim direktorijumom (opciono)
-async function initializeStorage() {
+async function 
     try {
         await storage.init({
             dir: './data', // Folder gde će se podaci čuvati
