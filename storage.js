@@ -3,6 +3,7 @@ const path = require('path');
 
 let isStorageInitialized = false;
 
+// Inicijalizacija skladišta
 async function initializeStorage() {
     if (isStorageInitialized) 
         return; // Ako je već inicijalizovano, ne ponavljaj
@@ -22,62 +23,33 @@ async function initializeStorage() {
 }
 
 // Sačuvaj podatke gosta
-async function saveGuestData(guestId, nickname, color = 'default') {
+async function saveGuestData(nickname, color = 'default') {
     try {
         const guestData = { nickname, color };
-        await storage.setItem(guestId, guestData); 
-        console.log(`Podaci za gosta ${guestId} su sačuvani:`, guestData);
+        const allGuests = await loadAllGuests() || []; // Učitaj sve goste kao niz
+        allGuests.push(guestData); // Dodaj novog gosta u niz
+        await storage.setItem('guests', allGuests); // Sačuvaj niz gostiju
+        console.log(`Podaci za gosta sa nadimkom ${nickname} su sačuvani:`, guestData);
     } catch (err) {
-        console.error(`Greška prilikom čuvanja podataka za gosta ${guestId}:`, err);
-    }
-}
-
-// Učitaj podatke gosta
-async function loadGuestData(guestId) {
-    try {
-        const guestData = await storage.getItem(guestId); 
-        if (!guestData) {
-            console.warn(`Podaci za gosta ${guestId} nisu pronađeni.`);
-        }
-        return guestData;
-    } catch (err) {
-        console.error(`Greška prilikom učitavanja podataka za gosta ${guestId}:`, err);
-    }
-}
-
-// Obriši podatke gosta
-async function deleteGuestData(guestId) {
-    try {
-        await storage.removeItem(guestId); 
-        console.log(`Podaci za gosta ${guestId} su obrisani.`);
-    } catch (err) {
-        console.error(`Greška prilikom brisanja podataka za gosta ${guestId}:`, err);
+        console.error(`Greška prilikom čuvanja podataka za gosta ${nickname}:`, err);
     }
 }
 
 // Učitaj sve goste
 async function loadAllGuests() {
     try {
-        const allGuestKeys = await storage.keys(); // Učitaj ključeve svih gostiju
-        console.log('Ključevi svih gostiju:', allGuestKeys);
-        const allGuests = {};
-
-        // Za svaku ključu, učitaj podatke
-        for (const key of allGuestKeys) {
-            allGuests[key] = await storage.getItem(key);
-            console.log(`Podaci za ${key}:`, allGuests[key]);
-        }
-
-        return allGuests; // Vraća sve goste kao objekat
+        const allGuests = await storage.getItem('guests'); // Učitaj niz svih gostiju
+        return allGuests || []; // Vraća prazan niz ako nema gostiju
     } catch (err) {
         console.error('Greška prilikom učitavanja svih gostiju:', err);
+        return []; // Vraćaj prazan niz u slučaju greške
     }
 }
 
 // Prikaz svih gostiju kada se server pokrene
 async function displayAllGuests() {
     const guests = await loadAllGuests();
-    if (Object.keys(guests).length === 0) {
+    if (guests.length === 0) {
         console.log('Nema gostiju. Dodajte goste!');
     } else {
         console.log('Svi gosti:', guests);
@@ -95,8 +67,6 @@ initializeStorage().then(() => {
 // Izvoz funkcija
 module.exports = {
     saveGuestData,
-    loadGuestData,
-    deleteGuestData,
     loadAllGuests,
     initializeStorage
 };
