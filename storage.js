@@ -1,7 +1,11 @@
 const storage = require('node-persist');
 const path = require('path');
 
-// Osiguraj da je storage inicijalizovan pre nego što koristiš bilo koje funkcije
+let isStorageInitialized = false;
+async function initializeStorage() {
+    if (isStorageInitialized) {
+        return; // Ako je već inicijalizovano, ne ponavljaj
+    }
 async function  {
     try {
         await storage.init({
