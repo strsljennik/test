@@ -60,5 +60,5 @@ async function loadAllGuests() {
 initializeStorage();
 
 // storage.js
-export { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests };
+module.exports { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests };
 
