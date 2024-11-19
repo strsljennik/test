@@ -11,6 +11,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 connectDB();
+initializeStorage();  // Inicijalizuj storage pre nego što nastavimo sa serverom
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
