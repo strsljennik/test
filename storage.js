@@ -7,17 +7,17 @@ async function initializeStorage() {
     if (isStorageInitialized) 
         return; // Ako je već inicijalizovano, ne ponavljaj
     
-    try {
+  try {
         await storage.init({
-            dir: path.join(__dirname, 'data'), // Folder gde će se podaci čuvati
+            dir: path.join(__dirname, 'gosti'), // Promeni 'data' u 'gosti'
             fileName: 'gosti.json',
             stringify: JSON.stringify, 
             parse: JSON.parse 
         });
-        isStorageInitialized = true; // Postavi status inicijalizacije na istinit
-        console.log('Storage je uspešno inicijalizovan.');
-    } catch (err) {
-        console.error('Greška prilikom inicijalizacije storage-a:', err);
+        isStorageInitialized = true; // Postavi na true nakon uspešne inicijalizacije
+        console.log('Skladište je uspešno inicijalizovano.');
+    } catch (error) {
+        console.error('Greška pri inicijalizaciji skladišta:', error);
     }
 }
 
