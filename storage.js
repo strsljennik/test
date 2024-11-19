@@ -25,14 +25,15 @@ async function initializeStorage() {
     }
 }
 
-// Funkcija za čuvanje podataka gosta
-async function saveGuestData(nickname = null, color = null) {
+// Funkcija za dodavanje ili ažuriranje podataka o gostu
+async function saveGuestData(nickname, color) {
     try {
         await initializeStorage();
 
-        // Generiši `nickname` ako nije prosleđen
+        // Uveri se da je nickname jedinstven
         if (!nickname) {
-            nickname = `gost-${Math.floor(1000 + Math.random() * 9000)}`;
+            console.error('[ERROR] Nickname mora biti prosleđen!');
+            return;
         }
 
         // Kreiraj objekat s novim vrednostima
@@ -41,21 +42,17 @@ async function saveGuestData(nickname = null, color = null) {
             color: color || 'default',
         };
 
-        // Sačuvaj ažurirane podatke (u ovom slučaju, uvek će se prepisivati)
+        // Sačuvaj ažurirane podatke
         await storage.setItem(nickname, guestData);
         console.log(`[INFO] Podaci za gosta ${nickname} su sačuvani:`, guestData);
-        
-        // Opcionalno, možete prikazati sve goste nakon ažuriranja
-        await displayAllGuests();
     } catch (err) {
         console.error(`[ERROR] Greška prilikom čuvanja podataka za gosta ${nickname}:`, err);
     }
 }
 
-// Funkcija za prikaz svih gostiju
-async function displayAllGuests() {
+// Funkcija za učitavanje svih gostiju
+async function loadAllGuests() {
     try {
-        await initializeStorage();
         const keys = await storage.keys();
 
         if (keys.length === 0) {
@@ -63,40 +60,30 @@ async function displayAllGuests() {
             return;
         }
 
-        console.log('[INFO] Svi gosti:');
-        const guestPromises = keys.map(async key => {
+        console.log('[INFO] Svi gosti nakon restarta:');
+        const guestPromises = keys.map(async (key) => {
             const guestData = await storage.getItem(key);
             console.log(`${key}:`, guestData);
         });
 
         await Promise.all(guestPromises);
     } catch (err) {
-        console.error('[ERROR] Greška prilikom prikaza svih gostiju:', err);
+        console.error('[ERROR] Greška prilikom učitavanja svih gostiju:', err);
     }
 }
 
 // Testiranje servera
 async function testServer() {
-    try {
-        console.log('=== Testiranje servera ===');
-        await saveGuestData(null, 'blue'); // Automatski nickname, boja "blue"
-        await saveGuestData('gost-1234', 'green'); // Ručno dodavanje
-        await saveGuestData('gost-1234', 'yellow'); // Ažuriranje boje
-        await displayAllGuests(); // Prikaz svih gostiju
-    } catch (error) {
-        console.error('[ERROR] Greška prilikom testiranja servera:', error);
-    }
+    await saveGuestData('gost-1', 'plava');
+    await saveGuestData('gost-2', 'crvena');
+    await loadAllGuests();
 }
 
-// Pokreni test i server
+// Pokreni server
 async function startServer() {
-    try {
-        await initializeStorage();
-        console.log('[INFO] Server je spreman!');
-        await testServer();
-    } catch (err) {
-        console.error('[ERROR] Greška pri pokretanju servera:', err);
-    }
+    await initializeStorage();
+    console.log('[INFO] Server je spreman!');
+    await loadAllGuests();
 }
 
 // Pokreni server
@@ -105,6 +92,6 @@ startServer();
 // Izvoz funkcija za dodatnu upotrebu
 module.exports = {
     saveGuestData,
-    displayAllGuests,
+    loadAllGuests,
     initializeStorage,
 };
