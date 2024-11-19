@@ -10,7 +10,7 @@ async function initializeStorage() {
     try {
         await storage.init({
             dir: path.join(__dirname, 'data'), // Folder gde će se podaci čuvati
-            fileName: 'gosti',
+            fileName: 'gosti.json',
             stringify: JSON.stringify, 
             parse: JSON.parse 
         });
