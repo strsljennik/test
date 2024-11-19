@@ -49,7 +49,7 @@ async function deleteGuestData(guestId) {
 // Učitaj sve goste
 async function loadAllGuests() {
     try {
-        const allGuests = await storage.values(); // Učitavanje svih vrednosti
+        const allGuests = await storage.getAll(); // Učitavanje svih vrednosti
         return allGuests;
     } catch (err) {
         console.error('Greška prilikom učitavanja svih gostiju:', err);
