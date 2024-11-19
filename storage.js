@@ -1,10 +1,15 @@
 const storage = require('node-persist');
+const path = require('path');
 
 // Osiguraj da je storage inicijalizovan pre nego što koristiš bilo koje funkcije
 async function initializeStorage() {
     try {
         await storage.init({
-            dir: './data', // Folder gde će se podaci čuvati
+            dir: path.join(__dirname, 'data'), // Folder gde će se podaci čuvati
+            // Postavi naziv datoteke
+            fileName: 'gosti.json',
+            stringify: JSON.stringify, // Kako čuvamo podatke pravimo JSON string
+            parse: JSON.parse // Kako učitavamo podatke pretvaramo JSON string u objekat
         });
         console.log('Storage je uspešno inicijalizovan.');
     } catch (err) {
@@ -56,11 +61,16 @@ async function loadAllGuests() {
     }
 }
 
+// Prikaz svih gostiju kada se server pokrene
+async function displayAllGuests() {
+    const guests = await loadAllGuests();
+    console.log('Svi gosti:', guests);
+}
+
 // Inicijalizacija storage-a pre korišćenja drugih funkcija
 initializeStorage().then(() => {
-    // Kada se storage inicijalizuje, možete pozvati druge funkcije
-    // Na primer:
-    // saveGuestData('guest1', 'JohnDoe');
+    // Prikaz svih gostiju nakon inicijalizacije
+    displayAllGuests();
 }).catch(err => {
     console.error('Greška pri inicijalizaciji storage-a:', err);
 });
