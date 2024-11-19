@@ -2,11 +2,11 @@ const storage = require('node-persist');
 const path = require('path');
 
 let isStorageInitialized = false;
+
 async function initializeStorage() {
     if (isStorageInitialized) 
         return; // Ako je već inicijalizovano, ne ponavljaj
-    }
-async function  {
+    
     try {
         await storage.init({
             dir: path.join(__dirname, 'data'), // Folder gde će se podaci čuvati
@@ -14,6 +14,7 @@ async function  {
             stringify: JSON.stringify, 
             parse: JSON.parse 
         });
+        isStorageInitialized = true; // Postavi status inicijalizacije na istinit
         console.log('Storage je uspešno inicijalizovan.');
     } catch (err) {
         console.error('Greška prilikom inicijalizacije storage-a:', err);
