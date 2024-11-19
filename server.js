@@ -13,12 +13,8 @@ const io = socketIo(server);
 // Inicijalizacija baze podataka i storage-a
 async function initializeServer() {
     await connectDB(); // Povezivanje sa MongoDB
-    await initializeStorage(); // Inicijalizacija node-persist storage-a
-    console.log('Server i baza podataka su inicijalizovani.');
+     console.log('Server i baza podataka su inicijalizovani.');
 }
-
-initializeServer();
-
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
