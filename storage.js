@@ -3,7 +3,7 @@ const path = require('path');
 
 let isStorageInitialized = false;
 async function initializeStorage() {
-    if (isStorageInitialized) {
+    if (isStorageInitialized) 
         return; // Ako je već inicijalizovano, ne ponavljaj
     }
 async function  {
