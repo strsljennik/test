@@ -1,6 +1,6 @@
-import storage from 'node-persist';
+const storage = require('node-persist');
 
-// Inicijalizacija storage-a sa prilagođenim direktorijumom (opciono)
+// Inicijalizacija storage-a
 async function initializeStorage() {
     try {
         await storage.init({
@@ -60,4 +60,4 @@ async function loadAllGuests() {
 initializeStorage();
 
 // Izvoz funkcija za korišćenje u drugim fajlovima
-export { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests };
+module.exports = { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests };
