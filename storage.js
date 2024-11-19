@@ -6,8 +6,8 @@ let isStorageInitialized = false;
 async function initializeStorage() {
     if (isStorageInitialized) 
         return; // Ako je već inicijalizovano, ne ponavljaj
-    
-  try {
+
+    try {
         await storage.init({
             dir: path.join(__dirname, 'gosti'), 
             fileName: 'gosti.json',
@@ -26,7 +26,7 @@ async function saveGuestData(guestId, nickname, color = 'default') {
     try {
         const guestData = { nickname, color };
         await storage.setItem(guestId, guestData); 
-        console.log(`Podaci za gosta ${guestId} su sačuvani.`);
+        console.log(`Podaci za gosta ${guestId} su sačuvani:`, guestData);
     } catch (err) {
         console.error(`Greška prilikom čuvanja podataka za gosta ${guestId}:`, err);
     }
@@ -55,33 +55,39 @@ async function deleteGuestData(guestId) {
     }
 }
 
-
-async function loadAllGuest() {
+// Učitaj sve goste
+async function loadAllGuests() {
     try {
         const allGuestKeys = await storage.keys(); // Učitaj ključeve svih gostiju
-        const allGuest = {};
+        console.log('Ključevi svih gostiju:', allGuestKeys);
+        const allGuests = {};
 
         // Za svaku ključu, učitaj podatke
         for (const key of allGuestKeys) {
-            allGuest[key] = await storage.getItem(key);
+            allGuests[key] = await storage.getItem(key);
+            console.log(`Podaci za ${key}:`, allGuests[key]);
         }
 
-        return allGuest; // Vraća sve goste kao objekat
+        return allGuests; // Vraća sve goste kao objekat
     } catch (err) {
         console.error('Greška prilikom učitavanja svih gostiju:', err);
     }
 }
 
 // Prikaz svih gostiju kada se server pokrene
-async function displayAllGuest() {
+async function displayAllGuests() {
     const guests = await loadAllGuests();
-    console.log('Svi gosti:', guest);
+    if (Object.keys(guests).length === 0) {
+        console.log('Nema gostiju. Dodajte goste!');
+    } else {
+        console.log('Svi gosti:', guests);
+    }
 }
 
 // Inicijalizacija storage-a pre korišćenja drugih funkcija
 initializeStorage().then(() => {
     // Prikaz svih gostiju nakon inicijalizacije
-    displayAllGuest();
+    displayAllGuests();
 }).catch(err => {
     console.error('Greška pri inicijalizaciji storage-a:', err);
 });
