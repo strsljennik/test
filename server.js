@@ -3,7 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
-import { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests } from './storage.js';
+const { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests } = require('./storage');
 require('dotenv').config();
 
 const app = express();
