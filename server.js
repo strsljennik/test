@@ -3,14 +3,21 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
-const { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests } = require('./storage');
+const { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests, initializeStorage } = require('./storage');
 require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-connectDB();
+// Inicijalizacija baze podataka i storage-a
+async function initializeServer() {
+    await connectDB(); // Povezivanje sa MongoDB
+    await initializeStorage(); // Inicijalizacija node-persist storage-a
+    console.log('Server i baza podataka su inicijalizovani.');
+}
+
+initializeServer();
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
@@ -97,6 +104,7 @@ io.on('connection', (socket) => {
 
 });
 
+// Funkcija za generisanje jedinstvenih brojeva za goste
 function generateUniqueNumber() {
     let number;
     do {
@@ -107,19 +115,21 @@ function generateUniqueNumber() {
 }
 
 // Sačuvaj gosta
-await saveGuestData('guest1', 'Gost1', '#ff0000');
+async function testStorage() {
+    await saveGuestData('guest1', 'Gost1', '#ff0000');
+    const guestData = await loadGuestData('guest1');
+    console.log(guestData); // { nickname: 'Gost1', color: '#ff0000' }
 
-// Učitaj podatke gosta
-const guestData = await loadGuestData('guest1');
-console.log(guestData); // { nickname: 'Gost1', color: '#ff0000' }
+    // Obriši gosta
+    await deleteGuestData('guest1');
 
-// Obriši gosta
-await deleteGuestData('guest1');
+    // Učitaj sve goste
+    const allGuests = await loadAllGuests();
+    console.log(allGuests);
+}
 
-// Učitaj sve goste
-const allGuests = await loadAllGuests();
-console.log(allGuests);
-
+// Testiranje asinhronih funkcija za storage
+testStorage();
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
