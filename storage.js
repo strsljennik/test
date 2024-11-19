@@ -20,6 +20,7 @@ async function initializeStorage() {
             forgiveParseErrors: true,
         });
         console.log('[INFO] Skladište je uspešno inicijalizovano.');
+        console.log(`[INFO] Skladište se nalazi u direktorijumu: ${storageDir}`); // Dodan log za putanju
     } catch (error) {
         console.error('[ERROR] Greška pri inicijalizaciji skladišta:', error);
     }
