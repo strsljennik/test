@@ -3,18 +3,16 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
-const { saveGuestData, loadGuestData, deleteGuestData, loadAllGuests, initializeStorage } = require('./storage');
+const { initializeStorage, saveGuestData, loadGuestData } = require('./storage');
 require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Inicijalizacija baze podataka i storage-a
-async function initializeServer() {
-    await connectDB(); // Povezivanje sa MongoDB
-     console.log('Server i baza podataka su inicijalizovani.');
-}
+connectDB();
+initializeStorage();  // Inicijalizuj storage pre nego što nastavimo sa serverom
+
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
@@ -25,9 +23,8 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-// Niz sa ovlašćenim korisnicima
 const authorizedUsers = new Set(['Radio Galaksija', 'ZI ZU', '__X__']);
-const bannedUsers = new Set(); // Banovani korisnici
+const bannedUsers = new Set();
 let guests = {};
 let assignedNumbers = new Set();
 
@@ -35,13 +32,14 @@ io.on('connection', (socket) => {
     const uniqueNumber = generateUniqueNumber();
     const nickname = `Gost-${uniqueNumber}`;
     guests[socket.id] = nickname;
+
+    saveGuestData(socket.id, nickname);  // Spasi podatke gosta u storage
     console.log(`${nickname} se povezao.`);
 
     socket.broadcast.emit('newGuest', nickname);
     io.emit('updateGuestList', Object.values(guests));
 
-    // Provera da li je korisnik ovlašćen
-    socket.on('userLoggedIn', (username) => {
+    socket.on('userLoggedIn', async (username) => {
         if (authorizedUsers.has(username)) {
             guests[socket.id] = `${username} (Admin)`;
             console.log(`${username} je autentifikovan kao admin.`);
@@ -49,6 +47,7 @@ io.on('connection', (socket) => {
             guests[socket.id] = username;
             console.log(`${username} se prijavio kao gost.`);
         }
+        await saveGuestData(socket.id, guests[socket.id]);  // Ažuriraj podatke gosta u storage
         io.emit('updateGuestList', Object.values(guests));
     });
 
@@ -65,14 +64,14 @@ io.on('connection', (socket) => {
         io.emit('chatMessage', messageToSend);
     });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
         console.log(`${guests[socket.id]} se odjavio.`);
         assignedNumbers.delete(parseInt(guests[socket.id].split('-')[1], 10));
+        await saveGuestData(socket.id, null);  // Obrisi podatke gosta kad se odjavi
         delete guests[socket.id];
         io.emit('updateGuestList', Object.values(guests));
     });
 
-    // Događaj za banovanje korisnika
     socket.on('banUser', (userIdToBan) => {
         if (!authorizedUsers.has(guests[socket.id].split(' ')[0])) {
             socket.emit('error', 'Nemate ovlašćenje za banovanje korisnika.');
@@ -85,7 +84,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Događaj za odbanovanje korisnika
     socket.on('unbanUser', (userIdToUnban) => {
         if (!authorizedUsers.has(guests[socket.id].split(' ')[0])) {
             socket.emit('error', 'Nemate ovlašćenje za odbanovanje korisnika.');
@@ -97,10 +95,8 @@ io.on('connection', (socket) => {
             console.log(`Korisnik ${userIdToUnban} je oslobođen od strane ${guests[socket.id]}.`);
         }
     });
-
 });
 
-// Funkcija za generisanje jedinstvenih brojeva za goste
 function generateUniqueNumber() {
     let number;
     do {
@@ -109,23 +105,6 @@ function generateUniqueNumber() {
     assignedNumbers.add(number);
     return number;
 }
-
-// Sačuvaj gosta
-async function testStorage() {
-    await saveGuestData('guest1', 'Gost1', '#ff0000');
-    const guestData = await loadGuestData('guest1');
-    console.log(guestData); // { nickname: 'Gost1', color: '#ff0000' }
-
-    // Obriši gosta
-    await deleteGuestData('guest1');
-
-    // Učitaj sve goste
-    const allGuests = await loadAllGuests();
-    console.log(allGuests);
-}
-
-// Testiranje asinhronih funkcija za storage
-testStorage();
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
