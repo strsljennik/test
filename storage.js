@@ -27,7 +27,7 @@ async function initializeStorage() {
 }
 
 // Funkcija za dodavanje ili ažuriranje podataka o gostu
-async function saveGuestData(nickname, color) {
+async function saveGuestData(socketUsername, nickname, color) {
     try {
         await initializeStorage();
 
@@ -44,11 +44,11 @@ async function saveGuestData(nickname, color) {
         };
 
         // Logovanje podataka pre nego što ih sačuvamo
-        console.log(`[INFO] Sačuvaj podatke za gosta ${nickname}:`, guestData);
+        console.log(`[INFO] Sačuvaj podatke za gosta ${nickname} (socket username: ${socketUsername}):`, guestData);
 
-        // Sačuvaj ažurirane podatke
-        await storage.setItem(nickname, guestData);
-        console.log(`[INFO] Podaci za gosta ${nickname} su sačuvani:`, guestData);
+        // Sačuvaj ažurirane podatke pod ključem "socket username"
+        await storage.setItem(socketUsername, guestData);
+        console.log(`[INFO] Podaci za gosta ${nickname} sa socket username "${socketUsername}" su sačuvani:`, guestData);
     } catch (err) {
         console.error(`[ERROR] Greška prilikom čuvanja podataka za gosta ${nickname}:`, err);
     }
@@ -85,8 +85,8 @@ async function loadAllGuests() {
 
 // Testiranje servera
 async function testServer() {
-    await saveGuestData('gost-1', 'plava');
-    await saveGuestData('gost-2', 'crvena');
+    await saveGuestData('socket1', 'gost-1', 'plava');
+    await saveGuestData('socket2', 'gost-2', 'crvena');
     await loadAllGuests();
 }
 
