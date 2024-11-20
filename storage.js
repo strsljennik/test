@@ -19,7 +19,8 @@ async function initializeStorage() {
             dir: storageDir, // koristi lokalni direktorijum 'cuvati'
             forgiveParseErrors: true, // ignoriši greške prilikom parsiranja podataka
             ttl: false, // isključuje automatsko podešavanje vremena isteka podataka
-            encrypt: false // isključuje šifrovanje, podatke čuva u plain text formatu
+            encrypt: false, // isključuje šifrovanje, podatke čuva u plain text formatu
+            raw: true, // onemogućava heširanje ključeva
         });
         console.log('[INFO] Skladište je uspešno inicijalizovano.');
         console.log(`[INFO] Skladište se nalazi u direktorijumu: ${storageDir}`);
@@ -95,8 +96,8 @@ async function testServer() {
     const uniqueNumber1 = 1234; // Ovo bi trebalo da bude broj generisan od servera
     const uniqueNumber2 = 5678; // Drugi broj generisan od servera
 
-    await saveGuestData(uniqueNumber1, 'gost-1', 'plava');
-    await saveGuestData(uniqueNumber2, 'gost-2', 'crvena');
+    await saveGuestData(uniqueNumber1, 'Gost-1', 'plava');
+    await saveGuestData(uniqueNumber2, 'Gost-2', 'crvena');
     await loadAllGuests();
 }
 
