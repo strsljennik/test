@@ -30,30 +30,30 @@ async function initializeStorage() {
 }
 
 // Funkcija za dodavanje ili ažuriranje podataka o gostu
-async function saveGuestData(uniqueNumber, nickname, color) {
+async function saveGuestData(uniqueNumber, username, color) {
     try {
         await initializeStorage();
 
-        // Provera da li je nickname validan
-        if (!nickname || typeof nickname !== 'string') {
-            console.error('[ERROR] Nickname mora biti prosleđen i mora biti tipa string!');
+        // Provera da li je usernamevalidan
+        if (!nickname || typeof username !== 'string') {
+            console.error('[ERROR] username mora biti prosleđen i mora biti tipa string!');
             return;
         }
 
         // Kreiraj objekat s novim vrednostima
         const guestData = {
-            nik: nickname,
+            nik: username,
             color: color || 'default',  // Ako boja nije prosleđena, koristi 'default'
         };
 
         // Logovanje podataka pre nego što ih sačuvamo
-        console.log(`[INFO] Sačuvaj podatke za gosta ${nickname} (key: ${uniqueNumber}):`, guestData);
+        console.log(`[INFO] Sačuvaj podatke za gosta ${username} (key: ${uniqueNumber}):`, guestData);
 
         // Sačuvaj ažurirane podatke pod ključem koji je generisan
         await storage.setItem(uniqueNumber, guestData);
-        console.log(`[INFO] Podaci za gosta ${nickname} sa ključem "${uniqueNumber}" su sačuvani:`, guestData);
+        console.log(`[INFO] Podaci za gosta ${username} sa ključem "${uniqueNumber}" su sačuvani:`, guestData);
     } catch (err) {
-        console.error(`[ERROR] Greška prilikom čuvanja podataka za gosta ${nickname}:`, err);
+        console.error(`[ERROR] Greška prilikom čuvanja podataka za gosta ${username}:`, err);
     }
 }
 
