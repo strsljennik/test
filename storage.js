@@ -29,7 +29,7 @@ async function initializeStorage() {
 }
 
 // Funkcija za dodavanje ili ažuriranje podataka o gostu
-async function saveGuestData(socketUsername, nickname, color) {
+async function saveGuestData(uniqueNumber, nickname, color) {
     try {
         await initializeStorage();
 
@@ -46,11 +46,11 @@ async function saveGuestData(socketUsername, nickname, color) {
         };
 
         // Logovanje podataka pre nego što ih sačuvamo
-        console.log(`[INFO] Sačuvaj podatke za gosta ${nickname} (socket username: ${socketUsername}):`, guestData);
+        console.log(`[INFO] Sačuvaj podatke za gosta ${nickname} (key: ${uniqueNumber}):`, guestData);
 
-        // Sačuvaj ažurirane podatke pod ključem "socket username"
-        await storage.setItem(socketUsername, guestData);
-        console.log(`[INFO] Podaci za gosta ${nickname} sa socket username "${socketUsername}" su sačuvani:`, guestData);
+        // Sačuvaj ažurirane podatke pod ključem koji je generisan
+        await storage.setItem(uniqueNumber, guestData);
+        console.log(`[INFO] Podaci za gosta ${nickname} sa ključem "${uniqueNumber}" su sačuvani:`, guestData);
     } catch (err) {
         console.error(`[ERROR] Greška prilikom čuvanja podataka za gosta ${nickname}:`, err);
     }
@@ -92,8 +92,11 @@ async function loadAllGuests() {
 
 // Testiranje servera
 async function testServer() {
-    await saveGuestData('socket1', 'gost-1', 'plava');
-    await saveGuestData('socket2', 'gost-2', 'crvena');
+    const uniqueNumber1 = 1234; // Ovo bi trebalo da bude broj generisan od servera
+    const uniqueNumber2 = 5678; // Drugi broj generisan od servera
+
+    await saveGuestData(uniqueNumber1, 'gost-1', 'plava');
+    await saveGuestData(uniqueNumber2, 'gost-2', 'crvena');
     await loadAllGuests();
 }
 
