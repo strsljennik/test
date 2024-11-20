@@ -18,6 +18,8 @@ async function initializeStorage() {
         await storage.init({
             dir: storageDir, // koristi lokalni direktorijum 'cuvati'
             forgiveParseErrors: true, // ignoriši greške prilikom parsiranja podataka
+            ttl: false, // isključuje automatsko podešavanje vremena isteka podataka
+            encrypt: false // isključuje šifrovanje, podatke čuva u plain text formatu
         });
         console.log('[INFO] Skladište je uspešno inicijalizovano.');
         console.log(`[INFO] Skladište se nalazi u direktorijumu: ${storageDir}`);
