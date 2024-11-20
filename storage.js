@@ -69,15 +69,20 @@ async function loadAllGuests() {
         const guestPromises = keys.map(async (key) => {
             const guestData = await storage.getItem(key);
 
+            // Ako podaci nisu pronađeni, postavi ih na prazan string
             if (!guestData) {
                 console.warn(`[WARN] Podaci za gosta ${key} nisu pronađeni ili su nevalidni.`);
-                return;
+                return `${key}: Nema podataka`; // Vraćamo string ako nema podataka
             }
 
-            console.log(`${key}:`, guestData);
+            // Vraćamo podatke kao string
+            return `${key}: ${JSON.stringify(guestData)}`;
         });
 
-        await Promise.all(guestPromises);
+        // Obrađujemo sve goste i logujemo ih
+        const guestDataStrings = await Promise.all(guestPromises);
+        guestDataStrings.forEach(data => console.log(data));
+
     } catch (err) {
         console.error('[ERROR] Greška prilikom učitavanja svih gostiju:', err);
     }
