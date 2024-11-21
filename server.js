@@ -10,12 +10,14 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+// Inicijalizacije
 connectDB();
 initializeStorage();  // Inicijalizuj storage pre nego što nastavimo sa serverom
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 
+// Rute
 app.post('/register', (req, res) => register(req, res, io));
 app.post('/login', (req, res) => login(req, res, io));
 
@@ -28,6 +30,16 @@ const bannedUsers = new Set();
 let guests = {};
 let assignedNumbers = new Set();
 
+// Generisanje jedinstvenog broja za gosta
+function generateUniqueNumber() {
+    let number;
+    do {
+        number = Math.floor(Math.random() * 8889) + 1111;
+    } while (assignedNumbers.has(number));
+    assignedNumbers.add(number);
+    return number;
+}
+
 io.on('connection', (socket) => {
     const uniqueNumber = generateUniqueNumber();
     const nickname = `Gost-${uniqueNumber}`;
@@ -39,6 +51,7 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('newGuest', nickname);
     io.emit('updateGuestList', Object.values(guests));
 
+    // Obrada logovanja korisnika
     socket.on('userLoggedIn', async (username) => {
         if (authorizedUsers.has(username)) {
             guests[socket.id] = `${username} (Admin)`;
@@ -51,6 +64,7 @@ io.on('connection', (socket) => {
         io.emit('updateGuestList', Object.values(guests));
     });
 
+    // Obrada poruka u chatu
     socket.on('chatMessage', (msgData) => {
         const time = new Date().toLocaleTimeString();
         const messageToSend = {
@@ -64,6 +78,7 @@ io.on('connection', (socket) => {
         io.emit('chatMessage', messageToSend);
     });
 
+    // Obrada odjave gosta
     socket.on('disconnect', async () => {
         console.log(`${guests[socket.id]} se odjavio.`);
         assignedNumbers.delete(parseInt(guests[socket.id].split('-')[1], 10));
@@ -71,15 +86,7 @@ io.on('connection', (socket) => {
         delete guests[socket.id];
         io.emit('updateGuestList', Object.values(guests));
     });
-
-function generateUniqueNumber() {
-    let number;
-    do {
-        number = Math.floor(Math.random() * 8889) + 1111;
-    } while (assignedNumbers.has(number));
-    assignedNumbers.add(number);
-    return number;
-}
+});
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
