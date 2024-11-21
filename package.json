@@ -4,6 +4,7 @@
   "main": "ffmpeg.js",
   "dependencies": {
     "uuid": "^8.0.0",
+    "dotenv": "^10.0.0",
     "abbrev": "^1.1.1",
     "accepts": "^1.3.8",
     "agent-base": "^6.0.2",
