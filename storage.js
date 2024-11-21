@@ -30,19 +30,18 @@ async function initializeStorage() {
 }
 
 // Funkcija za dodavanje ili ažuriranje podataka o gostu
-async function saveGuestData(uuid, socketId, nickname, color, ipAddress) {
+async function saveGuestData(uuid, nickname, color, ipAddress) {
     try {
         await initializeStorage();
 
         // Provera da li su podaci validni
-        if (!uuid || !socketId || !nickname) {
-            console.error('[ERROR] UUID, Socket ID i Nickname moraju biti prosleđeni!');
+        if (!uuid || !nickname) {
+            console.error('[ERROR] UUID i Nickname moraju biti prosleđeni!');
             return;
         }
 
         // Kreiraj objekat s novim vrednostima
         const guestData = {
-            socketId: socketId,
             nickname: nickname,
             color: color || 'default',  // Ako boja nije prosleđena, koristi 'default'
             ipAddress: ipAddress || 'unknown', // Ako IP nije prosleđen, koristi 'unknown'
@@ -146,8 +145,8 @@ async function testServer() {
     const uuid1 = '1234-uuid'; // Ovo bi trebalo da bude UUID generisan od servera
     const uuid2 = '5678-uuid'; // Drugi UUID generisan od servera
 
-    await saveGuestData(uuid1, 'socketId123', 'Gost-1', 'plava', '192.168.1.1');
-    await saveGuestData(uuid2, 'socketId456', 'Gost-2', 'crvena', '192.168.1.2');
+    await saveGuestData(uuid1, 'Gost-1', 'plava', '192.168.1.1');
+    await saveGuestData(uuid2, 'Gost-2', 'crvena', '192.168.1.2');
     await loadAllGuests();
 }
 
