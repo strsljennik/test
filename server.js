@@ -25,14 +25,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-let guests = {};
-
-io.on('connection', async (socket) => {
-    const uuid = uuidv4();  // Generiši UUID za novog gosta
-    const nickname = `Gost-${uuid}`;  // Korišćenje UUID kao nickname
-    guests[socket.id] = nickname;
-
-    await saveGuestData(uuid, nickname);  // Spasi podatke gosta u storage
+  await saveGuestData(uuid, nickname);  // Spasi podatke gosta u storage
     console.log(`${nickname} se povezao.`);
 
     io.emit('newGuest', nickname);  // Emituj novog gosta svim korisnicima
