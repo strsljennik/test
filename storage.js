@@ -41,10 +41,6 @@ async function saveGuestData(uuid, username, color) {
     try {
         await initializeStorage();
 
-        // Provera da li je username validan
-        if (!username || typeof username !== 'string') {
-            console.error('[ERROR] username mora biti prosleđen i mora biti tipa string!');
-            return;
         }
 
         // Kreiraj objekat s novim vrednostima
