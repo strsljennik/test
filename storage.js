@@ -30,33 +30,35 @@ async function initializeStorage() {
 }
 
 // Funkcija za dodavanje ili ažuriranje podataka o gostu
-async function saveGuestData(uniqueNumber, username, color) {
+async function saveGuestData(uuid, socketId, nickname, color, ipAddress) {
     try {
         await initializeStorage();
 
-        // Provera da li je username validan
-        if (!username || typeof username !== 'string') {
-            console.error('[ERROR] username mora biti prosleđen i mora biti tipa string!');
+        // Provera da li su podaci validni
+        if (!uuid || !socketId || !nickname) {
+            console.error('[ERROR] UUID, Socket ID i Nickname moraju biti prosleđeni!');
             return;
         }
 
         // Kreiraj objekat s novim vrednostima
         const guestData = {
-            nik: username,
+            socketId: socketId,
+            nickname: nickname,
             color: color || 'default',  // Ako boja nije prosleđena, koristi 'default'
+            ipAddress: ipAddress || 'unknown', // Ako IP nije prosleđen, koristi 'unknown'
         };
 
         // Logovanje podataka pre nego što ih sačuvamo
-        console.log(`[INFO] Sačuvaj podatke za gosta ${username} (key: ${uniqueNumber}):`, guestData);
+        console.log(`[INFO] Sačuvaj podatke za gosta ${nickname} (UUID: ${uuid}):`, guestData);
 
         // Prvo obriši stare podatke pre nego što sačuvaš nove
-        await storage.removeItem(uniqueNumber);
+        await storage.removeItem(uuid);
 
-        // Sačuvaj ažurirane podatke pod ključem koji je generisan
-        await storage.setItem(uniqueNumber, guestData);
-        console.log(`[INFO] Podaci za gosta ${username} sa ključem "${uniqueNumber}" su sačuvani:`, guestData);
+        // Sačuvaj ažurirane podatke pod UUID ključem
+        await storage.setItem(uuid, guestData);
+        console.log(`[INFO] Podaci za gosta ${nickname} sa UUID-om "${uuid}" su sačuvani:`, guestData);
     } catch (err) {
-        console.error(`[ERROR] Greška prilikom čuvanja podataka za gosta ${username}:`, err);
+        console.error(`[ERROR] Greška prilikom čuvanja podataka za gosta ${nickname}:`, err);
     }
 }
 
@@ -95,16 +97,16 @@ async function loadAllGuests() {
 }
 
 // Funkcija za učitavanje specifičnog gosta
-async function loadGuestDataByKey(key) {
+async function loadGuestDataByKey(uuid) {
     try {
-        const guestData = await storage.getItem(key);
+        const guestData = await storage.getItem(uuid);
         if (guestData) {
             console.log('[INFO] Podaci za gosta:', guestData);
         } else {
-            console.log(`[INFO] Nema podataka za gosta sa ključem: ${key}`);
+            console.log(`[INFO] Nema podataka za gosta sa UUID-om: ${uuid}`);
         }
     } catch (err) {
-        console.error(`[ERROR] Greška prilikom učitavanja podataka za gosta sa ključem: ${key}`, err);
+        console.error(`[ERROR] Greška prilikom učitavanja podataka za gosta sa UUID-om: ${uuid}`, err);
     }
 }
 
@@ -115,7 +117,7 @@ setInterval(async () => {
         console.log('[INFO] Brisanje starih podataka...');
         for (const key of keys) {
             await storage.removeItem(key);  // Brišemo podatke za svakog gosta
-            console.log(`[INFO] Obrisani podaci za gosta sa ključem: ${key}`);
+            console.log(`[INFO] Obrisani podaci za gosta sa UUID-om: ${key}`);
         }
     }
     console.log('[INFO] Ažurirani podaci o gostima.');
@@ -123,11 +125,11 @@ setInterval(async () => {
 
 // Testiranje servera
 async function testServer() {
-    const uniqueNumber1 = 1234; // Ovo bi trebalo da bude broj generisan od servera
-    const uniqueNumber2 = 5678; // Drugi broj generisan od servera
+    const uuid1 = '1234-uuid'; // Ovo bi trebalo da bude UUID generisan od servera
+    const uuid2 = '5678-uuid'; // Drugi UUID generisan od servera
 
-    await saveGuestData(uniqueNumber1, 'Gost-1', 'plava');
-    await saveGuestData(uniqueNumber2, 'Gost-2', 'crvena');
+    await saveGuestData(uuid1, 'socketId123', 'Gost-1', 'plava', '192.168.1.1');
+    await saveGuestData(uuid2, 'socketId456', 'Gost-2', 'crvena', '192.168.1.2');
     await loadAllGuests();
 }
 
