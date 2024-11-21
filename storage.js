@@ -30,6 +30,12 @@ async function initializeStorage() {
     }
 }
 
+// Funkcija za generisanje nasumičnog broja za ime gosta
+function generateGuestNickname() {
+    const randomNumber = Math.floor(Math.random() * (9999 - 1111 + 1)) + 1111; // Nasumičan broj između 1111 i 9999
+    return `Gost-${randomNumber}`;
+}
+
 // Funkcija za dodavanje ili ažuriranje podataka o gostu
 async function saveGuestData(uuid, username, color) {
     try {
@@ -127,8 +133,11 @@ async function testServer() {
     const uuid1 = uuidv4(); // Generisanje UUID za prvog gosta
     const uuid2 = uuidv4(); // Generisanje UUID za drugog gosta
 
-    await saveGuestData(uuid1, 'Gost-1', 'plava');
-    await saveGuestData(uuid2, 'Gost-2', 'crvena');
+    const guestNickname1 = generateGuestNickname(); // Generisanje imena gosta
+    const guestNickname2 = generateGuestNickname(); // Generisanje imena gosta
+
+    await saveGuestData(uuid1, guestNickname1, 'plava');
+    await saveGuestData(uuid2, guestNickname2, 'crvena');
     await loadAllGuests();
 }
 
