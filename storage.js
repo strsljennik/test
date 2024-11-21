@@ -110,18 +110,36 @@ async function loadGuestDataByKey(uuid) {
     }
 }
 
-// Funkcija koja čisti sve podatke na svakih 1 minut
+// Funkcija koja čisti sve podatke svakih 30 minuta, ali čuva poslednje stanje
 setInterval(async () => {
     const keys = await storage.keys();
     if (keys.length > 0) {
         console.log('[INFO] Brisanje starih podataka...');
+
+        // Lista trenutno aktivnih gostiju
+        const activeGuests = await getActiveGuests();  // Ovaj metod mora da bude implementiran prema tvojoj logici za praćenje aktivnih gostiju
+
         for (const key of keys) {
-            await storage.removeItem(key);  // Brišemo podatke za svakog gosta
-            console.log(`[INFO] Obrisani podaci za gosta sa UUID-om: ${key}`);
+            // Čuvanje podataka za aktivne goste
+            if (activeGuests.includes(key)) {
+                console.log(`[INFO] Ostavljen podatak za gosta sa UUID-om: ${key}`);
+            } else {
+                // Brišemo podatke za neaktivne goste
+                await storage.removeItem(key);  
+                console.log(`[INFO] Obrisani podaci za gosta sa UUID-om: ${key}`);
+            }
         }
     }
     console.log('[INFO] Ažurirani podaci o gostima.');
-}, 60 * 1000);  // 60 * 1000 ms = 1 minut
+}, 30 * 60 * 1000);  // 30 minuta
+
+// Funkcija koja vraća listu aktivnih gostiju (primer, moraš da implementiraš prema tvom kontekstu)
+async function getActiveGuests() {
+    const keys = await storage.keys();
+    const activeGuests = [];  // Ovde trebaš logiku za identifikovanje koji su gosti aktivni
+    // Na primer, koristiš socket ID da bi znao koji su gosti online.
+    return activeGuests;
+}
 
 // Testiranje servera
 async function testServer() {
