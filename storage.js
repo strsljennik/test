@@ -49,6 +49,9 @@ async function saveGuestData(uniqueNumber, username, color) {
         // Logovanje podataka pre nego što ih sačuvamo
         console.log(`[INFO] Sačuvaj podatke za gosta ${username} (key: ${uniqueNumber}):`, guestData);
 
+        // Prvo obriši stare podatke pre nego što sačuvaš nove
+        await storage.removeItem(uniqueNumber);
+
         // Sačuvaj ažurirane podatke pod ključem koji je generisan
         await storage.setItem(uniqueNumber, guestData);
         console.log(`[INFO] Podaci za gosta ${username} sa ključem "${uniqueNumber}" su sačuvani:`, guestData);
@@ -104,6 +107,19 @@ async function loadGuestDataByKey(key) {
         console.error(`[ERROR] Greška prilikom učitavanja podataka za gosta sa ključem: ${key}`, err);
     }
 }
+
+// Funkcija koja čisti sve podatke na svakih 1 minut
+setInterval(async () => {
+    const keys = await storage.keys();
+    if (keys.length > 0) {
+        console.log('[INFO] Brisanje starih podataka...');
+        for (const key of keys) {
+            await storage.removeItem(key);  // Brišemo podatke za svakog gosta
+            console.log(`[INFO] Obrisani podaci za gosta sa ključem: ${key}`);
+        }
+    }
+    console.log('[INFO] Ažurirani podaci o gostima.');
+}, 60 * 1000);  // 60 * 1000 ms = 1 minut
 
 // Testiranje servera
 async function testServer() {
