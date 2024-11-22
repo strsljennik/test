@@ -129,7 +129,9 @@ socket.on('newGuest', function(nickname) {
     const guestList = document.getElementById('guestList');
     const newGuest = document.createElement('div');
     newGuest.classList.add('guest');
-    newGuest.textContent = nickname;
+    
+    // Prikazivanje imena gosta umesto objekta
+    newGuest.textContent = nickname; // Prikazujemo nickname kao string
 
     // Učitaj postojeće stilove
     const guestData = loadGuestData(guestId);
@@ -151,6 +153,8 @@ socket.on('updateGuestList', function(users) {
         const guestId = `guest-${nickname}`;
         const newGuest = document.createElement('div');
         newGuest.classList.add('guest');
+        
+        // Prikazivanje imena gosta kao string
         newGuest.textContent = nickname;
 
         // Zadržavanje postojećih stilova iz `guestsData`
