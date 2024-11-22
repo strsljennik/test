@@ -1,0 +1,17 @@
+name: Ping Server
+
+on:
+  schedule:
+    - cron: "*/4 * * * *"  # Pokreće se svakih 4 minuta
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest  # Koristi najnoviji Ubuntu za pokretanje
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3  # Preuzima tvoj repo na GitHub server
+
+      - name: Send ping request
+        run: |
+          curl -X GET https://radiogalaksija.onrender.com/ || echo "Ping failed"
