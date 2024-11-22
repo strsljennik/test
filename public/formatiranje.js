@@ -1,12 +1,5 @@
 const socket = io();
 
-// UUID za korisnika
-let userUUID = localStorage.getItem('userUUID');
-if (!userUUID || !uuid.validate(userUUID)) { // Validacija UUID-a
-    userUUID = uuid.v4();  // Generišemo novi UUID ako ne postoji
-    localStorage.setItem('userUUID', userUUID); // Čuvamo UUID u localStorage
-}
-
 let isBold = true;
 let isItalic = true;
 let currentColor = '#FFFFFF';
@@ -49,43 +42,55 @@ function updateInputStyle() {
 document.getElementById('chatInput').addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
         event.preventDefault();
-        let message = this.value.trim(); // Uklonimo nepotrebne praznine
-        if (message) { // Proveri da li je poruka prazna
-            socket.emit('chatMessage', {
-                text: message,
-                bold: isBold,
-                italic: isItalic,
-                color: currentColor,
-                uuid: userUUID  // Pošaljemo UUID sa porukom
-            });
-            this.value = ''; // Isprazni polje za unos
-        }
+        let message = this.value;
+        socket.emit('chatMessage', {
+            text: message,
+            bold: isBold,
+            italic: isItalic,
+            color: currentColor
+        });
+        this.value = ''; // Isprazni polje za unos
     }
 });
 
-// Funkcija za učitavanje podataka o gostima
-function loadGuestData(guestId) {
-    let guestData = localStorage.getItem(guestId);
-    if (guestData) {
-        return JSON.parse(guestData); // Učitaj podatke iz localStorage
-    }
-   
+// Kada server pošalje poruku
+socket.on('chatMessage', function(data) {
+    let messageArea = document.getElementById('messageArea');
+    let newMessage = document.createElement('div');
+    newMessage.classList.add('message');
+    newMessage.style.fontWeight = data.bold ? 'bold' : 'normal';
+    newMessage.style.fontStyle = data.italic ? 'italic' : 'normal';
+    newMessage.style.color = data.color;
+    newMessage.innerHTML = `<strong>${data.nickname}:</strong> ${data.text} <span style="font-size: 0.8em; color: gray;">(${data.time})</span>`;
+    messageArea.prepend(newMessage);
+    messageArea.scrollTop = 0; // Automatsko skrolovanje
+});
 
 // Funkcija za dodavanje stilova gostima
 function addGuestStyles(guestElement, guestId) {
     const colorPickerButton = document.createElement('input');
     colorPickerButton.type = 'color';
     colorPickerButton.classList.add('colorPicker');
-    
-    
-    colorPickerButton.addEventListener('input', function() {
+     guestsData[guestId] = { color: 'currentColor', isBold: true, isItalic: true };
+     colorPickerButton.addEventListener('input', function() {
         guestElement.style.color = this.value;
         guestsData[guestId].color = this.value; // Ažuriraj boju u objektu
-        localStorage.setItem(guestId, JSON.stringify(guestsData[guestId]));  // Spasi u localStorage
     });
 
+    const boldButton = document.createElement('button');
+    boldButton.textContent = 'B';
+    boldButton.addEventListener('click', function() {
+        
+    });
+
+    const italicButton = document.createElement('button');
+    italicButton.textContent = 'I';
+    italicButton.addEventListener('click', function() {
+       
+    });
 
     guestElement.appendChild(colorPickerButton);
+    
 }
 
 // Kada nov gost dođe
@@ -94,10 +99,21 @@ socket.on('newGuest', function(nickname) {
     const guestList = document.getElementById('guestList');
     const newGuest = document.createElement('div');
     newGuest.classList.add('guest');
-    
-    // Prikazivanje imena gosta umesto objekta
-    newGuest.textContent = nickname; // Prikazujemo nickname kao string
+    newGuest.textContent = nickname;
 
+    // Dodaj novog gosta u guestsData ako ne postoji
+    if (!guestsData[guestId]) {
+        guestsData[guestId] = { color: '#000000', isBold: false, isItalic: false };
+    }
+
+    // Primeni postojeće stilove ako ih ima
+    newGuest.style.color = guestsData[guestId].color;
+    newGuest.style.fontWeight = guestsData[guestId].isBold ? 'bold' : 'normal';
+    newGuest.style.fontStyle = guestsData[guestId].isItalic ? 'italic' : 'normal';
+
+    addGuestStyles(newGuest, guestId); // Dodaj stilove
+
+    guestList.appendChild(newGuest); // Dodaj novog gosta
 });
 
 // Ažuriranje liste gostiju bez resetovanja stilova
@@ -108,17 +124,19 @@ socket.on('updateGuestList', function(users) {
     // Kreiraj nove elemente za sve korisnike
     users.forEach(nickname => {
         const guestId = `guest-${nickname}`;
+        
         const newGuest = document.createElement('div');
         newGuest.classList.add('guest');
-        
-        // Prikazivanje imena gosta kao string
         newGuest.textContent = nickname;
 
         // Zadržavanje postojećih stilova iz `guestsData`
-        const guestData = loadGuestData(guestId);
-        newGuest.style.color = guestData.color;
-        newGuest.style.fontWeight = guestData.isBold ? 'bold' : 'normal';
-        newGuest.style.fontStyle = guestData.isItalic ? 'italic' : 'normal';
+        if (!guestsData[guestId]) {
+         guestsData[guestId] = { color: 'currentColor', isBold: true, isItalic: true };
+     }
+
+        newGuest.style.color = guestsData[guestId].color;
+        newGuest.style.fontWeight = guestsData[guestId].isBold ? 'bold' : 'normal';
+        newGuest.style.fontStyle = guestsData[guestId].isItalic ? 'italic' : 'normal';
 
         addGuestStyles(newGuest, guestId); // Dodaj stilove za novog gosta
         guestList.appendChild(newGuest); // Dodaj u listu
@@ -127,11 +145,9 @@ socket.on('updateGuestList', function(users) {
 
 // Funkcija za brisanje chata
 function deleteChat() {
-    if (confirm('Da li ste sigurni da želite obrisati chat?')) {
-        const messageArea = document.getElementById('messageArea');
-        messageArea.innerHTML = ''; // Očisti sve poruke
-        alert('Chat je obrisan.'); // Obaveštenje korisniku
-    }
+    const messageArea = document.getElementById('messageArea');
+    messageArea.innerHTML = ''; // Očisti sve poruke
+    alert('Chat je obrisan.'); // Obaveštenje korisniku
 }
 
 // Osluškivanje klika na dugme "D"
