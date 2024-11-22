@@ -107,19 +107,6 @@ async function loadGuestDataByKey(key) {
     }
 }
 
-// Funkcija koja čisti sve podatke na svakih 1 minut
-setInterval(async () => {
-    const keys = await storage.keys();
-    if (keys.length > 0) {
-        console.log('[INFO] Brisanje starih podataka...');
-        for (const key of keys) {
-            await storage.removeItem(key);  // Brišemo podatke za svakog gosta
-            console.log(`[INFO] Obrisani podaci za gosta sa ključem: ${key}`);
-        }
-    }
-    console.log('[INFO] Ažurirani podaci o gostima.');
-}, 60 * 1000);  // 60 * 1000 ms = 1 minut
-
 // Testiranje servera
 async function testServer() {
     const uniqueNumber1 = 1234; // Ovo bi trebalo da bude broj generisan od servera
