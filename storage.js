@@ -36,7 +36,8 @@ async function saveGuestData(uniqueNumber, username, color) {
 
         // Provera da li je username validan
         if (!username || typeof username !== 'string') {
-         return;
+            console.error('[ERROR] Nevalidan username');
+            return;
         }
 
         // Kreiraj objekat s novim vrednostima
@@ -44,6 +45,14 @@ async function saveGuestData(uniqueNumber, username, color) {
             nik: username,
             color: color || 'default',  // Ako boja nije prosleđena, koristi 'default'
         };
+
+        // Provera da li već postoji gost sa istim ključem
+        const existingGuestData = await storage.getItem(uniqueNumber);
+        if (existingGuestData) {
+            console.log(`[INFO] Ažuriranje podataka za gosta ${username} sa ključem ${uniqueNumber}`);
+        } else {
+            console.log(`[INFO] Dodavanje novih podataka za gosta ${username} sa ključem ${uniqueNumber}`);
+        }
 
         // Logovanje podataka pre nego što ih sačuvamo
         console.log(`[INFO] Sačuvaj podatke za gosta ${username} (key: ${uniqueNumber}):`, guestData);
