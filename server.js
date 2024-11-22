@@ -4,7 +4,6 @@ const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
 const { initializeStorage, saveGuestData, loadGuestData } = require('./storage');
-
 require('dotenv').config();
 
 const app = express();
@@ -24,19 +23,33 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
+const authorizedUsers = new Set(['Radio Galaksija', 'ZI ZU', '__X__']);
+const bannedUsers = new Set();
 let guests = {};
 let assignedNumbers = new Set();
 
-io.on('connection', async (socket) => {
+io.on('connection', (socket) => {
     const uniqueNumber = generateUniqueNumber();
     const nickname = `Gost-${uniqueNumber}`;
     guests[socket.id] = nickname;
 
-    await saveGuestData(socket.id, nickname);  // Spasi podatke gosta u storage
+    saveGuestData(socket.id, nickname);  // Spasi podatke gosta u storage
     console.log(`${nickname} se povezao.`);
 
-    io.emit('newGuest', nickname);  // Emituj novog gosta svim korisnicima
-    io.emit('updateGuestList', Object.values(guests));  // Ažuriraj listu gostiju
+    socket.broadcast.emit('newGuest', nickname);
+    io.emit('updateGuestList', Object.values(guests));
+
+    socket.on('userLoggedIn', async (username) => {
+        if (authorizedUsers.has(username)) {
+            guests[socket.id] = `${username} (Admin)`;
+            console.log(`${username} je autentifikovan kao admin.`);
+        } else {
+            guests[socket.id] = username;
+            console.log(`${username} se prijavio kao gost.`);
+        }
+        await saveGuestData(socket.id, guests[socket.id]);  // Ažuriraj podatke gosta u storage
+        io.emit('updateGuestList', Object.values(guests));
+    });
 
     socket.on('chatMessage', (msgData) => {
         const time = new Date().toLocaleTimeString();
@@ -48,7 +61,7 @@ io.on('connection', async (socket) => {
             nickname: guests[socket.id],
             time: time
         };
-        io.emit('chatMessage', messageToSend);  // Pošaljemo poruku svim korisnicima
+        io.emit('chatMessage', messageToSend);
     });
 
     socket.on('disconnect', async () => {
@@ -56,9 +69,8 @@ io.on('connection', async (socket) => {
         assignedNumbers.delete(parseInt(guests[socket.id].split('-')[1], 10));
         await saveGuestData(socket.id, null);  // Obrisi podatke gosta kad se odjavi
         delete guests[socket.id];
-        io.emit('updateGuestList', Object.values(guests));  // Ažuriraj listu gostiju
+        io.emit('updateGuestList', Object.values(guests));
     });
-});
 
 function generateUniqueNumber() {
     let number;
