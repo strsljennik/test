@@ -5,6 +5,7 @@ const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
 const { initializeStorage, saveGuestData, loadGuestData } = require('./storage');
 require('dotenv').config();
+require('./ping');
 
 const app = express();
 const server = http.createServer(app);
