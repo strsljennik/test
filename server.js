@@ -37,8 +37,9 @@ io.on('connection', (socket) => {
     saveGuestData(socket.id, nickname); // Spasi podatke gosta u storage
     console.log(`${nickname} se povezao.`);
 
+    // Emitovanje samo novog gosta, umesto cele liste
     socket.broadcast.emit('newGuest', nickname);
-    io.emit('updateGuestList', Object.values(guests));
+    io.emit('updateGuestList', { action: 'add', guest: nickname });
 
     socket.on('userLoggedIn', async (username) => {
         if (authorizedUsers.has(username)) {
@@ -49,7 +50,8 @@ io.on('connection', (socket) => {
             console.log(`${username} se prijavio kao gost.`);
         }
         await saveGuestData(socket.id, guests[socket.id]); // Ažuriraj podatke gosta u storage
-        io.emit('updateGuestList', Object.values(guests));
+        // Emitovanje samo promene, umesto cele liste
+        io.emit('updateGuestList', { action: 'update', guest: guests[socket.id] });
     });
 
     socket.on('chatMessage', (msgData) => {
@@ -69,8 +71,11 @@ io.on('connection', (socket) => {
         console.log(`${guests[socket.id]} se odjavio.`);
         assignedNumbers.delete(parseInt(guests[socket.id].split('-')[1], 10));
         await saveGuestData(socket.id, null); // Obrisi podatke gosta kad se odjavi
+        const disconnectedGuest = guests[socket.id];
         delete guests[socket.id];
-        io.emit('updateGuestList', Object.values(guests));
+        
+        // Emitovanje samo gosta koji je otišao, umesto cele liste
+        io.emit('updateGuestList', { action: 'remove', guest: disconnectedGuest });
     });
 });
 
