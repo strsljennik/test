@@ -31,8 +31,6 @@ async function initializeStorage() {
 // Funkcija za dodavanje podataka o gostu
 async function saveGuestData(req, username) {
     try {
-        await initializeStorage();
-
         // Generiši ključ i prikupljaj podatke
         const key = username || `gost-${Math.floor(1111 + Math.random() * 8888)}`;
         const ip = requestIp.getClientIp(req) || 'Nepoznata IP';
@@ -75,11 +73,4 @@ async function loadAllGuests() {
     }
 }
 
-// Funkcija za testiranje
-async function testServer(req) {
-    await saveGuestData(req, 'gost-1234');
-    await loadAllGuests();
-}
-
-// Primer upotrebe (zahteva HTTP server za prosleđivanje `req` objekta)
-// testServer(req);
+module.exports = { initializeStorage, saveGuestData, loadAllGuests };
