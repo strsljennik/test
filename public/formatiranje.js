@@ -109,7 +109,7 @@ socket.on('newGuest', function(nickname) {
 
     // Primeni postojeće stilove ako ih ima
     guestsData[guestId] || { color: '#808080' };  // Default siva boja
-    newGuest.style.color = guestData.color;  // Primeni boju na gosta
+    newGuest.style.color = guestsData.color;  // Primeni boju na gosta
     newGuest.style.fontWeight = guestsData[guestId].isBold ? 'bold' : 'normal';
     newGuest.style.fontStyle = guestsData[guestId].isItalic ? 'italic' : 'normal';
 
