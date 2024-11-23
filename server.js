@@ -25,36 +25,27 @@ app.get('/', (req, res) => {
 });
 
 const authorizedUsers = new Set(['Radio Galaksija', 'ZI ZU', '__X__']);
+const bannedUsers = new Set();
 let guests = {};
 let assignedNumbers = new Set();
 
-async function loadGuests() {
-    // Učitaj sve goste iz skladišta
-    const loadedGuests = await loadGuestData();
-    for (let guest of loadedGuests) {
-        guests[guest.id] = guest; // Pretpostavljamo da guest ima id, nickname i druge atribute
-    }
-}
+io.on('connection', (socket) => {
+    const uniqueNumber = generateUniqueNumber();
+    const nickname = `Gost-${uniqueNumber}`;
+    guests[socket.id] = nickname;
 
-io.on('connection', async (socket) => {
-    await loadGuests(); // Učitaj prethodne goste
+    saveGuestData(socket.id, nickname); // Spasi podatke gosta u storage
+    console.log(`${nickname} se povezao.`);
 
-    // Postavi inicijalne podatke za gosta
-    const existingGuest = guests[socket.id] || { nickname: `Gost-${generateUniqueNumber()}` };
-    guests[socket.id] = existingGuest;
-
-    console.log(`${existingGuest.nickname} se povezao.`);
-    saveGuestData(socket.id, existingGuest); // Spasi podatke gosta u storage
-
-    socket.broadcast.emit('newGuest', existingGuest.nickname);
+    socket.broadcast.emit('newGuest', nickname);
     io.emit('updateGuestList', Object.values(guests));
 
     socket.on('userLoggedIn', async (username) => {
         if (authorizedUsers.has(username)) {
-            guests[socket.id] = { nickname: `${username} (Admin)` };
+            guests[socket.id] = `${username} (Admin)`;
             console.log(`${username} je autentifikovan kao admin.`);
         } else {
-            guests[socket.id] = { nickname: username };
+            guests[socket.id] = username;
             console.log(`${username} se prijavio kao gost.`);
         }
         await saveGuestData(socket.id, guests[socket.id]); // Ažuriraj podatke gosta u storage
@@ -68,16 +59,17 @@ io.on('connection', async (socket) => {
             bold: msgData.bold,
             italic: msgData.italic,
             color: msgData.color,
-            nickname: guests[socket.id].nickname,
+            nickname: guests[socket.id],
             time: time
         };
         io.emit('chatMessage', messageToSend);
     });
 
     socket.on('disconnect', async () => {
-        console.log(`${guests[socket.id].nickname} se odjavio.`);
-        await saveGuestData(socket.id, guests[socket.id]); // Očuvaj podatke
-        delete guests[socket.id]; // Obriši gosta iz trenutne liste
+        console.log(`${guests[socket.id]} se odjavio.`);
+        assignedNumbers.delete(parseInt(guests[socket.id].split('-')[1], 10));
+        await saveGuestData(socket.id, null); // Obrisi podatke gosta kad se odjavi
+        delete guests[socket.id];
         io.emit('updateGuestList', Object.values(guests));
     });
 });
