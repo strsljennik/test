@@ -73,8 +73,9 @@ function addGuestStyles(guestElement, guestId) {
     colorPickerButton.classList.add('colorPicker');
      guestsData[guestId] = { color: 'currentColor', isBold: true, isItalic: true };
      colorPickerButton.addEventListener('input', function() {
-        guestElement.style.color = this.value;
-        guestsData[guestId].color = this.value; // Ažuriraj boju u objektu
+      const guestData = guestsData[guestId] || { color: '#808080' };  // Default siva boja
+      newGuest.style.color = guestData.color;
+
     });
 
     const boldButton = document.createElement('button');
