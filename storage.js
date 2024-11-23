@@ -34,7 +34,7 @@ async function saveGuestData(req, username) {
         const key = username || `gost-${Math.floor(1111 + Math.random() * 8888)}`;
         
         // Koristi remoteAddress za dobijanje IP adrese
-        const ip = req.connection.remoteAddress || 'Nepoznata IP';
+        const ip = req.socket.remoteAddress || 'Nepoznata IP';
         console.log('Korisnička IP adresa: ', ip);  // Za debagovanje
 
         // Pribavljanje geolokacije (ako je moguće)
