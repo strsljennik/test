@@ -31,7 +31,7 @@ let assignedNumbers = new Set();
 
 io.on('connection', (socket) => {
     const uniqueNumber = generateUniqueNumber();
-    const username = register user
+    const username = "register user";  // Ako je 'register user' vrednost
     const nickname = `Gost-${uniqueNumber}`;
     guests[socket.id] = nickname;
     
