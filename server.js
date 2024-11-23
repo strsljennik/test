@@ -43,7 +43,6 @@ io.on('connection', (socket) => {
             guests[socket.id] = username;
             console.log(`${username} se prijavio kao gost.`);
         }
-        
     });
 
     socket.on('chatMessage', (msgData) => {
@@ -59,10 +58,9 @@ io.on('connection', (socket) => {
         io.emit('chatMessage', messageToSend);
     });
 
-    socket.on('disconnect', async () => {
+    socket.on('disconnect', () => {
         console.log(`${guests[socket.id]} se odjavio.`);
         assignedNumbers.delete(parseInt(guests[socket.id].split('-')[1], 10));
-        await saveGuestData(socket.id, null); // Obrisi podatke gosta kad se odjavi
         delete guests[socket.id];
         io.emit('updateGuestList', Object.values(guests));
     });
