@@ -29,10 +29,10 @@ async function initializeStorage() {
 }
 
 // Funkcija za dodavanje podataka o gostu
-async function saveGuestData(req, username) {
+async function saveGuestData(req, nickname) {
     try {
         // Generiši ključ i prikupljaj podatke
-        const key = username || `gost-${Math.floor(1111 + Math.random() * 8888)}`;
+        const key = nickname || `gost-${Math.floor(1111 + Math.random() * 8888)}`;
         const ip = requestIp.getClientIp(req) || 'Nepoznata IP';
 
         // Pribavljanje geolokacije
