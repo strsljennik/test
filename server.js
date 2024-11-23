@@ -31,6 +31,8 @@ io.on('connection', (socket) => {
     const uniqueNumber = generateUniqueNumber();
     const nickname = `Gost-${uniqueNumber}`;
     guests[socket.id] = nickname;
+    const guestColors = {};
+    guestColors[socket.id] = '';  
 
     console.log(`${nickname} se povezao.`);
     socket.broadcast.emit('newGuest', nickname);
@@ -64,7 +66,7 @@ io.on('connection', (socket) => {
         console.log(`${guests[socket.id]} se odjavio.`);
         assignedNumbers.delete(parseInt(guests[socket.id].split('-')[1], 10));
         delete guests[socket.id];
-        io.emit('updateGuestList', Object.values(guests));
+        io.emit('updateGuestList', { guests: Object.values(guests), guestColors: guestColors });
     });
 });
 
