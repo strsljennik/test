@@ -3,6 +3,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
+const { initializeStorage, saveGuestData, loadGuestData } = require('./storage');
 require('dotenv').config();
 require('./ping');
 
@@ -11,6 +12,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 connectDB();
+initializeStorage(); // Inicijalizuj storage pre nego što nastavimo sa serverom
 
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
@@ -31,10 +33,10 @@ io.on('connection', (socket) => {
     const uniqueNumber = generateUniqueNumber();
     const nickname = `Gost-${uniqueNumber}`;
     guests[socket.id] = nickname;
-    const guestColors = {};
-    guestColors[socket.id] = '';  
 
+    saveGuestData(socket.id, nickname); // Spasi podatke gosta u storage
     console.log(`${nickname} se povezao.`);
+
     socket.broadcast.emit('newGuest', nickname);
     io.emit('updateGuestList', Object.values(guests));
 
@@ -46,6 +48,7 @@ io.on('connection', (socket) => {
             guests[socket.id] = username;
             console.log(`${username} se prijavio kao gost.`);
         }
+        await saveGuestData(socket.id, guests[socket.id]); // Ažuriraj podatke gosta u storage
         io.emit('updateGuestList', Object.values(guests));
     });
 
@@ -62,11 +65,12 @@ io.on('connection', (socket) => {
         io.emit('chatMessage', messageToSend);
     });
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
         console.log(`${guests[socket.id]} se odjavio.`);
         assignedNumbers.delete(parseInt(guests[socket.id].split('-')[1], 10));
+        await saveGuestData(socket.id, null); // Obrisi podatke gosta kad se odjavi
         delete guests[socket.id];
-        io.emit('updateGuestList', { guests: Object.values(guests), guestColors: guestColors });
+        io.emit('updateGuestList', Object.values(guests));
     });
 });
 
