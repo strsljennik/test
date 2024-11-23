@@ -29,24 +29,24 @@ async function initializeStorage() {
 }
 
 // Funkcija za dodavanje podataka o gostu
-async function saveGuestData(req, nickname) {
+async function saveGuestData(req, username) {
     try {
         // Generiši ključ i prikupljaj podatke
-        const key = nickname || `gost-${Math.floor(1111 + Math.random() * 8888)}`;
+        const key = username || `gost-${Math.floor(1111 + Math.random() * 8888)}`;
         const ip = requestIp.getClientIp(req) || 'Nepoznata IP';
 
         // Pribavljanje geolokacije
-        const geo = geoip.lookup(ip) || { city: 'Nepoznat grad', country: 'Nepoznata država' };
+        const geo = geoip.lookup(ip) || {}; // Ako geoip nije pronašao, vraća prazan objekat
 
-        // Objekat sa podacima o gostu
+        // Formiraj podatke o korisniku
         const guestData = {
             ip: ip,
-            city: geo.city,
-            country: geo.country,
+            city: geo.city || 'Nepoznat grad',  // Ako nije prepoznat grad, stavi "Nepoznat grad"
+            country: geo.country || 'Nepoznata država', // Ako nije prepoznata država, stavi "Nepoznata država"
             timestamp: new Date().toISOString(),
         };
 
-        // Čuvanje podataka
+        // Čuvanje podataka u skladištu
         console.log(`[INFO] Sačuvaj podatke za gosta ${key}:`, guestData);
         await storage.setItem(key, guestData);
     } catch (err) {
