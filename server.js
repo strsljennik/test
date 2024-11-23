@@ -31,8 +31,10 @@ let assignedNumbers = new Set();
 
 io.on('connection', (socket) => {
     const uniqueNumber = generateUniqueNumber();
+    const username = register user
     const nickname = `Gost-${uniqueNumber}`;
     guests[socket.id] = nickname;
+    
 
     saveGuestData(socket.id, nickname); // Spasi podatke gosta u storage
     console.log(`${nickname} se povezao.`);
@@ -45,8 +47,8 @@ io.on('connection', (socket) => {
             guests[socket.id] = `${username} (Admin)`;
             console.log(`${username} je autentifikovan kao admin.`);
         } else {
-            guests[socket.id] = username;
-            console.log(`${username} se prijavio kao gost.`);
+            guests[socket.id] = socketid;
+            console.log(`${socketid} se prijavio kao gost.`);
         }
         await saveGuestData(socket.id, guests[socket.id]); // Ažuriraj podatke gosta u storage
         io.emit('updateGuestList', Object.values(guests));
