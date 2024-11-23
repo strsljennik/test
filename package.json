@@ -32,7 +32,7 @@
     "ws": "^8.18.0",
     "pm2": "^5.1.0",
     "request-ip": "^3.1.0",
-    "user-agent": "^2.3.0"
+    "user-agent": "^2.3.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
