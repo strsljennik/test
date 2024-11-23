@@ -1,8 +1,8 @@
 const storage = require('node-persist');
 const path = require('path');
 const fs = require('fs');
-const requestIp = require('request-ip'); // Za dobijanje javne IP adrese
-const useragent = require('user-agent'); // Za analizu podataka o korisniku
+const requestIp = require('request-ip'); // Za dobijanje IP adrese
+const geoip = require('geoip-lite'); // Za geolokaciju na osnovu IP adrese
 
 // Putanja do direktorijuma u kojem će biti sačuvani podaci
 const storageDir = path.join(__dirname, 'cuvati');
@@ -36,15 +36,16 @@ async function saveGuestData(req, username) {
         // Generiši ključ i prikupljaj podatke
         const key = username || `gost-${Math.floor(1111 + Math.random() * 8888)}`;
         const ip = requestIp.getClientIp(req) || 'Nepoznata IP';
-        const agent = useragent.parse(req.headers['user-agent']);
-        
+
+        // Pribavljanje geolokacije
+        const geo = geoip.lookup(ip) || { city: 'Nepoznat grad', country: 'Nepoznata država' };
+
         // Objekat sa podacima o gostu
         const guestData = {
             ip: ip,
-            browser: agent.browser.name,
-            device: agent.device.type || 'Nepoznato',
-            os: agent.os.name,
-            timestamp: new Date().toISOString()
+            city: geo.city,
+            country: geo.country,
+            timestamp: new Date().toISOString(),
         };
 
         // Čuvanje podataka
