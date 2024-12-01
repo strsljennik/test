@@ -25,7 +25,7 @@ async function sendGuestData(nickname) {
             body: JSON.stringify({ nickname: nickname, uuid: userUUID })
         });
 
-        const result = await response.json();
+        const result = await response.text();  // Umesto response.json()
         console.log('Odgovor servera:', result);
     } catch (error) {
         console.error('Greška pri slanju podataka:', error);
