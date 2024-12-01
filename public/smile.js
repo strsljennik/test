@@ -11,21 +11,9 @@ function closeSmileModal() {
 // Funkcija za dodavanje smilova u chat
 function addSmile(smile) {
     const chatInput = document.getElementById('chatInput');
-    chatInput.value += smile; // Dodaj emotikon u chat input
+    chatInput.value += smile; 
     closeSmileModal();
 }
-
-// Funkcija za slanje poruke
-function sendMessage() {
-    const chatInput = document.getElementById('chatInput');
-    const messageArea = document.getElementById('messageArea');
-    // Prikazivanje poruke u message area
-    if (chatInput.value.trim() !== '') {
-        messageArea.innerHTML += `<span style="font-size: 24px;">${chatInput.value}</span><br/>`;
-        chatInput.value = ''; // Očisti chat input nakon slanja
-    }
-}
-
 // Dodavanje HTML koda za modalni prozor sa smilovima
 const smileModalHTML = `
     <div id="smileModal" style="display: none; position: fixed; top: 50%; left: 0; transform: translateY(-50%); background: black; padding: 10px; border: 1px solid white; z-index: 1000; width: 200px; height: 400px; overflow-y: scroll;">
