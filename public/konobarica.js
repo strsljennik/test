@@ -1,7 +1,7 @@
 // Kada se povežemo sa serverom, emitujemo događaj za novog gosta
 socket.emit('new_guest');
 
-// Slušamo za poruke od servera, u ovom slučaju pozdravnu poruku od konobarice
+// Slušamo za poruke od servera, u ovom slučaju pozdravnu poruku od Konobarice
 socket.on('message', (data) => {
     const messageArea = document.getElementById('messageArea');
     
@@ -19,12 +19,13 @@ socket.on('message', (data) => {
         messageElement.classList.add('system-message');
     }
     
-    // Dodajemo poruku u area poruka
-    messageArea.appendChild(messageElement);
-    
+    // Dodajemo poruku na vrh umesto na dno
+    messageArea.insertBefore(messageElement, messageArea.firstChild);
 });
 
-    
-    // Dodajemo Konobaricu sa klasom 'guest-konobarica'
-    conobaricaItem.classList.add('guest-konobarica');
-    conobaricaItem.innerHTML = 'Konobarica'; // Dodajemo samo tekst bez tagova
+// Dodavanje Konobarice u listu gostiju (ako je potrebno)
+const guestList = document.getElementById('guestList');
+const konobaricaItem = document.createElement('div');
+konobaricaItem.classList.add('guest-konobarica');
+konobaricaItem.innerHTML = 'Konobarica'; // Dodajemo samo tekst bez tagova
+guestList.appendChild(konobaricaItem);
