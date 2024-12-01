@@ -6,6 +6,7 @@ const { register, login } = require('./prijava');
 const { setupSocketEvents } = require('./banmodul'); // Uvoz funkcije iz banmodula
 const uuidRouter = require('./uuidmodul'); // Putanja do modula
 const { saveIpData, getIpData } = require('./ip'); // Uvozimo ip.js
+const konobaricaModul = require('./konobaricamodul'); // Uvoz konobaricamodul.js
 const pingService = require('./ping');
 require('dotenv').config();
 
@@ -14,6 +15,8 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 connectDB(); // Povezivanje na bazu podataka
+konobaricaModul(io);
+
 
 // Middleware za parsiranje JSON podataka i serviranje statičkih fajlova
 app.use(express.json());
