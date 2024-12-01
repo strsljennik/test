@@ -1,17 +1,19 @@
 const virtualGuests = [
-    { nickname: 'Cuceklika 1', messages: ['Poz Svima', 'jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa Romalen'],
- color: 'deepskyblue' },
-    { nickname: 'Cuceklika 2', messages: ['Zdravo Sarinenge', 'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, ajmo💋 *__X__* 💋samo me em tu te kela'], color: 'purple' },
-
-    { nickname: 'Cuceklika 3', messages: ['Selami sarinenge', 'toooooooooooooooooooooooooooo,  X mangav tu ❤️*__X__*❤️'], color: 'red' },
-
-
-
-    { nickname: 'Cuceklika 1', messages: ['*__X__* Mangava tu ❤️'], color: 'deepskyblue' },
-
-    { nickname: 'Cuceklika 2', messages: ['Nas olestar cuceklike 1, Merava tuke *__X__* ❤️💋'], color: 'purple' },
-
-    { nickname: 'Cuceklika 3', messages: ['Dzabe tumen cupinen pe taro bala OV TANO SAMO MLO'], color: 'red' },
+    {
+        nickname: 'Cuceklika',
+        messages: [
+            'Zdravo Sarinenge',
+            'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, ajmo💋 *__X__* 💋samo me em tu te kela'
+        ],
+        color: 'purple'
+    },
+    {
+        nickname: 'Cuceklika',
+        messages: [
+            'Merava tuke *__X__* ❤️💋'
+        ],
+        color: 'purple'
+    }
 ];
 
 function sendMessageToChat(guest, message) {
@@ -25,48 +27,35 @@ function sendMessageToChat(guest, message) {
     
     // Dodavanje razmaka između poruka
     const spacingElement = document.createElement('div');
-    spacingElement.style.height = '10px'; // Podešavanje visine razmaka
+    spacingElement.style.height = '20px'; // Podešavanje visine razmaka
     messageArea.insertBefore(spacingElement, messageArea.firstChild.nextSibling); // Razmak nakon poruke
 
     messageArea.scrollTop = 0; // Skrolovanje na vrh
 }
 
-function addGuestToList(guest) {
-    const guestList = document.getElementById('guestList');
-    
-    // Proveri da li gost već postoji u listi
-    if (!Array.from(guestList.children).some(el => el.textContent === guest.nickname)) {
-        const guestElement = document.createElement('div');
-        guestElement.classList.add('guest');
-        guestElement.textContent = guest.nickname;
-        guestElement.style.color = guest.color; // Postavljanje boje za gosta
-
-        guestList.appendChild(guestElement);
-    }
-}
-
 function startVirtualGuests() {
-    const messageTimings = [
-        { guestIndex: 0, messageIndex: 0, time: 0 },    // cuceklika 1: Poz Svima
-        { guestIndex: 0, messageIndex: 1, time: 5 },    // cuceklika 1: jasaaaaaaaaaaaaaaaaa
-        { guestIndex: 1, messageIndex: 0, time: 60 },   // cuceklika 2: tooooooooooooooooooooo
-        { guestIndex: 1, messageIndex: 1, time: 65 },   // cuceklika 2: opaaaaaaaaaaaaaaaaaaa
-        { guestIndex: 2, messageIndex: 0, time: 120 },  // cuceklika 3: jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        { guestIndex: 2, messageIndex: 1, time: 125 },  // cuceklika 3: saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        { guestIndex: 0, messageIndex: 0, time: 180 },  // cuceklika 1: *__X__* Mangava tu ❤️
-        { guestIndex: 1, messageIndex: 1, time: 200 },  // cuceklika 2: Nas olestar cuceklike 1...
-        { guestIndex: 2, messageIndex: 1, time: 220 },  // cuceklika 3: Dzabe tumen cupinen...
-    ];
+    virtualGuests.forEach(guest => {
+        let messageIndex = 0;
 
-    messageTimings.forEach(({ guestIndex, messageIndex, time }) => {
-        setTimeout(() => {
-            sendMessageToChat(virtualGuests[guestIndex], virtualGuests[guestIndex].messages[messageIndex]);
-            addGuestToList(virtualGuests[guestIndex]); // Dodavanje gosta u listu
-        }, time * 1000); // Konvertovanje sekundi u milisekunde
+        const sendMessages = () => {
+            if (messageIndex < guest.messages.length) {
+                const message = guest.messages[messageIndex];
+                sendMessageToChat(guest, message);
+                
+                messageIndex++;
+                
+                if (messageIndex < guest.messages.length) {
+                    setTimeout(sendMessages, 15000); // Čekaj 15 sekundi pre slanja sledeće poruke
+                }
+            }
+        };
+        
+        // Početak slanja poruka
+        sendMessages();
     });
 
-    // Pauza od 240 sekundi pre ponovnog ciklusa
-    setTimeout(startVirtualGuests, 240 * 1000);
+    // Pauza od 15 minuta (900000 milisekundi) pre ponovnog ciklusa
+    setTimeout(startVirtualGuests, 900000);
 }
 
 // Pokretanje virtuelnih gostiju kada se stranica učita
