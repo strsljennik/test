@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<div id="authContainer">
+    <div id="authContainer">
     <!-- Forma za registraciju -->
     <form id="registerForm">
         <input type="text" id="registerUsername" placeholder="Ime gosta" required>
@@ -38,9 +38,28 @@
         <input type="color" id="colorPicker" style="display: none;"> <!-- Skriveni color picker -->
     </div>
 
-    <div id="messageArea"></div>
+<div id="functionModal" class="modal" style="display: none;" draggable="true">
+    <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h2>Funkcije</h2>
+        
+        <div class="foregroundFunctions">
+            <button id="clearChat">Obriši chat</button>
+            <button id="privateMessage">Privatna poruka</button>
+        </div>
+        
+        <div class="backgroundFunctions">
+            <button id="addImage">Dodaj sliku</button>
+            <button id="addFcp">Dodaj FCP datoteku</button>
+            <button id="addVideo">Dodaj video snimak</button>
+            <button id="enableCamera">Uključi kameru</button>
+        </div>
+    </div>
+</div>
 
-    <div id="messageInput">
+  <div id="messageArea"></div>
+
+     <div id="messageInput">
         <textarea id="chatInput" rows="1" placeholder="Type your message..."></textarea>
     </div>
 
@@ -49,18 +68,19 @@
        <!-- Gosti sa bojama će biti ovde prikazani -->
 </div>
 
-    
-</div>
+    </div>
 <script src="formatiranje.js"></script> <!-- Povezivanje JavaScript datoteke -->
  <script src="regist.js"></script>
-<script src="virtual.js"></script>
 <script src="konobarica.js"></script>
 <script src="smile.js"></script> <!-- Povezivanje JavaScript datoteke za smilove -->
 <script src="funkcije.js"></script>
+    <script src="privat.js"></script>
+     <script src="sitno.js"></script>
     <script src="uuid.js"></script>
      <script src="ipk.js"></script>
-<iframe src="https://zeno.fm/player/radio-galaksija" width="150" height="150" frameborder="0" scrolling="no"
+<iframe src="https://zeno.fm/player/radio-galaksija" width="295" height="90" frameborder="5" scrolling="no"
         style="position: fixed; top: 0; right: 0; z-index: 9999;"></iframe>
+     <img src="https://i.imgur.com/PB2JKvO.gif" class="overlay">
 
 </body>
 </html>
