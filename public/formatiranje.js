@@ -137,15 +137,3 @@ socket.on('updateGuestList', function(users) {
         }
     });
 });
-
-// Funkcija za brisanje chata
-function deleteChat() {
-    const messageArea = document.getElementById('messageArea');
-    messageArea.innerHTML = ''; // Očisti sve poruke
-    alert('Chat je obrisan.'); // Obaveštenje korisniku
-}
-
-// Osluškivanje klika na dugme "D"
-document.getElementById('openModal').onclick = function() {
-    deleteChat(); // Pozivamo funkciju za brisanje chata
-};
