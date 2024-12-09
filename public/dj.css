@@ -4,16 +4,16 @@
     align-items: center;
     font-size: 16px;
     margin: 5px 0;
-    padding-left: 20px; /* Da bismo omogućili prostor za ikonu */
-    font-weight: bold;  /* Dodajemo bold */
-    font-style: italic; /* Dodajemo italic */
-    color: inherit; /* Nasleđivanje boje od JavaScript-a */
+    padding-left: 20px;
+    font-weight: bold;
+    font-style: italic;
+    color: inherit;
 }
 
-/* Stil za ostale goste, sve imaju istu osnovnu postavku */
+/* Stil za ostale goste */
 .guest::before {
-    content: "•";  /* Tačka pre imena gostiju */
-    color: white;   /* Bela boja tačke */
+    content: "•"; 
+    color: white;   
     margin-right: 10px;
     font-size: 18px;
 }
@@ -30,8 +30,8 @@
 /* Stil za poruke konobarice */
 .konobarica {
     color: #ff6347; /* Boja za Konobaricu */
-    font-weight: bold; /* Bold za Konobaricu */
-    font-style: italic; /* Italic za Konobaricu */
+    font-weight: bold;
+    font-style: italic;
 }
 
 /* Stil za sistemske poruke */
@@ -40,6 +40,36 @@
     color: #888;
 }
 
+.modal {
+    display: none; /* Sakrij modal po default-u */
+    position: fixed; /* Fiksna pozicija */
+    z-index: 1; /* Na vrhu svih elemenata */
+    left: 0;
+    top: 0;
+    width: 400px; /* Širina modalnog prozora */
+    /* Dodajte željenu visinu ako je potrebno */
+    height: auto; 
+    overflow: hidden; /* Sakrij sadržaj koji prelazi */
+    background-color: rgba(0, 0, 0, 0.5); /* Poluprozirna pozadina */
+}
 
+.modal-content {
+    background-color: #fefefe;
+    margin: 0; /* Uklanjamo margin */
+    padding: 20px;
+    border: 1px solid #888;
+}
 
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
 
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
