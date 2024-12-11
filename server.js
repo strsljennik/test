@@ -7,6 +7,7 @@ const { setupSocketEvents } = require('./banmodul'); // Uvoz funkcije iz banmodu
 const uuidRouter = require('./uuidmodul'); // Putanja do modula
 const { saveIpData, getIpData } = require('./ip'); // Uvozimo ip.js
 const konobaricaModul = require('./konobaricamodul'); // Uvoz konobaricamodul.js
+const slikemodul = require('./slikemodul'); 
 const pingService = require('./ping');
 require('dotenv').config();
 
@@ -16,7 +17,7 @@ const io = socketIo(server);
 
 connectDB(); // Povezivanje na bazu podataka
 konobaricaModul(io);
-
+slikemodul.setSocket(io);
 
 // Middleware za parsiranje JSON podataka i serviranje statičkih fajlova
 app.use(express.json());
@@ -68,7 +69,7 @@ io.on('connection', (socket) => {
         io.emit('updateGuestList', Object.values(guests));
     });
 
-    // Obrada slanja poruka u četu
+     // Obrada slanja chat poruka
     socket.on('chatMessage', (msgData) => {
         const time = new Date().toLocaleTimeString();
         const messageToSend = {
@@ -79,10 +80,19 @@ io.on('connection', (socket) => {
             nickname: guests[socket.id], // Korišćenje nadimka za slanje poruke
             time: time,
         };
+
         // Spremi IP, poruku i nickname u fajl
         saveIpData(socket.handshake.address, msgData.text, guests[socket.id]);
-        
+
+        // Emituj poruku svim klijentima
         io.emit('chatMessage', messageToSend);
+    });
+
+    // Obrada za čišćenje chata
+    socket.on('clear-chat', () => {
+        console.log('Chat cleared');
+        // Emituj događaj koji obaveštava ostale klijente da je chat obrisan
+        io.emit('chat-cleared');
     });
 
     // Obrada diskonekcije korisnika
