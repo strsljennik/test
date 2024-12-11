@@ -1,134 +1,48 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const { connectDB } = require('./mongo');
-const { register, login } = require('./prijava');
-const { setupSocketEvents } = require('./banmodul'); // Uvoz funkcije iz banmodula
-const uuidRouter = require('./uuidmodul'); // Putanja do modula
-const { saveIpData, getIpData } = require('./ip'); // Uvozimo ip.js
-const konobaricaModul = require('./konobaricamodul'); // Uvoz konobaricamodul.js
-const slikemodul = require('./slikemodul'); 
-const pingService = require('./ping');
-require('dotenv').config();
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
+let io;
+let newImage = [];  
 
-connectDB(); // Povezivanje na bazu podataka
-konobaricaModul(io);
-slikemodul.setSocket(io);
+// Funkcija za setovanje io objekta
+function setSocket(serverIo) {
+    io = serverIo;
 
-// Middleware za parsiranje JSON podataka i serviranje statičkih fajlova
-app.use(express.json());
-app.use(express.static(__dirname + '/public'));
-app.use('/guests', uuidRouter); // Dodavanje ruta u aplikaciju
-app.set('trust proxy', true);
+    io.on('connection', (socket) => {
+        socket.emit('initial-images', newImage);
 
-// Rute za registraciju i prijavu
-app.post('/register', (req, res) => register(req, res, io));
-app.post('/login', (req, res) => login(req, res, io));
+        socket.on('add-image', (imageSource, position, dimensions) => {
+            if (!imageSource || !position || !dimensions) return;
 
-// Početna ruta
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
-});
+            newImage.push({
+                imageUrl: imageSource,
+                position: position,
+                dimensions: dimensions
+            });
 
-// Lista autorizovanih korisnika i banovanih korisnika
-const authorizedUsers = new Set(['Radio Galaksija', 'ZI ZU', '__X__']);
-const bannedUsers = new Set();
+            io.emit('display-image', {
+                imageUrl: imageSource,
+                position: position,
+                dimensions: dimensions
+            });
+        });
 
-// Skladištenje informacija o gostima
-const guests = {};
-const assignedNumbers = new Set(); // Set za generisane brojeve
+        socket.on('update-image', (data) => {
+            const image = newImage.find(img => img.imageUrl === data.imageUrl);
+            if (image) {
+                image.position = data.position;
+                image.dimensions = data.dimensions;
+            }
+            io.emit('sync-image', data);
+        });
 
-// Dodavanje socket događaja iz banmodula
-setupSocketEvents(io, guests, bannedUsers); // Dodavanje guests i bannedUsers u banmodul
-
-// Socket.io događaji
-io.on('connection', (socket) => {
-    // Generisanje jedinstvenog broja za gosta
-    const uniqueNumber = generateUniqueNumber();
-    const nickname = `Gost-${uniqueNumber}`; // Nadimak korisnika
-    guests[socket.id] = nickname; // Dodajemo korisnika u guest list
-    console.log(`${nickname} se povezao.`);
-
-    // Emitovanje događaja da bi ostali korisnici videli novog gosta
-    socket.broadcast.emit('newGuest', nickname);
-    io.emit('updateGuestList', Object.values(guests));
-
-    // Obrada prijave korisnika
-    socket.on('userLoggedIn', async (username) => {
-        if (authorizedUsers.has(username)) {
-            guests[socket.id] = username; // Ne dodajemo (Admin) oznaku
-            console.log(`${username} je autentifikovan kao admin.`);
-        } else {
-            guests[socket.id] = username; // Ako je običan gost
-            console.log(`${username} se prijavio kao gost.`);
-        }
-        io.emit('updateGuestList', Object.values(guests));
+        socket.on('remove-image', (imageUrl) => {
+            const index = newImage.findIndex(img => img.imageUrl === imageUrl);
+            if (index !== -1) {
+                newImage.splice(index, 1);
+            }
+            io.emit('update-images', newImage);
+        });
     });
+}
 
-     // Obrada slanja chat poruka
-    socket.on('chatMessage', (msgData) => {
-        const time = new Date().toLocaleTimeString();
-        const messageToSend = {
-            text: msgData.text,
-            bold: msgData.bold,
-            italic: msgData.italic,
-            color: msgData.color,
-            nickname: guests[socket.id], // Korišćenje nadimka za slanje poruke
-            time: time,
-        };
-
-        // Spremi IP, poruku i nickname u fajl
-        saveIpData(socket.handshake.address, msgData.text, guests[socket.id]);
-
-        // Emituj poruku svim klijentima
-        io.emit('chatMessage', messageToSend);
-    });
-
-    // Obrada za čišćenje chata
-    socket.on('clear-chat', () => {
-        console.log('Chat cleared');
-        // Emituj događaj koji obaveštava ostale klijente da je chat obrisan
-        io.emit('chat-cleared');
-    });
-
-    // Obrada diskonekcije korisnika
-    socket.on('disconnect', () => {
-        console.log(`${guests[socket.id]} se odjavio.`);
-        delete guests[socket.id]; // Uklanjanje gosta iz liste
-        io.emit('updateGuestList', Object.values(guests));
-    });
-
-    // Mogućnost banovanja korisnika prema nickname-u
-    socket.on('banUser', (nicknameToBan) => {
-        const socketIdToBan = Object.keys(guests).find(key => guests[key] === nicknameToBan);
-
-        if (socketIdToBan) {
-            io.to(socketIdToBan).emit('banned');
-            io.sockets.sockets[socketIdToBan].disconnect();
-            console.log(`Korisnik ${nicknameToBan} (ID: ${socketIdToBan}) je banovan.`);
-        } else {
-            console.log(`Korisnik ${nicknameToBan} nije pronađen.`);
-            socket.emit('userNotFound', nicknameToBan);
-        }
-    });
-
-    // Funkcija za generisanje jedinstvenog broja
-    function generateUniqueNumber() {
-        let number;
-        do {
-            number = Math.floor(Math.random() * 8889) + 1111; // Brojevi između 1111 i 9999
-        } while (assignedNumbers.has(number));
-        assignedNumbers.add(number);
-        return number;
-    }
-});
-
-// Pokretanje servera na definisanom portu
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server je pokrenut na portu ${PORT}`);
-});
+// Izvoz funkcije setSocket
+module.exports = { setSocket };
