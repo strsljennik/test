@@ -69,6 +69,29 @@
 
 .close:hover,
 .close:focus {
+
+    /* Osnovni stil za desktop */ 
+body {
+    font-size: 16px;
+    background-color: #f4f4f4;
+}
+
+/* Stil za ekrane sa širinom manjom od 768px (tablet i mobilni uređaji) */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+        background-color: #e0e0e0;
+    }
+}
+
+/* Stil za ekrane sa širinom manjom od 480px (mobilni uređaji) */
+@media (max-width: 480px) {
+    body {
+        font-size: 12px;
+        background-color: #ccc;
+    }
+}
+
     color: black;
     text-decoration: none;
     cursor: pointer;
