@@ -4,6 +4,11 @@ document.getElementById('openModal').addEventListener('click', function() {
     if (!isLoggedIn) {
         const password = prompt("Unesite lozinku:");
 
+           // Ako unesena lozinka odgovara, otvara modal
+        if (password === "123galaksija") {
+            isLoggedIn = true; // Postavljamo status na login
+            document.getElementById('functionModal').style.display = "block";
+
         const allowedNicks = ["Radio Galaksija", "ZI ZU", "__X__", "___F117___"];
         const currentNick = "Radio Galaksija"; // Ovo treba da bude aktuelni korisnički nick.
 
