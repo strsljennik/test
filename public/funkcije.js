@@ -89,9 +89,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-   document.getElementById('chatInput').addEventListener('keydown', function(event) {
+    // Funkcija koja prati unos poruka
+    document.getElementById('chat-input').addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
-            event.preventDefault();  // Sprečava slanje poruke sa Enter tasterom
+            event.preventDefault();
+            if (isBanned) {
+                alert('Banovani ste i ne možete slati poruke.');
+                return;
+            }
 
             const message = this.value;
             socket.emit('chatMessage', { text: message, bold: false, italic: false, color: 'black' });
