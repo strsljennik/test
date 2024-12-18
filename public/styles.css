@@ -129,3 +129,13 @@ body {
   height: 78px;
   z-index: 10000; /* Osigurava da slika bude iznad iframe-a */
 }
+
+.private-message {
+    color: #FF5733;  /* Možete promeniti boju prema želji */
+    font-style: italic;
+    background-color: #f4f4f4;  /* Svetlo siva pozadina */
+    border-left: 3px solid #FF5733;  /* Dodatna levica boja za privatne poruke */
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
