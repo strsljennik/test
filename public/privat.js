@@ -13,7 +13,10 @@ document.getElementById('privateMessage').addEventListener('click', () => {
         });
     }
 
-  
+    console.log(statusText);
+    alert(statusText);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     const guestList = document.getElementById('guestList');
     const chatInput = document.getElementById('chatInput');
@@ -35,13 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedGuest.style.backgroundColor = ''; // Resetuje prethodnog gosta
             }
 
-           selectedGuest = event.target; // Postavlja novog gosta
-selectedGuest.style.backgroundColor = 'rgba(255, 255, 0, 0.3)'; // Providna žuta traka
-isPrivateChatEnabled = true; // Uključuje privatni chat
+            selectedGuest = event.target; // Postavlja novog gosta
+            selectedGuest.style.backgroundColor = 'rgba(255, 255, 0, 0.3)'; // Providna žuta traka
+            isPrivateChatEnabled = true; // Uključuje privatni chat
 
-// Forma poruke za privatni chat
-chatInput.value = `---->>> ${selectedGuest.textContent} : `;
-}
+            // Forma poruke za privatni chat
+            chatInput.value = `---->>> ${selectedGuest.textContent} : `;
+            console.log("Privatni chat sa: ", selectedGuest.textContent);
+        }
+    });
 
     // Kada korisnik pritisne Enter
     chatInput.addEventListener('keydown', (event) => {
@@ -54,15 +59,19 @@ chatInput.value = `---->>> ${selectedGuest.textContent} : `;
                 const recipient = selectedGuest.textContent;
                 const time = new Date().toLocaleTimeString();
 
-                socket.emit('private_message', {
-                    to: recipient,
-                    message,
-                    time
-                });
+               socket.emit('private_message', {
+    to: recipient,
+    message,
+    time,
+    bold: isBold,
+    italic: isItalic,
+    color: currentColor,
+    underline: isUnderline,
+    overline: isOverline
+});
 
                
-
-                // Forma ostaje netaknuta za privatni chat
+               // Forma ostaje netaknuta za privatni chat
                 chatInput.value = `---->>> ${recipient} : `;
             } else {
                 // Emisija obične poruke
