@@ -7,6 +7,7 @@ let isOverline = false;   // Dodano za overline
 // Objekat za čuvanje podataka o gostima
 const guestsData = {};
 const colorPrefs = {};
+let nickname; 
 
 
 // Funkcija za BOLD formatiranje
