@@ -13,10 +13,7 @@ document.getElementById('privateMessage').addEventListener('click', () => {
         });
     }
 
-    console.log(statusText);
-    alert(statusText);
-});
-
+  
 document.addEventListener('DOMContentLoaded', () => {
     const guestList = document.getElementById('guestList');
     const chatInput = document.getElementById('chatInput');
@@ -38,15 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedGuest.style.backgroundColor = ''; // Resetuje prethodnog gosta
             }
 
-            selectedGuest = event.target; // Postavlja novog gosta
-            selectedGuest.style.backgroundColor = 'rgba(255, 255, 0, 0.3)'; // Providna žuta traka
-            isPrivateChatEnabled = true; // Uključuje privatni chat
+           selectedGuest = event.target; // Postavlja novog gosta
+selectedGuest.style.backgroundColor = 'rgba(255, 255, 0, 0.3)'; // Providna žuta traka
+isPrivateChatEnabled = true; // Uključuje privatni chat
 
-            // Forma poruke za privatni chat
-            chatInput.value = `---->>> ${selectedGuest.textContent} : `;
-            console.log("Privatni chat sa: ", selectedGuest.textContent);
-        }
-    });
+// Forma poruke za privatni chat
+chatInput.value = `---->>> ${selectedGuest.textContent} : `;
+}
 
     // Kada korisnik pritisne Enter
     chatInput.addEventListener('keydown', (event) => {
@@ -65,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     time
                 });
 
-                console.log(`Privatna poruka poslata ${recipient}:`, message);
+               
 
                 // Forma ostaje netaknuta za privatni chat
                 chatInput.value = `---->>> ${recipient} : `;
