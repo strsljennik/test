@@ -9,6 +9,7 @@ const konobaricaModul = require('./konobaricamodul'); // Uvoz konobaricamodul.js
 const slikemodul = require('./slikemodul');
 const router = require('./memorymodul'); // Uvoz ruta iz memorymodul.js
 const pingService = require('./ping');
+const privateModule = require('./privatmodul'); // Podesi putanju ako je u drugom folderu
 require('dotenv').config();
 
 const app = express();
@@ -19,6 +20,7 @@ let isAudioStreaming = false;
 connectDB(); // Povezivanje na bazu podataka
 konobaricaModul(io);
 slikemodul.setSocket(io);
+
 
 // Middleware za parsiranje JSON podataka i serviranje statičkih fajlova
 app.use(express.json());
@@ -47,6 +49,7 @@ const assignedNumbers = new Set(); // Set za generisane brojeve
 
 // Dodavanje socket događaja iz banmodula
 setupSocketEvents(io, guests, bannedUsers); // Dodavanje guests i bannedUsers u banmodul
+privateModule(io, guests);
 
 // Socket.io događaji
 io.on('connection', (socket) => {
@@ -86,14 +89,6 @@ io.on('connection', (socket) => {
             time: time,
         };
         io.emit('chatMessage', messageToSend);
-    });
-
-    // Obrada privatne poruke
-    socket.on('private_message', ({ to, message, time }) => {
-        const toSocketId = Object.keys(guests).find(key => guests[key] === to);
-        if (toSocketId) {
-            io.to(toSocketId).emit('private_message', { from: guests[socket.id], message, time });
-        }
     });
 
     // Obrada za čišćenje chata
