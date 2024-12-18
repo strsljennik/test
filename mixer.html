@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <script src="/socket.io/socket.io.js"></script>
+    <title>Mixer pravio  *__X__* </title>
+    <style>
+   #mixer {
+    background-color: black;
+    color: white;
+    width: 300px; /* Prilagođena širina */
+    height: auto; /* Automatska visina */
+    padding: 10px;
+    border: 5px solid white; 
+    position: absolute;
+    cursor: move;
+    box-shadow: 0 0 10px white; 
+    border-radius: 10px; 
+    bottom: 20px;
+    resize: both; /* Omogućava promenu veličine */
+    overflow: hidden; /* Održava prikaz unutar okvira */
+}
+
+button {
+    background-color: black;
+    color: white;
+    border: 2px solid white; 
+    padding: 10px; 
+    cursor: pointer;
+    margin: 5px;
+    text-transform: uppercase;
+    box-shadow: 0 0 10px white; 
+    width: 60px; /* Usklađena širina */
+    font-size: 12px;
+    bottom: 2px;
+}
+
+button:hover {
+    background-color: white;
+    color: black;
+}
+
+#songList {
+    list-style: none;
+    padding: 0;
+    max-height: calc(100% - 150px); /* Lista se prilagođava visini */
+    overflow-y: auto; 
+    border: 1px solid white;
+    border-radius: 5px;  
+    margin-top: 100px; 
+    bottom: 40px; 
+}
+
+#songList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border-bottom: 1px solid white;
+    cursor: grab;
+}
+
+.selected {
+    background-color: #333;
+}
+
+.title {
+    text-align: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0; 
+    margin-bottom: 10px; 
+    font-weight: bold; 
+    font-style: italic; 
+}
+
+#mixer-buttons {
+    display: flex;
+    justify-content: space-around; 
+    position: relative; /* Omogućava pravilan raspored */
+    bottom: 0; /* Na samom dnu */
+    left: 0;
+    right: 0;
+    margin-top: 10px; /* Razmak od liste */
+}
+
+    </style>
+</head>
+<body>
+    <div id="mixer">
+        <audio id="audioPlayer" controls style="position: absolute; top: 0px; left: 0;"></audio>
+        <h2 class="title" style="position: absolute; top: 60px; left: 0;">By *__X__*</h2>
+        <input type="file" id="fileInput" multiple style="position: absolute; top: 90px; left: 0; right: 0; margin-bottom: 10px;">
+
+        <ul id="songList"></ul>
+        
+        <div id="mixer-buttons">
+            <button id="playSelected">Play</button>
+            <button id="deleteSelected">Obriši</button>
+            
+        </div>
+    </div>
+
+    <script>
+        const socket = window.parent.socket;
+        const mixer = document.getElementById("mixer");
+        const audioPlayer = document.getElementById('audioPlayer');
+        const songList = document.getElementById('songList');
+        const fileInput = document.getElementById('fileInput');
+        const deleteSelectedButton = document.getElementById('deleteSelected');
+        const playSelectedButton = document.getElementById('playSelected');
+        const hideButton = document.getElementById('hideButton');
+        const closeButton = document.getElementById('closeButton');
+        let songs = [];
+        let currentSongIndex = 0;
+
+        let isDragging = false;
+let offsetX, offsetY;
+
+mixer.addEventListener('mousedown', (e) => {
+    if (e.target === mixer || e.target.tagName === 'H2') {
+        isDragging = true;
+        offsetX = e.clientX - mixer.offsetLeft;
+        offsetY = e.clientY - mixer.offsetTop;
+        e.stopPropagation();  // Sprečava širenje događaja na druge elemente
+    }
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+        mixer.style.left = `${e.clientX - offsetX}px`;
+        mixer.style.top = `${e.clientY - offsetY}px`;
+    }
+});
+
+document.addEventListener('mouseup', () => {
+    isDragging = false;
+});
+
+        fileInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const url = URL.createObjectURL(files[i]);
+                addSong(url, files[i].name);
+            }
+            fileInput.value = '';
+        });
+
+        function addSong(url, name) {
+            songs.push({ url, name });
+            const li = document.createElement('li');
+            li.textContent = name;
+
+                li.setAttribute('draggable', 'true');
+
+
+            li.addEventListener('click', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    li.classList.toggle('selected');
+                } else {
+                    const selectedSongs = document.querySelectorAll('.selected');
+                    selectedSongs.forEach(song => song.classList.remove('selected'));
+                    li.classList.add('selected');
+                }
+            });
+
+            songList.appendChild(li); // Dodajemo pesmu u listu
+        }
+
+        deleteSelectedButton.addEventListener('click', () => {
+            const selectedSongs = document.querySelectorAll('.selected');
+            selectedSongs.forEach(songElement => {
+                const index = Array.from(songList.children).indexOf(songElement);
+                if (index > -1) {
+                    songs.splice(index, 1);
+                    songList.removeChild(songElement);
+                }
+            });
+        });
+
+        playSelectedButton.addEventListener('click', () => {
+            const selectedSongs = document.querySelectorAll('.selected');
+            if (selectedSongs.length === 1) {
+                const index = Array.from(songList.children).indexOf(selectedSongs[0]);
+                if (index > -1) {
+                    playSong(index);
+                }
+            }
+        });
+
+        function playSong(index) {
+            if (index >= 0 && index < songs.length) {
+                currentSongIndex = index;
+                audioPlayer.src = songs[index].url;
+                audioPlayer.style.display = 'block';
+                audioPlayer.play();
+            }
+        }
+
+     audioPlayer.addEventListener('ended', () => {
+    // Izbriši trenutnu pesmu
+    songs.splice(currentSongIndex, 1);
+    songList.removeChild(songList.children[currentSongIndex]);
+
+    // Igraj sledeću pesmu
+    if (currentSongIndex < songs.length) {
+        playSong(currentSongIndex); // Igraj pesmu sa trenutnim indeksom
+    } else {
+        currentSongIndex = 0; // Resetuj na početak ako su sve pesme odsvirane
+    }
+});
+
+songList.addEventListener('dragstart', (e) => {
+    e.target.classList.add('dragging');
+});
+
+songList.addEventListener('dragend', (e) => {
+    e.target.classList.remove('dragging');
+});
+
+songList.addEventListener('dragstart', (e) => {
+    if (e.target.tagName === 'LI') {
+        e.target.classList.add('dragging');
+    }
+});
+
+songList.addEventListener('dragend', (e) => {
+    if (e.target.tagName === 'LI') {
+        e.target.classList.remove('dragging');
+        updateSongsOrder(); // Ažuriraj niz pesama nakon prevlačenja
+    }
+});
+
+songList.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    const draggingItem = document.querySelector('.dragging');
+    const siblings = [...songList.children].filter(item => item !== draggingItem);
+    const nextSibling = siblings.find(sibling => {
+        const rect = sibling.getBoundingClientRect();
+        return e.clientY < rect.top + rect.height / 2;
+    });
+    songList.insertBefore(draggingItem, nextSibling);
+});
+
+function updateSongsOrder() {
+    const updatedOrder = [];
+    const listItems = [...songList.children];
+
+    listItems.forEach((item) => {
+        const songName = item.textContent.trim(); // Uzmi ime pesme iz <li>
+        const song = songs.find((s) => s.name === songName); // Pronađi pesmu po imenu
+        if (song) {
+            updatedOrder.push(song); // Dodaj pesmu u novi redosled
+        }
+    });
+
+    songs = updatedOrder; // Ažuriraj globalni niz pesama
+}
+
+</script>
+</body>
+</html
