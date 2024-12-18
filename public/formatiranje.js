@@ -7,7 +7,7 @@ let isOverline = false;   // Dodano za overline
 // Objekat za čuvanje podataka o gostima
 const guestsData = {};
 const colorPrefs = {};
-const bannedUsers = {}; // Lista banovanih korisnika
+
 
 // Funkcija za BOLD formatiranje
 document.getElementById('boldBtn').addEventListener('click', function() {
@@ -54,7 +54,6 @@ function updateInputStyle() {
     inputField.style.textDecoration = (isUnderline ? 'underline ' : '') + (isOverline ? 'overline' : '');
 }
 
-
 // Kada korisnik pritisne Enter
 document.getElementById('chatInput').addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
@@ -65,8 +64,7 @@ document.getElementById('chatInput').addEventListener('keydown', function(event)
             bold: isBold,
             italic: isItalic,
             color: currentColor,
-            underline: isUnderline,  // Dodano za underline
-            overline: isOverline     // Dodano za overline
+            nickname: nickname // Pošalji ime gosta
         });
         this.value = ''; // Isprazni polje za unos
     }
@@ -86,6 +84,26 @@ socket.on('chatMessage', function(data) {
     messageArea.prepend(newMessage);
     messageArea.scrollTop = 0; // Automatsko skrolovanje
 });
+
+// Kada server pošalje privatnu poruku
+socket.on('private_message', function(data) {
+    let messageArea = document.getElementById('messageArea');
+    let newMessage = document.createElement('div');
+    newMessage.classList.add('message');
+
+    // Formatiranje privatne poruke
+    newMessage.style.fontWeight = data.bold ? 'bold' : 'normal';
+    newMessage.style.fontStyle = data.italic ? 'italic' : 'normal';
+    newMessage.style.color = data.color;
+    newMessage.style.textDecoration = (data.underline ? 'underline ' : '') + (data.overline ? 'overline' : '');
+    
+    newMessage.innerHTML = `<strong>${data.from} (Privatno):</strong> ${data.message} <span style="font-size: 0.8em; color: gray;">(${data.time})</span>`;
+    
+    // Prikazuje privatnu poruku
+    messageArea.prepend(newMessage);
+    messageArea.scrollTop = 0; // Automatsko skrolovanje
+});
+
 
 
 // Funkcija za dodavanje stilova gostima
