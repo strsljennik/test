@@ -9,7 +9,6 @@ const guestsData = {};
 const colorPrefs = {};
 
 
-
 // Funkcija za BOLD formatiranje
 document.getElementById('boldBtn').addEventListener('click', function() {
     isBold = !isBold;
@@ -65,7 +64,8 @@ document.getElementById('chatInput').addEventListener('keydown', function(event)
             bold: isBold,
             italic: isItalic,
             color: currentColor,
-          });
+            nickname: nickname // Pošalji ime gosta
+        });
         this.value = ''; // Isprazni polje za unos
     }
 });
