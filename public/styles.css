@@ -19,7 +19,7 @@ body {
     border-radius: 10px;
     padding: 20px;
     width: 250px; /* Zadržana širina */
-    height: 150px; /* Nova visina */
+    height: 200px; /* Nova visina */
     position: absolute; /* Zadržana pozicija */
     top: 0; /* Bez razmaka od vrha */
     left: 0; /* Bez razmaka od leve ivice */
@@ -120,4 +120,12 @@ body {
     border-bottom: 1px solid white;
     cursor: pointer;
     color: inherit; /* Ensure dynamic color from JS is applied */
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 78px;
+  z-index: 10000; /* Osigurava da slika bude iznad iframe-a */
 }
