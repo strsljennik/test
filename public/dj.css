@@ -41,34 +41,43 @@
 }
 
 .modal {
-    display: none; /* Sakrij modal po default-u */
-    position: fixed; /* Fiksna pozicija */
-    z-index: 1; /* Na vrhu svih elemenata */
+    display: none;
+    position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
-    width: 400px; /* Širina modalnog prozora */
-    /* Dodajte željenu visinu ako je potrebno */
-    height: auto; 
-    overflow: hidden; /* Sakrij sadržaj koji prelazi */
-    background-color: rgba(0, 0, 0, 0.5); /* Poluprozirna pozadina */
+    width: 400px;
+    height: auto;
+    overflow: hidden;
+    background-color: black; /* Potpuno crna pozadina */
+    border: 2px solid #fff; /* Bela neon ivica */
+    box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8); /* Neon svetlo oko */
+    border-radius: 10px;
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 0; /* Uklanjamo margin */
+    background-color: black;
+    color: #fff; /* Bela boja teksta */
     padding: 20px;
-    border: 1px solid #888;
+    border: 1px solid #fff; /* Bela neon ivica */
+    border-radius: 10px;
 }
 
 .close {
-    color: #aaa;
-    float: right;
+    color: #fff; /* Bela boja za dugme za zatvaranje */
     font-size: 28px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .close:hover,
 .close:focus {
+    color: #ff00ff; /* Neon ružičasta na hover */
+    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff; /* Neon efekat na hover */
+}
+
+
+
 
   /* Osnovni stil za desktop */
 body {
@@ -119,3 +128,115 @@ h1 {
     }
 }
 
+/* STIL ZA MIXER MODAL */
+
+.mixerModal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 350px;
+    height:800px;
+    overflow: hidden;
+    background-color: black; /* Potpuno crna pozadina */
+    border: 2px solid #fff; /* Bela neon ivica */
+    box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8); /* Neon svetlo oko */
+    border-radius: 10px;
+}
+
+.mixerModal-content {
+    background-color: black;
+    color: #fff; /* Bela boja teksta */
+    padding: 20px;
+    border: 1px solid #fff; /* Bela neon ivica */
+    border-radius: 10px;
+}
+
+/* Stilizacija dugmadi */
+button {
+    background-color: black;   /* Crna pozadina */
+    color: white;              /* Belu boju teksta */
+    border: 2px solid white;   /* Bele granice */
+    border-radius: 5px;       /* Zaobljeni uglovi */
+    padding: 10px 20px;       /* Unutrašnje margine (gore-dole, levo-desno) */
+    margin: 5px;              /* Spoljna margina između dugmadi */
+    cursor: pointer;           /* Promeni kursor na ruku */
+    transition: background-color 0.3s; /* Efekat prelaska */
+}
+
+/* Efekat hover za dugmadi */
+button:hover {
+    background-color: white;   /* Promeni pozadinu na belu kada se pređe mišem */
+    color: black;              /* Promeni boju teksta na crnu */
+}
+
+
+
+/* Stil za modal sa id 'gostimodal' */
+#gostimodal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px;
+    height: 250px;
+    background-color: #000;
+    border: 2px solid white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    text-align: center;
+    overflow: auto
+}
+
+/* Neon efekat na granici modal-a */
+#gostimodal {
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.7);
+}
+
+/* Stil za dugmiće unutar modala */
+#gostimodal .toolbarBtn {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    font-size: 16px;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.3s;
+}
+
+/* Hover efekat na dugmićima */
+#gostimodal .toolbarBtn:hover {
+    background-color: white;
+    color: black;
+    box-shadow: 0 0 15px 2px rgba(255, 255, 255, 1);
+}
+
+/* Paleta za biranje boje u modal-u */
+#gostimodal #colorPicker {
+    margin-top: 10px;
+    width: 80%;
+    height: 30px;
+    border: 2px solid white;
+}
+
+/* X za zatvaranje */
+#gostimodal .close {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+#gostimodal .close:hover {
+    color: red;
+}
