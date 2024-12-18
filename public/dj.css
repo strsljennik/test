@@ -44,15 +44,18 @@
     display: none;
     position: fixed;
     z-index: 1;
-    left: 0;
-    top: 0;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     width: 400px;
     height: auto;
     overflow: hidden;
     background-color: black; /* Potpuno crna pozadina */
     border: 2px solid #fff; /* Bela neon ivica */
-    box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8); /* Neon svetlo oko */
-    border-radius: 10px;
+    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.8); /* Neon svetlo oko */
+    border-radius: 15px; /* Veći zaobljeni kutovi */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .modal-content {
@@ -61,21 +64,47 @@
     padding: 20px;
     border: 1px solid #fff; /* Bela neon ivica */
     border-radius: 10px;
+    font-family: 'Arial', sans-serif;
 }
 
 .close {
     color: #fff; /* Bela boja za dugme za zatvaranje */
-    font-size: 28px;
+    font-size: 32px;
     font-weight: bold;
     cursor: pointer;
+    border: 2px solid #fff; /* Bela granica oko dugmeta */
+    padding: 8px 16px; /* Veća veličina dugmeta */
+    border-radius: 5px; /* Zaobljeni kutovi dugmeta */
+    background-color: transparent; /* Transparentna pozadina */
+    transition: all 0.3s ease; /* Glatka animacija na hover */
 }
 
 .close:hover,
 .close:focus {
     color: #ff00ff; /* Neon ružičasta na hover */
-    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff; /* Neon efekat na hover */
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; /* Neon efekat na hover */
+    border-color: #ff00ff; /* Neon granica pri hover */
+    background-color: rgba(255, 0, 255, 0.1); /* Svetlo ružičasta pozadina pri hover */
 }
 
+button {
+    background-color: black; /* Crna pozadina */
+    color: white; /* Bela boja teksta */
+    border: 2px solid #fff; /* Bela neon ivica */
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease; /* Glatka animacija */
+}
+
+button:hover,
+button:focus {
+    background-color: rgba(255, 0, 255, 0.2); /* Ružičasta pozadina pri hover */
+    border-color: #ff00ff; /* Neon ružičasta granica pri hover */
+    color: #ff00ff; /* Neon ružičasta boja teksta */
+    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff; /* Neon efekat na hover */
+}
 
 
 
@@ -127,51 +156,6 @@ h1 {
         width: 100%;
     }
 }
-
-/* STIL ZA MIXER MODAL */
-
-.mixerModal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 350px;
-    height:800px;
-    overflow: hidden;
-    background-color: black; /* Potpuno crna pozadina */
-    border: 2px solid #fff; /* Bela neon ivica */
-    box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8); /* Neon svetlo oko */
-    border-radius: 10px;
-}
-
-.mixerModal-content {
-    background-color: black;
-    color: #fff; /* Bela boja teksta */
-    padding: 20px;
-    border: 1px solid #fff; /* Bela neon ivica */
-    border-radius: 10px;
-}
-
-/* Stilizacija dugmadi */
-button {
-    background-color: black;   /* Crna pozadina */
-    color: white;              /* Belu boju teksta */
-    border: 2px solid white;   /* Bele granice */
-    border-radius: 5px;       /* Zaobljeni uglovi */
-    padding: 10px 20px;       /* Unutrašnje margine (gore-dole, levo-desno) */
-    margin: 5px;              /* Spoljna margina između dugmadi */
-    cursor: pointer;           /* Promeni kursor na ruku */
-    transition: background-color 0.3s; /* Efekat prelaska */
-}
-
-/* Efekat hover za dugmadi */
-button:hover {
-    background-color: white;   /* Promeni pozadinu na belu kada se pređe mišem */
-    color: black;              /* Promeni boju teksta na crnu */
-}
-
-
 
 /* Stil za modal sa id 'gostimodal' */
 #gostimodal {
