@@ -7,7 +7,7 @@ let isOverline = false;   // Dodano za overline
 // Objekat za čuvanje podataka o gostima
 const guestsData = {};
 const colorPrefs = {};
-let nickname; 
+
 
 
 // Funkcija za BOLD formatiranje
@@ -65,8 +65,7 @@ document.getElementById('chatInput').addEventListener('keydown', function(event)
             bold: isBold,
             italic: isItalic,
             color: currentColor,
-            nickname: nickname // Pošalji ime gosta
-        });
+          });
         this.value = ''; // Isprazni polje za unos
     }
 });
