@@ -7,12 +7,14 @@ const { setupSocketEvents } = require('./banmodul'); // Uvoz funkcije iz banmodu
 const uuidRouter = require('./uuidmodul'); // Putanja do modula
 const konobaricaModul = require('./konobaricamodul'); // Uvoz konobaricamodul.js
 const slikemodul = require('./slikemodul');
+const router = require('./memorymodul'); // Uvoz ruta iz memorymodul.js
 const pingService = require('./ping');
 require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
+let isAudioStreaming = false;
 
 connectDB(); // Povezivanje na bazu podataka
 konobaricaModul(io);
@@ -23,6 +25,8 @@ app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 app.use('/guests', uuidRouter); // Dodavanje ruta u aplikaciju
 app.set('trust proxy', true);
+app.use('/api', router); // Mount ruta na /api
+
 
 // Rute za registraciju i prijavu
 app.post('/register', (req, res) => register(req, res, io));
@@ -76,6 +80,8 @@ io.on('connection', (socket) => {
             bold: msgData.bold,
             italic: msgData.italic,
             color: msgData.color,
+             underline: msgData.underline,
+            overline: msgData.overline,
             nickname: guests[socket.id],
             time: time,
         };
@@ -96,7 +102,7 @@ io.on('connection', (socket) => {
         io.emit('chat-cleared');
     });
 
-    // Obrada diskonekcije korisnika
+ // Obrada diskonekcije korisnika
     socket.on('disconnect', () => {
         console.log(`${guests[socket.id]} se odjavio.`);
         delete guests[socket.id];
