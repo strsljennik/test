@@ -29,18 +29,6 @@ konobaricaItem.classList.add('guest-konobarica');
 konobaricaItem.innerHTML = 'Konobarica'; // Dodajemo samo tekst bez tagova
 guestList.appendChild(konobaricaItem);
 
-//  ZA MIXER DODATAK
-// Open modal on button click
-document.getElementById("mixer").onclick = function() {
-  document.getElementById("mixerModal").style.display = "block";
-}
-
-// Close modal when clicking the close button
-document.getElementById("kosModal").addEventListener("click", function() {
-  document.getElementById("mixerModal").style.display = "none";
-});
-
-
 // GOSTI MODAL 
 var modal = document.getElementById("gostimodal");
 var btn = document.getElementById("GBtn");
