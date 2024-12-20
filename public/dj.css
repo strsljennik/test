@@ -111,7 +111,7 @@ button:focus {
   /* Osnovni stil za desktop */
 body {
     font-size: 16px;
-    background-color: #f4f4f4;
+   background-color: black;
     margin: 0;
     padding: 0;
 }
@@ -200,27 +200,4 @@ h1 {
     background-color: white;
     color: black;
     box-shadow: 0 0 15px 2px rgba(255, 255, 255, 1);
-}
-
-/* Paleta za biranje boje u modal-u */
-#gostimodal #colorPicker {
-    margin-top: 10px;
-    width: 80%;
-    height: 30px;
-    border: 2px solid white;
-}
-
-/* X za zatvaranje */
-#gostimodal .close {
-    color: white;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-}
-
-#gostimodal .close:hover {
-    color: red;
 }
