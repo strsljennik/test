@@ -1,5 +1,7 @@
-const virtualGuests = [
-    { nickname: 'Sanja', messages: [ 'Romalen jasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'violet' },
+if (!window.virtualGuests) {
+    window.virtualGuests = [
+       
+        { nickname: 'Sanja', messages: [ 'Romalen jasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'violet' },
     { nickname: 'Bojan', messages: ['Poz svima , no pc'], color: 'lime' },
     { nickname: 'Gost-7721', messages: ['Jaaaaaaaaaaaaasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'white' },
     { nickname: '°Sladja°', messages: ['Romalen jasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'magenta' },
@@ -10,26 +12,7 @@ const virtualGuests = [
     { nickname: '/Sanella/', messages: [''], color: 'red' },
     { nickname: 'Gost-4756', messages: [''], color: 'gray' },
     { nickname: 'Gost-4829', messages: ['Poz sarjenge'], color: 'white' },
-    { nickname: 'Gost-4912', messages: ['Sare soven , usten te kelen ari'], color: 'white' },
-    { nickname: 'King', messages: [''], color: 'gold' },
-    { nickname: 'Gost-5001', messages: [''], color: 'white' },
-    { nickname: 'Gost-5132', messages: [''], color: 'white' },
-    { nickname: 'Gost-5254', messages: [''], color: 'white' },
-    { nickname: 'LJubisa', messages: [''], color: 'black' },
-    { nickname: 'Gost-5389', messages: [''], color: 'white' },
-    { nickname: 'Gost-5510', messages: ['Slušam muziku.'], color: 'white' },
-    { nickname: 'Gost-5673', messages: ['toooooooooooooooooooooooooooooooooooooooooooooo'], color: 'white' },
-    { nickname: 'Gost-5785', messages: [''], color: 'aqua' },
-    { nickname: 'Alexandra', messages: [''], color: 'blue' },
-    { nickname: 'Gost-5932', messages: [''], color: 'white' },
-    { nickname: 'Gost-6054', messages: ['jasaaaaaaaa jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'white' },
-    { nickname: 'Gost-6178', messages: [''], color: 'white' },
-    { nickname: 'Gost-6299', messages: ['Dobar dan svima!'], color: 'green' },
-    { nickname: 'Bojana', messages: [''], color: 'purple' },
-    { nickname: 'Gost-6450', messages: ['Vikend vibe.'], color: 'white' },
-    { nickname: 'Gost-6574', messages: ['jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'white' },
-    { nickname: 'Mellisa', messages: ['toooooooooooooooooooooooooooooooooooooo!'], color: 'yellow' },
-];
+   ];
 
 function sendMessageToChat(guest, message) {
     const messageArea = document.getElementById('messageArea');
