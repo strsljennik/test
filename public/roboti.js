@@ -9,6 +9,22 @@ const virtualGuests = [
     { nickname: 'Gost-8644', messages: [''], color: 'white' },
     { nickname: '<<Kristina>>', messages: [''], color: 'pink' },
     { nickname: '/Sanella/', messages: [''], color: 'red' },
+
+   {
+        nickname: 'Cuceklika',
+        messages: [
+            'Zdravo Sarinenge',
+            'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, ajmo💋 *__X__* 💋samo me em tu te kela'
+        ],
+        color: 'purple'
+    },
+    {
+        nickname: 'Cuceklika',
+        messages: [
+            'Merava tuke *__X__* ❤️💋'
+        ],
+        color: 'purple'
+    }
     
 ];
 
