@@ -1,4 +1,4 @@
-const virtualGuests = [
+const defaultGuests = [
     { nickname: 'Sanja', messages: [ 'Romalen jasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'violet' },
     { nickname: 'Bojan', messages: ['Poz svima , no pc'], color: 'lime' },
     { nickname: 'Gost-7721', messages: ['Jaaaaaaaaaaaaasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'white' },
@@ -41,12 +41,20 @@ function sendMessageToChat(guest, message) {
     messageArea.scrollTop = 0;
 }
 
-// Funkcija za dodavanje gostiju u listu
+// Funkcija za dodavanje gostiju u listu, bez duplikata
 function addGuestsToList() {
     const guestList = document.getElementById('guestList');
-    
-    // Ovdje ne resetujemo listu, jer želimo da gosti ostanu stalni
-    virtualGuests.forEach(guest => {
+    const storedGuests = JSON.parse(localStorage.getItem('virtualGuests')) || defaultGuests;
+
+    // Filtriraj duplikate po nickname-u
+    const uniqueGuests = storedGuests.filter((guest, index, self) => 
+        index === self.findIndex((g) => (
+            g.nickname === guest.nickname
+        ))
+    );
+
+    // Dodaj samo jedinstvene goste u listu
+    uniqueGuests.forEach(guest => {
         const guestElement = document.createElement('div');
         guestElement.classList.add('guest');
         guestElement.textContent = guest.nickname;
@@ -56,11 +64,16 @@ function addGuestsToList() {
 
         guestList.appendChild(guestElement);
     });
+
+    // Sačuvaj jedinstvene goste u localStorage
+    localStorage.setItem('virtualGuests', JSON.stringify(uniqueGuests));
 }
 
 // Funkcija za pokretanje poruka gostiju
 function startVirtualGuests() {
-    virtualGuests.forEach((guest, index) => {
+    const storedGuests = JSON.parse(localStorage.getItem('virtualGuests')) || defaultGuests;
+
+    storedGuests.forEach((guest, index) => {
         setTimeout(() => {
             guest.messages.forEach((message, msgIndex) => {
                 setTimeout(() => {
@@ -70,7 +83,7 @@ function startVirtualGuests() {
         }, index * 300000); // 5 minuta razmaka između gostiju
     });
 
-    setTimeout(startVirtualGuests, virtualGuests.length * 300000);
+    setTimeout(startVirtualGuests, storedGuests.length * 300000);
 }
 
 // Pokretanje kodova pri učitavanju stranice
