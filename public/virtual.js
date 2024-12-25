@@ -14,6 +14,16 @@ const virtualGuests = [
         ],
         color: 'purple'
     }
+ { nickname: 'Sanja', messages: [ 'Romalen jasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'violet' },
+    { nickname: 'Bojan', messages: ['Poz svima , no pc'], color: 'lime' },
+    { nickname: 'Gost-7721', messages: ['Jaaaaaaaaaaaaasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'white' },
+    { nickname: '°Sladja°', messages: ['Romalen jasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'magenta' },
+   { nickname: 'Gost-5582', messages: [' Opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'white' },
+    { nickname: 'Boxer', messages: [''], color: 'braun' },
+    { nickname: 'Gost-8644', messages: [''], color: 'white' },
+    { nickname: '<<Kristina>>', messages: [''], color: 'pink' },
+    { nickname: '/Sanella/', messages: [''], color: 'red' },
+    
 ];
 
 function sendMessageToChat(guest, message) {
