@@ -1,16 +1,14 @@
 const virtualGuests = [
-   
     { nickname: 'Sanja', messages: [ 'Romalen jasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'violet' },
     { nickname: 'Bojan', messages: ['Poz svima , no pc'], color: 'lime' },
     { nickname: 'Gost-7721', messages: ['Jaaaaaaaaaaaaasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'white' },
     { nickname: '°Sladja°', messages: ['Romalen jasaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'magenta' },
-   { nickname: 'Gost-5582', messages: [' Opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'white' },
+    { nickname: 'Gost-5582', messages: [' Opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!'], color: 'white' },
     { nickname: 'Boxer', messages: [''], color: 'braun' },
     { nickname: 'Gost-8644', messages: [''], color: 'white' },
     { nickname: '<<Kristina>>', messages: [''], color: 'pink' },
     { nickname: '/Sanella/', messages: [''], color: 'red' },
-
-   {
+    {
         nickname: 'Cuceklika',
         messages: [
             'Zdravo Sarinenge',
@@ -25,9 +23,9 @@ const virtualGuests = [
         ],
         color: 'purple'
     }
-    
 ];
 
+// Funkcija za slanje poruka u chat
 function sendMessageToChat(guest, message) {
     const messageArea = document.getElementById('messageArea');
 
@@ -43,23 +41,24 @@ function sendMessageToChat(guest, message) {
     messageArea.scrollTop = 0;
 }
 
+// Funkcija za dodavanje gostiju u listu
 function addGuestsToList() {
     const guestList = document.getElementById('guestList');
     
+    // Ovdje ne resetujemo listu, jer želimo da gosti ostanu stalni
     virtualGuests.forEach(guest => {
-        if (!Array.from(guestList.children).some(el => el.textContent === guest.nickname)) {
-            const guestElement = document.createElement('div');
-            guestElement.classList.add('guest');
-            guestElement.textContent = guest.nickname;
-            guestElement.style.color = guest.color;
-            guestElement.style.fontWeight = 'bold';
-            guestElement.style.fontStyle = 'italic';
+        const guestElement = document.createElement('div');
+        guestElement.classList.add('guest');
+        guestElement.textContent = guest.nickname;
+        guestElement.style.color = guest.color;
+        guestElement.style.fontWeight = 'bold';
+        guestElement.style.fontStyle = 'italic';
 
-            guestList.appendChild(guestElement);
-        }
+        guestList.appendChild(guestElement);
     });
 }
 
+// Funkcija za pokretanje poruka gostiju
 function startVirtualGuests() {
     virtualGuests.forEach((guest, index) => {
         setTimeout(() => {
@@ -74,6 +73,7 @@ function startVirtualGuests() {
     setTimeout(startVirtualGuests, virtualGuests.length * 300000);
 }
 
+// Pokretanje kodova pri učitavanju stranice
 window.onload = () => {
     addGuestsToList();
     startVirtualGuests();
