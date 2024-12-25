@@ -10,7 +10,7 @@ const virtualGuests = [
     { nickname: 'Gost-8644', messages: [''], color: 'white' },
     { nickname: '<<Kristina>>', messages: [''], color: 'pink' },
     { nickname: '/Sanella/', messages: [''], color: 'red' },
-    ];
+];
 
 function sendMessageToChat(guest, message) {
     const messageArea = document.getElementById('messageArea');
@@ -18,54 +18,49 @@ function sendMessageToChat(guest, message) {
     const messageElement = document.createElement('div');
     messageElement.innerHTML = `<span style="color: ${guest.color}; font-weight: bold; font-style: italic;">${guest.nickname}: ${message}</span>`;
     
-    // Dodavanje poruke na vrh
     messageArea.insertBefore(messageElement, messageArea.firstChild);
     
-    // Dodavanje razmaka između poruka
     const spacingElement = document.createElement('div');
-    spacingElement.style.height = '10px'; // Podešavanje visine razmaka
-    messageArea.insertBefore(spacingElement, messageArea.firstChild.nextSibling); // Razmak nakon poruke
+    spacingElement.style.height = '10px';
+    messageArea.insertBefore(spacingElement, messageArea.firstChild.nextSibling);
 
-    messageArea.scrollTop = 0; // Skrolovanje na vrh
+    messageArea.scrollTop = 0;
 }
 
 function addGuestToList(guest) {
     const guestList = document.getElementById('guestList');
     
-    // Proveri da li gost već postoji u listi
-    if (!Array.from(guestList.children).some(el => el.textContent === guest.nickname)) {
-        const guestElement = document.createElement('div');
-        guestElement.classList.add('guest');
-        guestElement.textContent = guest.nickname;
-        guestElement.style.color = guest.color; // Postavljanje boje za gosta
+    const guestElement = document.createElement('div');
+    guestElement.classList.add('guest');
+    guestElement.textContent = guest.nickname;
+    guestElement.style.color = guest.color;
 
-        guestList.appendChild(guestElement);
-    }
+    guestList.appendChild(guestElement);
 }
 
 function startVirtualGuests() {
+    // Dodaj sve goste odmah u listu
+    virtualGuests.forEach(guest => addGuestToList(guest));
+
     const messageTimings = [
-        { guestIndex: 0, messageIndex: 0, time: 0 },    // cuceklika 1: Poz Svima
-        { guestIndex: 0, messageIndex: 1, time: 5 },    // cuceklika 1: jasaaaaaaaaaaaaaaaaa
-        { guestIndex: 1, messageIndex: 0, time: 60 },   // cuceklika 2: Zdravo Sarinenge
-        { guestIndex: 1, messageIndex: 1, time: 65 },   // cuceklika 2: opaaaaaaaaaaaaaaaaaaa
-        { guestIndex: 2, messageIndex: 0, time: 120 },  // cuceklika 3: Selami sarinenge
-        { guestIndex: 2, messageIndex: 1, time: 125 },  // cuceklika 3: tooOOOOOOOOOOOOOOOOOOO
-        { guestIndex: 0, messageIndex: 0, time: 180 },  // cuceklika 1: *__X__* Mangava tu ❤️
-        { guestIndex: 1, messageIndex: 1, time: 200 },  // cuceklika 2: Nas olestar cuceklike 1...
-        { guestIndex: 2, messageIndex: 1, time: 220 },  // cuceklika 3: Dzabe tumen cupinen...
+        { guestIndex: 0, messageIndex: 0, time: 0 },    
+        { guestIndex: 0, messageIndex: 1, time: 5 },    
+        { guestIndex: 1, messageIndex: 0, time: 60 },   
+        { guestIndex: 1, messageIndex: 1, time: 65 },   
+        { guestIndex: 2, messageIndex: 0, time: 120 },  
+        { guestIndex: 2, messageIndex: 1, time: 125 },  
+        { guestIndex: 0, messageIndex: 0, time: 180 },  
+        { guestIndex: 1, messageIndex: 1, time: 200 },  
+        { guestIndex: 2, messageIndex: 1, time: 220 },  
     ];
 
     messageTimings.forEach(({ guestIndex, messageIndex, time }) => {
         setTimeout(() => {
             sendMessageToChat(virtualGuests[guestIndex], virtualGuests[guestIndex].messages[messageIndex]);
-            addGuestToList(virtualGuests[guestIndex]); // Dodavanje gosta u listu
-        }, time * 1000); // Konvertovanje sekundi u milisekunde
+        }, time * 1000);
     });
 
-    // Pauza od 240 sekundi pre ponovnog ciklusa
     setTimeout(startVirtualGuests, 240 * 1000);
 }
 
-// Pokretanje virtuelnih gostiju kada se stranica učita
 window.onload = startVirtualGuests;
