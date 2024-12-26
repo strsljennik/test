@@ -1,15 +1,15 @@
 const virtualGuests = [
-    { nickname: 'cuceklika 1', messages: ['Poz Svima', 'jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'deepskyblue' },
+    { nickname: 'Cuceklika 1', messages: ['Poz Svima', 'jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'deepskyblue' },
     
-    { nickname: 'cuceklika 2', messages: ['Zdravo Sarinenge', 'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'purple' },
+    { nickname: 'Cuceklika 2', messages: ['Zdravo Sarinenge', 'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'purple' },
     
-    { nickname: 'cuceklika 3', messages: ['Selami sarinenge', 'tooOOOOOOOOOOOOOOOOOOOOOOO'], color: 'red' },
+    { nickname: 'Cuceklika 3', messages: ['Selami sarinenge', 'tooOOOOOOOOOOOOOOOOOOOOOOO'], color: 'red' },
     
-    { nickname: 'cuceklika 1', messages: ['*__X__* Mangava tu ❤️'], color: 'deepskyblue' },
+    { nickname: 'Cuceklika 1', messages: ['*__X__* Mangava tu ❤️'], color: 'deepskyblue' },
     
-    { nickname: 'cuceklika 2', messages: ['Nas olestar cuceklike 1, Merava tuke *__X__* ❤️💋'], color: 'purple' },
+    { nickname: 'Cuceklika 2', messages: ['Nas olestar cuceklike 1, Merava tuke *__X__* ❤️💋'], color: 'purple' },
     
-    { nickname: 'cuceklika 3', messages: ['Dzabe tumen cupinen pe taro bala OV TANO SAMO MLO'], color: 'red' },
+    { nickname: 'Cuceklika 3', messages: ['Dzabe tumen cupinen pe taro bala OV TANO SAMO MLO'], color: 'red' },
 ];
 
 function sendMessageToChat(guest, message) {
