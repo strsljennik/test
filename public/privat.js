@@ -8,7 +8,7 @@ document.getElementById('privateMessage').addEventListener('click', () => {
 
     if (isPrivateChatEnabled) {
         document.querySelectorAll('.guest').forEach(guest => {
-            guest.style.pointerEvents = 'auto'; // Omogućavamo selekciju gostiju
+            guest.style.pointerEvents = ''; // Omogućavamo selekciju gostiju
         });
     } else {
         document.querySelectorAll('.guest').forEach(guest => {
