@@ -63,31 +63,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
-  
-    // Kada korisnik pritisne Enter
-    chatInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            let message = chatInput.value;
-
-            if (isPrivateChatEnabled && selectedGuest) {
-                // Emisija privatne poruke
-                const recipient = selectedGuest.textContent;
-                const time = new Date().toLocaleTimeString();
-
-               socket.emit('private_message', {
-    to: recipient,
-    message,
-    time,
-    bold: isBold,
-    italic: isItalic,
-    color: currentColor,
-    underline: isUnderline,
-    overline: isOverline
-});
-
-          // Forma ostaje netaknuta za privatni chat
+// Premesti keydown listener izvan click eventa
+chatInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        let message = chatInput.value;
+        if (isPrivateChatEnabled && selectedGuest) {
+            // Emisija privatne poruke
+            const recipient = selectedGuest.textContent;
+            const time = new Date().toLocaleTimeString();
+            socket.emit('private_message', {
+                to: recipient,
+                message,
+                time,
+                bold: isBold,
+                italic: isItalic,
+                color: currentColor,
+                underline: isUnderline,
+                overline: isOverline
+            });
             chatInput.value = `---->>> ${recipient} : `;
         } else {
             // Emisija obične poruke
@@ -99,8 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 underline: isUnderline,
                 overline: isOverline
             });
-
             chatInput.value = ''; // Resetuje unos samo za obične poruke
         }
     }
-});       
+});
