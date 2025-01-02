@@ -53,10 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             selectedGuest = event.target; // Postavlja novog gosta
             selectedGuest.style.backgroundColor = 'rgba(255, 255, 0, 0.3)'; // Providna žuta traka
+              isPrivateChatEnabled = false; // Uključuje privatni chat
             
          // Forma poruke za privatni chat
             chatInput.value = `---->>> ${selectedGuest.textContent} : `;
             console.log("Privatni chat sa: ", selectedGuest.textContent);
+            
         }
     });
 });
