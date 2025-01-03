@@ -38,8 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (selectedGuest === event.target) {
                 selectedGuest.style.backgroundColor = ''; // Uklanja traku selekcije
                 selectedGuest = null; // Resetuje selektovanog gosta
-                isPrivateChatEnabled = false; // Isključuje privatni chat
-                chatInput.value = ''; // Resetuje unos
+                 chatInput.value = ''; // Resetuje unos
                 console.log("Privatni chat isključen.");
                 return;
             }
