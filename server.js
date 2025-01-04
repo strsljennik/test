@@ -10,10 +10,17 @@ const slikemodul = require('./slikemodul');
 const pingService = require('./ping');
 const privateModule = require('./privatmodul'); // Podesi putanju ako je u drugom folderu
 require('dotenv').config();
-
+const cors = require('cors');
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+    cors: {
+        origin: '*', // Omogućava svim domenima da se povežu putem WebSocket-a
+        methods: ['GET', 'POST'],
+        allowedHeaders: ['Content-Type'],
+        credentials: true
+    }
+});
 
 connectDB(); // Povezivanje na bazu podataka
 konobaricaModul(io);
@@ -92,14 +99,7 @@ io.on('connection', (socket) => {
         io.emit('chat-cleared');
     });
 
- // Obrada diskonekcije korisnika
-    socket.on('disconnect', () => {
-        console.log(`${guests[socket.id]} se odjavio.`);
-        delete guests[socket.id];
-        io.emit('updateGuestList', Object.values(guests));
-    });
-
-    // Mogućnost banovanja korisnika prema nickname-u
+ // Mogućnost banovanja korisnika prema nickname-u
     socket.on('banUser', (nicknameToBan) => {
         const socketIdToBan = Object.keys(guests).find(key => guests[key] === nicknameToBan);
 
@@ -123,6 +123,13 @@ io.on('connection', (socket) => {
         return number;
     }
 });
+
+ // Obrada diskonekcije korisnika
+    socket.on('disconnect', () => {
+        console.log(`${guests[socket.id]} se odjavio.`);
+        delete guests[socket.id];
+        io.emit('updateGuestList', Object.values(guests));
+    });
 
 // Pokretanje servera na definisanom portu
 const PORT = process.env.PORT || 3000;
