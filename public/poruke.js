@@ -39,3 +39,16 @@ socket.on('chat-cleared', function() {
     const chatWindow = document.getElementById('messageArea');
     chatWindow.innerHTML = ""; // Briše sve unutar chata
 });
+//  ZENO PLAYER NA DUGME  
+ document.getElementById('sound').onclick = function() {
+            var iframe = document.getElementById('radioIframe');
+            if (iframe.style.display === 'none') {
+                // Prikazi iframe i pokreni strim
+                iframe.style.display = 'block';
+                this.textContent = 'Pause';
+            } else {
+                // Sakrij iframe i pauziraj strim
+                iframe.style.display = 'none';
+                this.textContent = 'Play';
+            }
+        };
