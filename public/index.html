@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <div id="authContainer">
+   <div id="authContainer" style="display: none;">
     <!-- Forma za registraciju -->
     <form id="registerForm">
         <input type="text" id="registerUsername" placeholder="Napavi Nik" required>
@@ -45,9 +45,9 @@
         <span class="close">&times;</span>
         
         <!-- Dugmici unutar modala -->
+        <button class="toolbarBtn" id="NIK"> REGISTRACIJA / LOGIN</button>
         <button class="toolbarBtn" id="boldBtn">Bold</button>
         <button class="toolbarBtn" id="italicBtn">Italic</button>
-        <!-- Dugme za boju koje sadrži paletu boja -->
         <button class="toolbarBtn" id="colorBtn">Color</button>
         <input type="color" id="colorPicker" style="display: none;">
     
@@ -58,8 +58,8 @@
 <button class="toolbarBtn" id="linijagoreBtn">Krov</button>
         <button class="toolbarBtn" id="sound">Muzika</button>
         <button class="toolbarBtn" id="ton">Muzika-Mixer</button>
-      
-</div>
+       
+      </div>
 </div>
 <div id="functionModal" class="modal" style="display: none;" draggable="true">
     <div class="modal-content">
@@ -125,7 +125,9 @@
  <iframe id="radioIframe" src="https://zeno.fm/player/radio-galaksija?autoplay=true&muted=true" 
             width="300" height="139" frameborder="5" scrolling="no"
             style="display: none; position: fixed; top: 0; right: 0; z-index: 9998;"></iframe>
-
-
+    <img id="playerCover" src="https://i.imgur.com/OFK8Tur.jpeg" 
+    width="300" height="139" 
+    style="position: fixed; top: 0; right: 0; z-index: 9999; pointer-events: none; display: none;">
+ 
  </body>
 </html>
