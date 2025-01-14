@@ -39,6 +39,21 @@ socket.on('chat-cleared', function() {
     const chatWindow = document.getElementById('messageArea');
     chatWindow.innerHTML = ""; // Briše sve unutar chata
 });
+// ZENO PLAYER NA DUGME
+document.getElementById('sound').addEventListener('click', function() {
+    const iframe = document.getElementById('radioIframe');
+    const cover = document.getElementById('playerCover');
+    
+    // Toggles između prikaza ili skrivanja playera i cover-a
+    if (iframe.style.display === 'none' || iframe.style.display === '') {
+        iframe.style.display = 'block';  // Prikazi player
+        cover.style.display = 'block';   // Prikazi cover
+        iframe.src = iframe.src;         // Automatski pokreni zvuk, ako treba
+    } else {
+        iframe.style.display = 'none';   // Sakrij player
+        cover.style.display = 'none';    // Sakrij cover
+    }
+});
 //  REGISTRACIJA I LOGIN TABLA
 document.getElementById('NIK').addEventListener('click', function() {
     var container = document.getElementById('authContainer');
