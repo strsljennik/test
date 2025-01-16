@@ -48,6 +48,8 @@ const bannedUsers = new Set();
 
 // Skladištenje informacija o gostima
 const guests = {};
+const guestsData = {};
+let newColor;
 const assignedNumbers = new Set(); // Set za generisane brojeve
 
 // Dodavanje socket događaja iz banmodula
@@ -60,13 +62,23 @@ io.on('connection', (socket) => {
     const uniqueNumber = generateUniqueNumber();
     const nickname = `Gost-${uniqueNumber}`; // Nadimak korisnika
     guests[socket.id] = nickname; // Dodajemo korisnika u guest list
-    socket.emit('setNickname', nickname);
+   socket.emit('setNickname', nickname);
 
-  // Emitovanje događaja da bi ostali korisnici videli novog gosta
+// Funkcija za generisanje jedinstvenog broja
+    function generateUniqueNumber() {
+        let number;
+        do {
+            number = Math.floor(Math.random() * 8889) + 1111; // Brojevi između 1111 i 9999
+        } while (assignedNumbers.has(number));
+        assignedNumbers.add(number);
+        return number;
+    }
+
+ // Emitovanje događaja da bi ostali korisnici videli novog gosta
     socket.broadcast.emit('newGuest', nickname);
-    io.emit('updateGuestList', Object.values(guests));
+io.emit('updateGuestList', Object.values(guests));
 
-    // Obrada prijave korisnika
+ // Obrada prijave korisnika
     socket.on('userLoggedIn', (username) => {
         if (authorizedUsers.has(username)) {
             guests[socket.id] = username;
@@ -99,7 +111,7 @@ io.on('connection', (socket) => {
         console.log('Chat cleared');
         io.emit('chat-cleared');
     });
-
+ 
 // Mogućnost banovanja korisnika prema nickname-u
     socket.on('banUser', (nicknameToBan) => {
         const socketIdToBan = Object.keys(guests).find(key => guests[key] === nicknameToBan);
@@ -114,15 +126,28 @@ io.on('connection', (socket) => {
         }
     });
 
-   // Funkcija za generisanje jedinstvenog broja
-    function generateUniqueNumber() {
-        let number;
-        do {
-            number = Math.floor(Math.random() * 8889) + 1111; // Brojevi između 1111 i 9999
-        } while (assignedNumbers.has(number));
-        assignedNumbers.add(number);
-        return number;
+// Poslati trenutne goste sa bojama novom gostu
+socket.emit('currentGuests', Object.keys(guestsData).map(guestId => ({
+    guestId: guestId,
+    color: guestsData[guestId].color
+})));
+
+// Kada gost menja svoju boju
+socket.on('updateGuestColor', ({ guestId, newColor }) => {
+    console.log('Received color update from client:', guestId, newColor);
+    
+    // Ažuriraj boju gosta na serveru
+    if (!guestsData[guestId]) {
+        guestsData[guestId] = { color: '' }; // Osiguraj da postoji guestId
     }
+    guestsData[guestId].color = newColor;
+
+    // Emituje promenu boje svim klijentima
+    io.emit('updateGuestColor', { guestId, newColor });
+    console.log('Broadcasted color update:', guestId, newColor);
+});
+
+
 // Obrada diskonekcije korisnika
     socket.on('disconnect', () => {
         console.log(`${guests[socket.id]} se odjavio.`);
