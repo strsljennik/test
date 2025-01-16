@@ -4,8 +4,9 @@ module.exports = (io) => {
     io.on('connection', (socket) => {
         // Kada novi gost uđe, pošaljemo pozdravnu poruku od Konobarice
         socket.on('new_guest', () => {
-            const greetingMessage = `Dobro nam došli, osećajte se kao kod kuće, i budite raspoloženi! Sada će vam vaša Konobarica posluziti kaficu ☕, 
-                                                        a naši DJ-evi će se pobrinuti da vam ispune muzičke želje.`;
+            const greetingMessage = `Dobro nam došli, osećajte se kao kod kuće i budite raspoloženi! Sada će vam vaša Konobarica posluziti kaficu ☕, 
+                                                        a naši DJ-evi će se pobrinuti da vam ispune muzičke želje.Nik( Registracija ili login) , Muzika i sve ostalo  
+                                                        potrebno za chat mozete naci klikom na dugme D `;
 
             // Emituj poruku sa klasom 'konobarica' kako bi imala stil
             io.emit('message', { 
