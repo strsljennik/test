@@ -29,7 +29,6 @@ socket.on('display-image', (data) => {
 
 // Osluškujemo 'initial-images' događaj sa servera i prikazujemo postojeće slike
 socket.on('initial-images', (images) => {
-    console.log('Prikaz inicijalnih slika:', images);
     images.forEach((imageData) => {
         addImageToDOM(imageData.imageUrl, imageData.position, imageData.dimensions);
     });
@@ -37,9 +36,7 @@ socket.on('initial-images', (images) => {
 
 // Osluškujemo 'update-images' događaj sa servera
 socket.on('update-images', (updatedImages) => {
-    console.log('Nova lista slika:', updatedImages);
-
-  document.querySelectorAll('img').forEach(slika => {
+     document.querySelectorAll('img').forEach(slika => {
     if (slika.id !== "playerCover") {
         slika.remove(); // Briše samo slike koje nemaju ID "playerCover"
     }
@@ -225,16 +222,12 @@ function emitImageUpdate(img) {
     const position = { x: img.offsetLeft, y: img.offsetTop }; // Pozicija slike
     const dimensions = { width: img.offsetWidth, height: img.offsetHeight }; // Dimenzije slike
     const imageUrl = img.src; // URL slike
-    console.log(`Emituju se podaci slike: URL: ${imageUrl}, pozicija: (${position.x}, ${position.y}), dimenzije: (${dimensions.width}, ${dimensions.height})`);
-
-    // Pozivamo funkciju koja emituje podatke serveru
-    updateImageOnServer(imageUrl, position, dimensions);
+     updateImageOnServer(imageUrl, position, dimensions);
 }
 
 // Funkcija za slanje podataka o slici serveru
 function updateImageOnServer(imageUrl, position, dimensions) {
-    console.log(`Slanje podataka serveru: URL: ${imageUrl}, pozicija: (${position.x}, ${position.y}), dimenzije: (${dimensions.width}, ${dimensions.height})`);
-    socket.emit('update-image', {
+     socket.emit('update-image', {
         imageUrl: imageUrl,
         position: position,
         dimensions: dimensions
@@ -243,13 +236,12 @@ function updateImageOnServer(imageUrl, position, dimensions) {
 
 // Funkcija za sinhronizaciju slike sa servera
 socket.on('sync-image', (data) => {
-    console.log(`Prijem sinhronizovanih podataka: URL: ${data.imageUrl}, pozicija: (${data.position.x}, ${data.position.y}), dimenzije: (${data.dimensions.width}, ${data.dimensions.height})`);
     const syncedImage = document.querySelector(`img[src="${data.imageUrl}"]`); // Selektujemo sliku po URL-u
     if (syncedImage) {
         syncedImage.style.left = data.position.x + 'px';
         syncedImage.style.top = data.position.y + 'px';
         syncedImage.style.width = data.dimensions.width + 'px';
         syncedImage.style.height = data.dimensions.height + 'px';
-        console.log(`Slika sinhronizovana: X: ${data.position.x}, Y: ${data.position.y}, širina: ${data.dimensions.width}, visina: ${data.dimensions.height}`);
+        
     }
 });
