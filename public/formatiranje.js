@@ -178,15 +178,13 @@ socket.on('updateGuestColor', ({ guestId, newColor }) => {
 
 // Slušanje događaja za trenutne goste i njihovih boja
 socket.on('currentGuests', (guests) => {
-    console.log('Received guests:', guests);  // Proveri šta stiže
     if (Array.isArray(guests)) {
         guests.forEach(({ guestId, color }) => {
             setGuestColor(guestId, color);
         });
-    } else {
-        console.error('Expected an array, but got:', guests);
     }
 });
+
 
 // Dodaj listener za ažuriranje boje u realnom vremenu
 const colorPicker = document.getElementById('colorPicker');
