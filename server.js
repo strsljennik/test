@@ -11,6 +11,7 @@ const pingService = require('./ping');
 const privatmodul = require('./privatmodul'); // Podesi putanju ako je u drugom folderu
 require('dotenv').config();
 const cors = require('cors');
+const { initializeStorage, saveGuestData, loadGuestData } = require('./storage');
 
 const app = express();
 const server = http.createServer(app);
