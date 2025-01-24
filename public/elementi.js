@@ -1,9 +1,10 @@
-// Funkcija koja omogućava drag and resize
+// Funkcija za omogućavanje drag-and-resize za elemente
 function enableDragAndResize(container) {
     let isResizing = false;
     let resizeSide = null;
 
     container.addEventListener('mousedown', function (e) {
+        // Ignoriši događaje iz textarea
         if (e.target.tagName === 'TEXTAREA') return;
 
         const rect = container.getBoundingClientRect();
@@ -54,13 +55,8 @@ function enableDragAndResize(container) {
                 document.onmousemove = null;
                 document.onmouseup = null;
 
-                // Emitujemo promene serveru
-                socket.emit('update-chat-container', {
-                    top: container.style.top,
-                    left: container.style.left,
-                    width: container.style.width,
-                    height: container.style.height
-                });
+                // Emitovanje podataka o promenama
+                emitChanges(container);
             };
         } else {
             dragMouseDown(e);
@@ -84,23 +80,36 @@ function enableDragAndResize(container) {
     function closeDragElement() {
         document.onmouseup = null;
         document.onmousemove = null;
+
+        // Emitovanje podataka o promenama
+        emitChanges(container);
     }
 }
 
-// Selektovanje #chatContainer i primena funkcionalnosti
-const chatContainer = document.querySelector('#chatContainer');
-if (chatContainer) {
-    chatContainer.style.position = 'absolute'; // Obavezno postaviti na absolute
-    enableDragAndResize(chatContainer);
+// Funkcija za emitovanje podataka o promenama u chatContainer
+function emitChanges(container) {
+    const position = { x: container.offsetLeft, y: container.offsetTop };
+    const dimensions = { width: container.offsetWidth, height: container.offsetHeight };
+    socket.emit('update-chat-container', { position, dimensions });
 }
 
-// Kada server emituje podatke o promenama od drugih korisnika
-socket.on('sync-chat-container', (data) => {
+// Klikom na dugme omogućavamo drag-and-resize za #chatContainer
+const chatButton = document.querySelector('#chat');
+chatButton.addEventListener('click', function () {
     const chatContainer = document.querySelector('#chatContainer');
     if (chatContainer) {
-        chatContainer.style.top = data.top;
-        chatContainer.style.left = data.left;
-        chatContainer.style.width = data.width;
-        chatContainer.style.height = data.height;
+        chatContainer.style.position = 'absolute'; // Mora biti pozicioniran na absolute
+        enableDragAndResize(chatContainer);
+    }
+});
+
+// Socket: Sinhronizacija chatContainer sa servera
+socket.on('sync-chat-container', function (data) {
+    const chatContainer = document.querySelector('#chatContainer');
+    if (chatContainer) {
+        chatContainer.style.left = data.position.x + 'px';
+        chatContainer.style.top = data.position.y + 'px';
+        chatContainer.style.width = data.dimensions.width + 'px';
+        chatContainer.style.height = data.dimensions.height + 'px';
     }
 });
