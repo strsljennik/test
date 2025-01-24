@@ -9,7 +9,7 @@ const permanentGuests = [
             { nickname: 'Halime', messages: ['Zdravo Sarinenge', 'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'purple' },
             { nickname: 'Holofira', messages: ['Selami sarinenge', 'tooOOOOOOOOOOOOOOOOOOOOOOO'], color: 'red' },
             { nickname: 'Holofira', messages: ['*__X__* Mangava tu ❤️'], color:  'red' },
-            { nickname: 'Halime', messages: ['Nas olestar cuceklike 1, Merava tuke *__X__* ❤️💋'], color: 'purple' },
+            { nickname: 'Halime', messages: ['Nas olestar lolije ili ka sredinav ti frizura, Merava tuke *__X__* ❤️💋'], color: 'purple' },
             { nickname: 'Bala Hatun', messages: ['Dzabe tumen cupinen pe taro bala OV TANO SAMO MLO'], color:'deepskyblue' },
         ];
 
