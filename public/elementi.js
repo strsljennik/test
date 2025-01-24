@@ -1,9 +1,9 @@
+// Funkcija koja omogućava drag and resize
 function enableDragAndResize(container) {
     let isResizing = false;
     let resizeSide = null;
 
     container.addEventListener('mousedown', function (e) {
-        // Ignoriši događaje iz textarea
         if (e.target.tagName === 'TEXTAREA') return;
 
         const rect = container.getBoundingClientRect();
@@ -53,6 +53,14 @@ function enableDragAndResize(container) {
                 resizeSide = null;
                 document.onmousemove = null;
                 document.onmouseup = null;
+
+                // Emitujemo promene serveru
+                socket.emit('update-chat-container', {
+                    top: container.style.top,
+                    left: container.style.left,
+                    width: container.style.width,
+                    height: container.style.height
+                });
             };
         } else {
             dragMouseDown(e);
@@ -85,3 +93,14 @@ if (chatContainer) {
     chatContainer.style.position = 'absolute'; // Obavezno postaviti na absolute
     enableDragAndResize(chatContainer);
 }
+
+// Kada server emituje podatke o promenama od drugih korisnika
+socket.on('sync-chat-container', (data) => {
+    const chatContainer = document.querySelector('#chatContainer');
+    if (chatContainer) {
+        chatContainer.style.top = data.top;
+        chatContainer.style.left = data.left;
+        chatContainer.style.width = data.width;
+        chatContainer.style.height = data.height;
+    }
+});
