@@ -7,11 +7,17 @@ const permanentGuests = [
         const virtualGuests = [
             { nickname: 'Bala Hatun', messages: ['Poz Svima', 'jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'deepskyblue' },
             { nickname: 'Halime', messages: ['Zdravo Sarinenge', 'opaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'], color: 'purple' },
-            { nickname: 'Holofira', messages: ['Selami sarinenge', 'tooOOOOOOOOOOOOOOOOOOOOOOO'], color: 'red' },
+            { nickname: 'Holofira', messages: ['Selami sarinenge', 'toooooooooooooooooooooooo'], color: 'red' },
             { nickname: 'Holofira', messages: ['*__X__* Mangava tu ❤️'], color:  'red' },
             { nickname: 'Halime', messages: ['Nas olestar lolije ili ka sredinav ti frizura, Merava tuke *__X__* ❤️💋'], color: 'purple' },
             { nickname: 'Bala Hatun', messages: ['Dzabe tumen cupinen pe taro bala OV TANO SAMO MLO'], color:'deepskyblue' },
-        ];
+               { nickname: 'Holofira', messages: ['Za svijet ste možda jedna osoba, ali za jednu osobu ste vi (X) svijet'], color: 'red' },   
+             { nickname: 'Halime', messages: ['Volim te X i to je početak i kraj svegaa'], color: 'purple' },       
+                     { nickname: 'Bala Hatun', messages: ['Volim te ne samo zbog onoga što jesi, već i zbog onoga što sam ja kad sam s tobom'], color:'deepskyblue' },
+            { nickname: 'Halime', messages: ['Kad sam imala 8 godina moja sestra je bila upola mladja od mene , sada imam 40, koliko ima moja sestra ? KO POGODI DOBIJA 3 PESME OD DJ-A'], color: 'purple' }, 
+       { nickname: 'Holofira', messages: ['Ulicom setaju dva oca i dva sina a ipak ih je samo troje , KAKO TO ?  KO ODGOVOR ZNA 3 PESME OD DJ-A '], color:  'red' },
+ { nickname: 'Bala Hatun', messages: ['Tvoje je , ali ga svi drugi vise koriste nego ti . KO POGODI 3 PESME OD DJ-A'], color:'deepskyblue' },
+ ];
 
         function sendMessageToChat(guest, message) {
             const messageArea = document.getElementById('messageArea');
@@ -56,29 +62,23 @@ const permanentGuests = [
             }
         }
 
-        function startVirtualGuests() {
-            const messageTimings = [
-                { guestIndex: 0, messageIndex: 0, time: 0 },
-                { guestIndex: 0, messageIndex: 1, time: 5 },
-                { guestIndex: 1, messageIndex: 0, time: 60 },
-                { guestIndex: 1, messageIndex: 1, time: 65 },
-                { guestIndex: 2, messageIndex: 0, time: 120 },
-                { guestIndex: 2, messageIndex: 1, time: 125 },
-                { guestIndex: 3, messageIndex: 0, time: 180 },
-                { guestIndex: 4, messageIndex: 0, time: 200 },
-                { guestIndex: 5, messageIndex: 0, time: 220 },
-            ];
+       function startVirtualGuests() {
+    let time = 0; // Početno vreme
 
-            messageTimings.forEach(({ guestIndex, messageIndex, time }) => {
-                setTimeout(() => {
-                    const guest = virtualGuests[guestIndex];
-                    sendMessageToChat(guest, guest.messages[messageIndex]);
-                    addGuestToList(guest); // Dodavanje samo ako gost nije već tu
-                }, time * 1000);
-            });
+    virtualGuests.forEach((guest, guestIndex) => {
+        guest.messages.forEach((message, messageIndex) => {
+            setTimeout(() => {
+                sendMessageToChat(guest, message);
+                addGuestToList(guest); // Dodavanje gosta u listu
+            }, time * 1000);
 
-            setTimeout(startVirtualGuests, 240 * 1000); // Ponovni ciklus nakon 240 sekundi
-        }
+            time += 30; // Povećavanje vremena za 30 sekundi za svaku poruku
+        });
+    });
+
+    setTimeout(startVirtualGuests, time * 1000); // Ponovni ciklus
+}
+
 
         // Pokretanje popunjavanja liste i virtuelnih gostiju
         window.onload = () => {
