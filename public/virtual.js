@@ -11,7 +11,7 @@ const permanentGuests = [
             { nickname: 'Holofira', messages: ['*__X__* Mangava tu ❤️'], color:  'red' },
             { nickname: 'Halime', messages: ['Nas olestar lolije ili ka sredinav ti frizura, Merava tuke *__X__* ❤️💋'], color: 'purple' },
             { nickname: 'Bala Hatun', messages: ['Dzabe tumen cupinen pe taro bala OV TANO SAMO MLO'], color:'deepskyblue' },
-               { nickname: 'Holofira', messages: ['Za svet sI možda jedna osoba, ali za jednu osobu ste ti (X) ceo svet'], color: 'red' },   
+               { nickname: 'Holofira', messages: ['Za svet sI možda jedna osoba, ali za jednu osobu si ti (X) ceo svet'], color: 'red' },   
              { nickname: 'Halime', messages: ['Volim te X.  To je početak i kraj svegaa'], color: 'purple' },       
                      { nickname: 'Bala Hatun', messages: ['Volim te X ne samo zbog onoga što jesi, već i zbog onoga što sam ja kad sam s tobom'], color:'deepskyblue' },
             { nickname: 'Halime', messages: ['Kad sam imala 8 godina moja sestra je bila upola mladja od mene , sada imam 40, koliko ima moja sestra ? KO POGODI DOBIJA 3 PESME OD DJ-A'], color: 'purple' }, 
