@@ -113,12 +113,6 @@ body {
     overflow-y: auto;
    }
 
-.guest {
-    padding: 5px;
-    border-bottom: 1px solid white;
-    cursor: pointer;
-    
-}
  /* CSS ZA MIXER DODATAK IZ HTML MIXER */
  
   #mixer {
