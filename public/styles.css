@@ -73,6 +73,7 @@ body {
     flex-direction: column;
     overflow-y: auto;
     word-wrap: break-word;  /* Prelamanje reči unutar poruka */
+    pointer-events: none;
 }
 
 .message {
@@ -109,7 +110,7 @@ body {
     color: white; /* Default color remains white for non-dynamic text */
     border-bottom: 10px solid white;
     overflow-y: auto;
-}
+   }
 
 .guest {
     padding: 5px;
