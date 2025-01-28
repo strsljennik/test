@@ -116,12 +116,23 @@ body {
     padding: 5px;
     border-bottom: 1px solid white;
     cursor: pointer;
+     display: flex;
+    align-items: center;
+     margin: 5px 0;
+    padding-left: 20px;
+    font-weight: bold;
+    font-style: italic;
     
 }
 
+.guest::before {
+    content: "•"; 
+    margin-right: 10px;
+    font-size: 18px;
+}
+    
  /* CSS ZA MIXER DODATAK IZ HTML MIXER */
- 
-  #mixer {
+   #mixer {
     display: none;
     background-color: black;
     color: white;
