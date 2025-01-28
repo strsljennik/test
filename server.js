@@ -55,6 +55,7 @@ const assignedNumbers = new Set(); // Set za generisane brojeve
 // Dodavanje socket događaja iz banmodula
 setupSocketEvents(io, guests, bannedUsers); // Dodavanje guests i bannedUsers u banmodul
 privatmodul(io, guests);
+let currentBackground = "";
 
 // Socket.io događaji
 io.on('connection', (socket) => {
@@ -143,6 +144,13 @@ socket.on('updateGuestColor', ({ guestId, newColor }) => {
     // Emituje promenu boje svim klijentima
     io.emit('updateGuestColor', { guestId, newColor });
 });
+      socket.emit("updateBackground", currentBackground);
+
+    socket.on("changeBackground", (url) => {
+        console.log("Nova pozadina:", url);
+        currentBackground = url;
+        io.emit("updateBackground", url);
+    });
 
 // Obrada diskonekcije korisnika
     socket.on('disconnect', () => {
