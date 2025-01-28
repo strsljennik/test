@@ -26,12 +26,12 @@ body {
 
 #chatContainer {
     width: 900px;
-    height: 600px;
+    height: 550px;
     margin: auto;
     border: 2px solid white;
     background-color: black;
     display: flex;
-    position: relative;
+   position: absolute; 
     flex-direction: column;
     overflow: hidden;
 }
