@@ -67,15 +67,20 @@ body {
     position: absolute;
     top: 95px;
     left: 5px;
-    right: 195px; /* Udaljenost sa desne strane */
+    right: 195px;
     bottom: 0px;
     padding: 10px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    word-wrap: break-word;  /* Prelamanje reči unutar poruka */
-    pointer-events: none;
+    word-wrap: break-word;
+    pointer-events: auto; /* Omogućava skrolovanje */
 }
+
+#messageArea * {
+    pointer-events: none; /* Onemogućava interakciju unutar poruka */
+}
+
 
 .message {
     margin-bottom: 10px;
