@@ -1,33 +1,39 @@
 module.exports = (io) => {
-    let chatContainerPosition = { x: 0, y: 0 }; // Početna pozicija chat kontejnera
+   let chatContainerState = { x: 0, y: 0, width: 900, height: 600 };
 
     io.on('connection', (socket) => {
         console.log('A user connected: ' + socket.id);
 
-        // Kada novi gost uđe, šaljemo mu pozdravnu poruku od Konobarice
+        socket.emit('updateChatContainer', { ...chatContainerState });
+
         socket.on('new_guest', () => {
             const greetingMessage = `Dobro nam došli, osećajte se kao kod kuće, i budite nam raspoloženi! Sada će vam vaša Konobarica posluziti kaficu ☕, 
                                     a naši DJ-evi će se pobrinuti da vam ispune muzičke želje.`;
-
-            // Emitujemo pozdravnu poruku svima
             io.emit('message', { 
                 username: '<span class="konabarica">Konobarica</span>', 
                 message: greetingMessage,
-                isSystemMessage: true // označavamo kao sistemsku poruku
+                isSystemMessage: true 
             });
-
-            // Šaljemo trenutnu poziciju chat kontejnera novom korisniku
-            socket.emit('updateChatContainer', chatContainerPosition);
+            socket.emit('updateChatContainer', { ...chatContainerState });
         });
 
-        // Kada se korisnik poveže, šaljemo mu trenutnu poziciju chat kontejnera (u slučaju da se ne aktivira 'new_guest')
-        socket.emit('updateChatContainer', chatContainerPosition);
-
-        // Kada klijent pošalje poziciju chat kontejnera
         socket.on('moveChatContainer', (data) => {
-            chatContainerPosition = data; // Ažuriraj poziciju chat kontejnera
-            io.emit('updateChatContainer', chatContainerPosition); // Emitujemo svima
+            if (typeof data.x === 'number' && typeof data.y === 'number') {
+                chatContainerState.x = data.x;
+                chatContainerState.y = data.y;
+                io.emit('updateChatContainer', { ...chatContainerState });
+            }
         });
+
+        socket.on('resizeChatContainer', (data) => {
+            if (typeof data.width === 'number' && typeof data.height === 'number' && data.width > 50 && data.height > 50) {
+                chatContainerState.width = data.width;
+                chatContainerState.height = data.height;
+                io.emit('updateChatContainer', { ...chatContainerState });
+            }
+        });
+
+        socket.emit('updateChatContainer', { ...chatContainerState });
 
         socket.on('disconnect', () => {
             console.log('User disconnected: ' + socket.id);
