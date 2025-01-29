@@ -4,6 +4,16 @@ module.exports = (io) => {
     io.on('connection', (socket) => {
         console.log('A user connected: ' + socket.id);
 
+     socket.on('versionLoaded', (data) => {
+    // Obavesti sve povezane korisnike
+    io.emit('versionLoaded', data);
+}); // Zatvara 'versionLoaded' handler
+
+socket.on('disconnect', () => {
+    console.log('User disconnected: ' + socket.id);
+}); // Zatvara 'disconnect' handler
+
+
         socket.emit('updateChatContainer', { ...chatContainerState });
 
         socket.on('new_guest', () => {
@@ -35,7 +45,7 @@ module.exports = (io) => {
 
         socket.emit('updateChatContainer', { ...chatContainerState });
 
-        socket.on('disconnect', () => {
+   socket.on('disconnect', () => {
             console.log('User disconnected: ' + socket.id);
         });
     });
