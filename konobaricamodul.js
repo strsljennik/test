@@ -44,5 +44,6 @@ socket.emit('updateChatContainer', { ...chatContainerState });
 
 socket.on('disconnect', () => {
     console.log('User disconnected: ' + socket.id);
-    }
-});
+       });
+    });
+};
