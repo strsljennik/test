@@ -4,13 +4,10 @@ module.exports = (io) => {
     io.on('connection', (socket) => {
         console.log('A user connected: ' + socket.id);
 
-socket.on('versionLoaded', (data) => {
+  socket.on('versionLoaded', (data) => {
     // Obavesti sve povezane korisnike
     io.emit('versionLoaded', data);
 });
-
-
-        socket.emit('updateChatContainer', { ...chatContainerState });
 
         socket.on('new_guest', () => {
             const greetingMessage = `Dobro nam došli, osećajte se kao kod kuće, i budite nam raspoloženi! Sada će vam vaša Konobarica posluziti kaficu ☕, 
