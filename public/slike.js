@@ -253,6 +253,8 @@ document.getElementById("pozadina").addEventListener("click", function() {
         socket.emit("changeBackground", url); // Ovo šalje serveru
     } else {
         document.body.style.backgroundImage = "url('default_image_url.jpg')";
+        socket.emit("changeBackground", "default_image_url.jpg");
+
     }
 });
 
