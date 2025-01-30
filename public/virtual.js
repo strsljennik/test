@@ -2,6 +2,7 @@ const permanentGuests = [
             { nickname: 'Bala Hatun', color: 'deepskyblue' },
             { nickname: 'Halime', color: 'purple' },
             { nickname: 'Holofira', color: 'red' },
+              { nickname: 'Robot-X', color: 'white' },
         ];
 
         const virtualGuests = [
@@ -22,7 +23,18 @@ const permanentGuests = [
    { nickname: 'Bala Hatun', messages: ['Jasaaaaaaaaaaaaaaaaaaaaaaaaaaaaa X SAMO MANGE-----TUKE ARI TEJSA'], color:'deepskyblue' },    
      { nickname: 'Halime', messages: ['X ajde tejsa ava ko dorucko , dakerav tu ko 8 kad ka dzal o Ertugrul ki buti'], color: 'purple' }, 
        { nickname: 'Bala Hatun', messages: ['X ava tejsa ki vecera u 9 , o Osmani na sovela kere '], color:'deepskyblue' },   
-      { nickname: 'Holofira', messages: ['X ma te ave tejsa slucajno , o Mehmeti bar kas ulo , ic na ikljovel avrijal'], color:  'red' },                
+      { nickname: 'Holofira', messages: ['X ma te ave tejsa slucajno , o Mehmeti bar kas ulo , ic na ikljovel avrijal'], color:  'red' },     
+            { nickname: 'Halime', messages: ['Ovaj X samo nesto cacka , uvek nesto pokvari'], color: 'purple' },     
+                     { nickname: 'Holofira', messages: ['Tacno , svaki dan nesto dira ,treba mu zabraniti pc pod hitno , pre nego pokvari ceo radio'], color:  'red' },  
+        { nickname: 'Bala Hatun', messages: ['Ne dirajte X-a , nije on kriv sto nezna sta radi '], color:'deepskyblue' },     
+           { nickname: 'Halime', messages: ['Dok nisi pokvario ton ajde da slusamo malo Zvonka i Ramka'], color: 'purple' },  
+               { nickname: 'Bala Hatun', messages: ['Ako moze Sabana i Jasara takodje '], color:'deepskyblue' },       
+                     { nickname: 'Holofira', messages: ['Ne Zaboravi Dzeja i Sinana'], color:  'red' }, 
+                      { nickname: 'Robot-X', messages: ['Bala , Hola, Halime -- ako se ne smirite brisacu vas sve 3 zauvek , razumele ?'], color:  'white' }, 
+                     { nickname: 'Bala Hatun', messages: ['Hoces , ali malo sutra '], color:'deepskyblue' }, 
+                     { nickname: 'Holofira', messages: ['Kad bi ti mogo bez nas , odavno bi nas izbrisao '], color:'red' },  
+                      { nickname: 'Halime', messages: ['Mozda i mozes ti nas da izbrises sa chata ali nas nemozes izrbisati iz srca '], color: 'purple' },  
+                    { nickname: 'Robot-X', messages: ['Nastavite da galamite, igrajte se , pa cemo videti sta ce biti...........'], color:  'white' }, 
  ];
 
         function sendMessageToChat(guest, message) {
