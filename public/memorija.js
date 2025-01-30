@@ -15,6 +15,26 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.style.padding = '20px';
     modal.style.overflow = 'auto';
 
+let isDragging = false;
+    let offsetX, offsetY;
+
+    modal.addEventListener('mousedown', function (e) {
+        isDragging = true;
+        offsetX = e.clientX - modal.offsetLeft;
+        offsetY = e.clientY - modal.offsetTop;
+    });
+
+    document.addEventListener('mousemove', function (e) {
+        if (isDragging) {
+            modal.style.left = e.clientX - offsetX + 'px';
+            modal.style.top = e.clientY - offsetY + 'px';
+        }
+    });
+
+    document.addEventListener('mouseup', function () {
+        isDragging = false;
+    });
+
     modal.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3 style="color: #00ffff;">Unesite naziv verzije</h3>
@@ -119,25 +139,33 @@ function deleteVersion(index) {
     renderPageList(); // Ponovo renderuj listu verzija
 }
 
+function restoreImages(images) {
+    const existingImages = document.querySelectorAll('img');
+    existingImages.forEach(img => img.remove());
 
-    function restoreImages(images) {
-        // Brisanje prethodnih slika
-        const existingImages = document.querySelectorAll('img');
-        existingImages.forEach(img => img.remove());
+    images.forEach(imageData => {
+        const img = new Image();
+        img.src = imageData.src;
+        img.style.position = 'absolute';
+        img.style.top = imageData.top + 'px';
+        img.style.left = imageData.left + 'px';
+        img.style.width = imageData.width + 'px';
+        img.style.height = imageData.height + 'px';
 
-        // Ponovno dodavanje slika sa sačuvanim pozicijama
-        images.forEach(imageData => {
-            const img = new Image();
-            img.src = imageData.src;
-            img.style.position = 'absolute';
-            img.style.top = imageData.top + 'px';
-            img.style.left = imageData.left + 'px';
-            img.style.width = imageData.width + 'px';
-            img.style.height = imageData.height + 'px';
+        document.body.appendChild(img);
+    });
 
-            document.body.appendChild(img); // Dodaj sliku na stranicu na poziciju gde je bila
-        });
-    }
+    // Obavesti sve povezane korisnike da je verzija učitana
+    socket.emit('versionLoaded', { images });
+}
+
+// Osluškuj za obaveštenja o učitanoj verziji, ali bez alert-a
+socket.on('versionLoaded', (data) => {
+    // Ažuriraj slike na stranici
+    restoreImages(data.images);
+});
+
+ 
 
     document.getElementById('downloadPagesButton').addEventListener('click', function () {
         if (savedPages.length === 0) {
