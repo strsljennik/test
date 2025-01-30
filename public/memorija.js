@@ -15,6 +15,26 @@ document.addEventListener('DOMContentLoaded', function () {
     modal.style.padding = '20px';
     modal.style.overflow = 'auto';
 
+let isDragging = false;
+    let offsetX, offsetY;
+
+    modal.addEventListener('mousedown', function (e) {
+        isDragging = true;
+        offsetX = e.clientX - modal.offsetLeft;
+        offsetY = e.clientY - modal.offsetTop;
+    });
+
+    document.addEventListener('mousemove', function (e) {
+        if (isDragging) {
+            modal.style.left = e.clientX - offsetX + 'px';
+            modal.style.top = e.clientY - offsetY + 'px';
+        }
+    });
+
+    document.addEventListener('mouseup', function () {
+        isDragging = false;
+    });
+
     modal.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3 style="color: #00ffff;">Unesite naziv verzije</h3>
@@ -50,43 +70,41 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.style.display = 'none';
     });
 
- document.getElementById('saveNewPageButton').addEventListener('click', function () {
-    const pageName = document.getElementById('newPageNameInput').value;
-    if (!pageName) {
-        alert('Morate uneti naziv verzije.');
-        return;
-    }
+    document.getElementById('saveNewPageButton').addEventListener('click', function () {
+        const pageName = document.getElementById('newPageNameInput').value;
+        if (!pageName) {
+            alert('Morate uneti naziv verzije.');
+            return;
+        }
 
-    const images = [];
-    const imgElements = document.querySelectorAll('img');
+        const images = [];
+        const imgElements = document.querySelectorAll('img');
 
-    imgElements.forEach(img => {
-        const rect = img.getBoundingClientRect();
-        images.push({
-            src: img.src,
-            top: rect.top,
-            left: rect.left,
-            width: rect.width,
-            height: rect.height
+        // Prolazimo kroz sve slike na stranici i spremamo njihove pozicije i dimenzije
+        imgElements.forEach(img => {
+            const rect = img.getBoundingClientRect(); // Uzmi poziciju slike
+            images.push({
+                src: img.src,
+                top: rect.top,
+                left: rect.left,
+                width: rect.width,
+                height: rect.height
+            });
         });
+
+        const pageData = {
+            name: pageName,
+            images: images // Čuva slike sa njihovim pozicijama i dimenzijama
+        };
+
+        savedPages.push(pageData);
+        localStorage.setItem('savedPages', JSON.stringify(savedPages));
+
+        renderPageList();
+        document.getElementById('newPageNameInput').value = '';
     });
 
-    const backgroundImage = document.body.style.backgroundImage; // Dodaj pozadinsku sliku
-
-    const pageData = {
-        name: pageName,
-        images: images,
-        backgroundImage: backgroundImage // Spremi pozadinsku sliku
-    };
-
-    savedPages.push(pageData);
-    localStorage.setItem('savedPages', JSON.stringify(savedPages));
-
-    renderPageList();
-    document.getElementById('newPageNameInput').value = '';
-});
-
-    function renderPageList() {
+ function renderPageList() {
     pageList.innerHTML = '';
     savedPages.forEach((page, index) => {
         const li = document.createElement('li');
@@ -96,10 +114,9 @@ document.addEventListener('DOMContentLoaded', function () {
         li.style.borderBottom = '1px solid #00ffff';
 
         li.addEventListener('click', function () {
-    alert(`Učitana verzija: ${page.name}`);
-    restoreImages(page.images, page.backgroundImage); // Učitaj pozadinsku sliku zajedno sa slikama
-});
-
+            alert(`Učitana verzija: ${page.name}`);
+            restoreImages(page.images); // Učitavanje slika sa pozicijama
+        });
 
         // Dodaj desni klik za brisanje
         li.addEventListener('contextmenu', function(event) {
@@ -122,10 +139,7 @@ function deleteVersion(index) {
     renderPageList(); // Ponovo renderuj listu verzija
 }
 
-function restoreImages(images, backgroundImage) {
-    // Obnavljanje pozadinske slike
-    document.body.style.backgroundImage = backgroundImage;
-
+function restoreImages(images) {
     const existingImages = document.querySelectorAll('img');
     existingImages.forEach(img => img.remove());
 
@@ -141,19 +155,17 @@ function restoreImages(images, backgroundImage) {
         document.body.appendChild(img);
     });
 
-    if (window.socket) {
-        socket.emit('versionLoaded', { images, backgroundImage });
-    }
+    // Obavesti sve povezane korisnike da je verzija učitana
+    socket.emit('versionLoaded', { images });
 }
 
-// Osluškuj za obaveštenja o učitanoj verziji
-if (window.socket) {
-    socket.on('versionLoaded', (data) => {
-        restoreImages(data.images, data.backgroundImage); // Dodaj pozadinsku sliku
-    });
-}
+// Osluškuj za obaveštenja o učitanoj verziji, ali bez alert-a
+socket.on('versionLoaded', (data) => {
+    // Ažuriraj slike na stranici
+    restoreImages(data.images);
+});
 
-
+ 
 
     document.getElementById('downloadPagesButton').addEventListener('click', function () {
         if (savedPages.length === 0) {
