@@ -4,14 +4,10 @@ module.exports = (io) => {
     io.on('connection', (socket) => {
         console.log('A user connected: ' + socket.id);
 
-     socket.on('versionLoaded', (data) => {
+socket.on('versionLoaded', (data) => {
     // Obavesti sve povezane korisnike
     io.emit('versionLoaded', data);
-}); // Zatvara 'versionLoaded' handler
-
-socket.on('disconnect', () => {
-    console.log('User disconnected: ' + socket.id);
-}); // Zatvara 'disconnect' handler
+});
 
 
         socket.emit('updateChatContainer', { ...chatContainerState });
@@ -35,18 +31,18 @@ socket.on('disconnect', () => {
             }
         });
 
-        socket.on('resizeChatContainer', (data) => {
-            if (typeof data.width === 'number' && typeof data.height === 'number' && data.width > 50 && data.height > 50) {
-                chatContainerState.width = data.width;
-                chatContainerState.height = data.height;
-                io.emit('updateChatContainer', { ...chatContainerState });
-            }
-        });
+      socket.on('resizeChatContainer', (data) => {
+    if (typeof data.width === 'number' && typeof data.height === 'number' && data.width > 50 && data.height > 50) {
+        chatContainerState.width = data.width;
+        chatContainerState.height = data.height;
+        io.emit('updateChatContainer', { ...chatContainerState });
+    }
+});
 
-        socket.emit('updateChatContainer', { ...chatContainerState });
+// Emisija za ažuriranje odmah nakon konekcije, pošto možda želiš da odmah pošalješ trenutnu veličinu
+socket.emit('updateChatContainer', { ...chatContainerState });
 
-   socket.on('disconnect', () => {
-            console.log('User disconnected: ' + socket.id);
-        });
-    });
-};
+socket.on('disconnect', () => {
+    console.log('User disconnected: ' + socket.id);
+    }
+});
