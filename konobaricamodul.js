@@ -34,6 +34,12 @@ module.exports = (io) => {
 // Emisija za ažuriranje odmah nakon konekcije, pošto možda želiš da odmah pošalješ trenutnu veličinu
 socket.emit('updateChatContainer', { ...chatContainerState });
 
+         socket.on('versionLoaded', (data) => {
+    // Obavesti sve povezane korisnike
+    io.emit('versionLoaded', data);
+});
+
+
 socket.on('disconnect', () => {
     console.log('User disconnected: ' + socket.id);
        });
