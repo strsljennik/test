@@ -70,41 +70,53 @@ let isDragging = false;
         modal.style.display = 'none';
     });
 
-    document.getElementById('saveNewPageButton').addEventListener('click', function () {
-        const pageName = document.getElementById('newPageNameInput').value;
-        if (!pageName) {
-            alert('Morate uneti naziv verzije.');
-            return;
-        }
+document.getElementById('saveNewPageButton').addEventListener('click', function () {
+    const pageName = document.getElementById('newPageNameInput').value;
+    if (!pageName) {
+        alert('Morate uneti naziv verzije.');
+        return;
+    }
 
-        const images = [];
-        const imgElements = document.querySelectorAll('img');
+    const images = [];
+    const imgElements = document.querySelectorAll('img');
 
-        // Prolazimo kroz sve slike na stranici i spremamo njihove pozicije i dimenzije
-        imgElements.forEach(img => {
-            const rect = img.getBoundingClientRect(); // Uzmi poziciju slike
+    // Filtriraj slike, isključi #playerCover
+    imgElements.forEach(img => {
+        if (img.id !== 'playerCover') {  // Ignoriši playerCover sliku
+            const rect = img.getBoundingClientRect();
             images.push({
+                type: 'img',
                 src: img.src,
                 top: rect.top,
                 left: rect.left,
                 width: rect.width,
                 height: rect.height
             });
-        });
-
-        const pageData = {
-            name: pageName,
-            images: images // Čuva slike sa njihovim pozicijama i dimenzijama
-        };
-
-        savedPages.push(pageData);
-        localStorage.setItem('savedPages', JSON.stringify(savedPages));
-
-        renderPageList();
-        document.getElementById('newPageNameInput').value = '';
+        }
     });
 
- function renderPageList() {
+    // Provera i čuvanje pozadinske slike ako postoji
+    const backgroundImage = document.body.style.backgroundImage;
+    if (backgroundImage && backgroundImage !== 'none') {
+        images.push({
+            type: 'background',
+            src: backgroundImage.replace('url(', '').replace(')', '').replace(/"/g, '') // Čisti URL iz backgroundImage
+        });
+    }
+
+    const pageData = {
+        name: pageName,
+        images: images
+    };
+
+    savedPages.push(pageData);
+    localStorage.setItem('savedPages', JSON.stringify(savedPages));
+
+    renderPageList();
+    document.getElementById('newPageNameInput').value = '';
+});
+
+function renderPageList() {
     pageList.innerHTML = '';
     savedPages.forEach((page, index) => {
         const li = document.createElement('li');
@@ -140,32 +152,50 @@ function deleteVersion(index) {
 }
 
 function restoreImages(images) {
+    // Prvo ukloni sve postojeće slike sa stranice, osim #playerCover
     const existingImages = document.querySelectorAll('img');
-    existingImages.forEach(img => img.remove());
-
-    images.forEach(imageData => {
-        const img = new Image();
-        img.src = imageData.src;
-        img.style.position = 'absolute';
-        img.style.top = imageData.top + 'px';
-        img.style.left = imageData.left + 'px';
-        img.style.width = imageData.width + 'px';
-        img.style.height = imageData.height + 'px';
-
-        document.body.appendChild(img);
+    existingImages.forEach(function (img) {
+        if (img.id !== "playerCover") {  // Ignoriši playerCover sliku
+            img.remove();
+        }
     });
 
-    // Obavesti sve povezane korisnike da je verzija učitana
-    socket.emit('versionLoaded', { images });
+    // Ukloni pozadinsku sliku sa body ili drugih elemenata
+    const elementsWithBackground = document.querySelectorAll('*');
+    elementsWithBackground.forEach(function (element) {
+        const backgroundImage = window.getComputedStyle(element).backgroundImage;
+        if (backgroundImage !== 'none') {
+            element.style.backgroundImage = '';  // Ukloni pozadinsku sliku
+        }
+    });
+
+    // Zatim učitaj nove slike sa pozicijama i dimenzijama
+    images.forEach(function (imageData) {
+        if (imageData.type === 'background') {
+            // Postavi pozadinsku sliku ako je tip 'background'
+            document.body.style.backgroundImage = "url('" + imageData.src + "')";
+        } else if (imageData.type === 'img') {
+            // Učitaj slike sa pozicijama
+            const img = new Image();
+            img.src = imageData.src;
+            img.style.position = 'absolute';
+            img.style.top = imageData.top + 'px';
+            img.style.left = imageData.left + 'px';
+            img.style.width = imageData.width + 'px';
+            img.style.height = imageData.height + 'px';
+
+            document.body.appendChild(img);
+        }
+    });
 }
+// Obavesti sve povezane korisnike da je verzija učitana
+socket.emit('versionLoaded', { images });
 
 // Osluškuj za obaveštenja o učitanoj verziji, ali bez alert-a
 socket.on('versionLoaded', (data) => {
     // Ažuriraj slike na stranici
     restoreImages(data.images);
 });
-
- 
 
     document.getElementById('downloadPagesButton').addEventListener('click', function () {
         if (savedPages.length === 0) {
