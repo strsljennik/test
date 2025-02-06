@@ -59,3 +59,8 @@ document.getElementById('NIK').addEventListener('click', function() {
     var container = document.getElementById('authContainer');
     container.style.display = container.style.display === 'none' ? 'block' : 'none';
   });
+// YOUTUBE
+document.getElementById('tube').addEventListener('click', () => {
+    const videoUrl = "https://www.youtube.com/embed/[video_id]?autoplay=1"; // Zamenite [video_id] sa stvarnim ID-jem videa
+    window.open(videoUrl, '_blank'); // Otvara novi tab sa YouTube videom
+  });
