@@ -15,6 +15,7 @@
 </head>
 <body>
 
+
    <div id="authContainer" style="display: none;">
     <!-- Forma za registraciju -->
     <form id="registerForm">
@@ -68,22 +69,29 @@
         
         <div class="foregroundFunctions">
             <button id="clearChat">Obriši chat</button>
-            <button id="privateMessage">Privatna poruka</button>
+            <button id="privateMessage">Privat</button>
 <button id="pozadina">Pozadina</button>
-          <button id="tube">TUBE</button>  
+<button id="strim">mik+kam</button>
     
 </div>
         
         <div class="backgroundFunctions">
-            <button id="addImage"> slika</button>
-            <button id="banned">A</button>
-             <button id="memorija">memorija</button>
-            <button id="chat"> chat </button>
+            <button id="addImage"> Slika</button>
+                   <button id="chat"> Chat </button>
             <button id="pesme"> Mixer </button>
-            
+             <button id="govna"> *__X__* </button>
+  <button id="memorija"> *Memorija* </button>
 
      </div>
     </div>
+</div>
+
+<!-- Originalni UUID modal -->
+<div id="uuidModal" style="display: none;">
+    <h3>BY *__X__*</h3>
+    <ul id="uuidList"></ul>
+<button id="blokip"> Blokip </button>
+<button id="delete"> Delete </button>
 </div>
 
 <div id="memoryForm" style="display: none;">
@@ -113,28 +121,30 @@
             
              </div>
     </div>
-     <script src="memorija.js"></script> 
- <script src="elementi.js"></script>    
-<script src="virtual.js"></script>  
-<script src="konobarica.js"></script>
+
+<div id="strimkocka" style="display: none;">
+      <button id="toggleMicrophone" class="toolbarBtn">Uključi mikrofon</button>
+        <button id="toggleCamera" class="toolbarBtn">Uključi kameru</button>
+</div>
+
+     <script src="regist.js"></script>
+ <script src="elementi.js"></script>   
+     <script src="konobarica.js"></script>
 <script src="formatiranje.js"></script> 
- <script src="regist.js"></script>
+ <script src="funkcije.js"></script>
 <script src="smile.js"></script> 
-<script src="funkcije.js"></script>
 <script src="slike.js"></script>
-  <script src="uuid.js"></script>
- <script src="poruke.js"></script>
+   <script src="poruke.js"></script>
     <script src="privat.js"></script>
-     <iframe id="radioIframe" src="https://zeno.fm/player/radio-galaksija?autoplay=true&muted=true" 
+ <script src="memorija.js"></script>
+    <script src="strim.js"></script>
+   
+ <iframe id="radioIframe" src="https://zeno.fm/player/radio-galaksija?autoplay=true&muted=true" 
             width="300" height="139" frameborder="5" scrolling="no"
             style="display: none; position: fixed; top: 0; right: 0; z-index: 9998;"></iframe>
     <img id="playerCover" src="https://i.imgur.com/OFK8Tur.jpeg" 
     width="300" height="139" 
     style="position: fixed; top: 0; right: 0; z-index: 9999; pointer-events: none; display: none;">
-    <iframe src="https://www.youtube.com/embed/[video_id]?autoplay=1&controls=0" 
-        style="width: 0; height: 0; border: none;" 
-        allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
  
  </body>
 </html>
