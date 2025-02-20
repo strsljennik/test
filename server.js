@@ -4,7 +4,6 @@ const socketIo = require('socket.io');
 const { connectDB } = require('./mongo');
 const { register, login } = require('./prijava');
 const { setupSocketEvents } = require('./banmodul'); // Uvoz funkcije iz banmodula
-const uuidRouter = require('./uuidmodul'); // Putanja do modula
 const konobaricaModul = require('./konobaricamodul'); // Uvoz konobaricamodul.js
 const slikemodul = require('./slikemodul');
 const pingService = require('./ping');
@@ -30,7 +29,6 @@ slikemodul.setSocket(io);
 // Middleware za parsiranje JSON podataka i serviranje statičkih fajlova
 app.use(express.json());
 app.use(express.static(__dirname + '/public'));
-app.use('/guests', uuidRouter); // Dodavanje ruta u aplikaciju
 app.set('trust proxy', true);
 app.use(cors());
 
@@ -43,7 +41,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 // Lista autorizovanih i banovanih korisnika
-const authorizedUsers = new Set(['Radio Galaksija', 'ZI ZU', '__X__']);
+const authorizedUsers = new Set(['Radio Galaksija', 'ZI ZU', '*__X__*']);
 const bannedUsers = new Set();
 
 // Skladištenje informacija o gostima
@@ -63,7 +61,9 @@ io.on('connection', (socket) => {
     const uniqueNumber = generateUniqueNumber();
     const nickname = `Gost-${uniqueNumber}`; // Nadimak korisnika
     guests[socket.id] = nickname; // Dodajemo korisnika u guest list
-   socket.emit('setNickname', nickname);
+ socket.emit('setNickname', nickname);
+    const ipList = socket.handshake.headers['x-forwarded-for'];
+const ipAddress = ipList ? ipList.split(',')[0].trim() : socket.handshake.address;
 
 // Funkcija za generisanje jedinstvenog broja
     function generateUniqueNumber() {
@@ -75,23 +75,21 @@ io.on('connection', (socket) => {
         return number;
     }
 
- // Emitovanje događaja da bi ostali korisnici videli novog gosta
-    socket.broadcast.emit('newGuest', nickname);
+socket.broadcast.emit('newGuest', nickname);
 io.emit('updateGuestList', Object.values(guests));
+io.emit('logMessage', `${guests[socket.id]} se povezao. IP adresa: ${ipAddress}`);
 
- // Obrada prijave korisnika
-    socket.on('userLoggedIn', (username) => {
-        if (authorizedUsers.has(username)) {
-            guests[socket.id] = username;
-            console.log(`${username} je autentifikovan kao admin.`);
-        } else {
-            guests[socket.id] = username;
-            console.log(`${username} se prijavio kao gost.`);
-        }
-        io.emit('updateGuestList', Object.values(guests));
-    });
+socket.on('userLoggedIn', (username) => {
+    io.emit('logMessage', `${guests[socket.id]} je ${username}. IP adresa: ${ipAddress}`);
+    
+    if (authorizedUsers.has(username)) {
+        // Ovdje možeš dodati specifične akcije za autorizovane korisnike, ako su potrebne
+    }
+     guests[socket.id] = username;
+    io.emit('updateGuestList', Object.values(guests));
+});
 
- // Obrada slanja chat poruka
+   // Obrada slanja chat poruka
     socket.on('chatMessage', (msgData) => {
         const time = new Date().toLocaleTimeString();
         const messageToSend = {
@@ -113,20 +111,6 @@ io.emit('updateGuestList', Object.values(guests));
         io.emit('chat-cleared');
     });
  
-// Mogućnost banovanja korisnika prema nickname-u
-    socket.on('banUser', (nicknameToBan) => {
-        const socketIdToBan = Object.keys(guests).find(key => guests[key] === nicknameToBan);
-
-        if (socketIdToBan) {
-            io.to(socketIdToBan).emit('banned');
-            io.sockets.sockets[socketIdToBan].disconnect();
-            console.log(`Korisnik ${nicknameToBan} (ID: ${socketIdToBan}) je banovan.`);
-        } else {
-            console.log(`Korisnik ${nicknameToBan} nije pronađen.`);
-            socket.emit('userNotFound', nicknameToBan);
-        }
-    });
-
 // Poslati trenutne goste sa bojama novom gostu
 socket.emit('currentGuests', Object.keys(guestsData).map(guestId => ({
     guestId: guestId,
@@ -154,7 +138,7 @@ socket.on('updateGuestColor', ({ guestId, newColor }) => {
 
 // Obrada diskonekcije korisnika
     socket.on('disconnect', () => {
-        console.log(`${guests[socket.id]} se odjavio.`);
+        console.log(`${guests[socket.id]} se odjavio. IP adresa korisnika: ${ipAddress}`);
         delete guests[socket.id];
         io.emit('updateGuestList', Object.values(guests));
     });
