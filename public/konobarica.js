@@ -43,13 +43,25 @@ btn.onclick = function() {
 span.onclick = function() {
     modal.style.display = "none";
 }
+  let isDragging = false;
+    let offsetX, offsetY;
 
-// Zatvori modal klikom izvan njega
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
+    modal.addEventListener('mousedown', function (e) {
+        isDragging = true;
+        offsetX = e.clientX - modal.offsetLeft;
+        offsetY = e.clientY - modal.offsetTop;
+    });
+
+    document.addEventListener('mousemove', function (e) {
+        if (isDragging) {
+            modal.style.left = e.clientX - offsetX + 'px';
+            modal.style.top = e.clientY - offsetY + 'px';
+        }
+    });
+
+    document.addEventListener('mouseup', function () {
+        isDragging = false;
+    });
 
 // Funkcija za uvećanje fonta
 function increaseFontSize() {
