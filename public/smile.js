@@ -1,5 +1,5 @@
 // Funkcija za otvaranje modalnog prozora sa smajlovima
-document.getElementById('smilesBtn').addEventListener('click', function() {
+document.getElementById('smilesBtn').addEventListener('click', function () {
     const smileModal = document.getElementById('smileModal');
     const smilesBtn = document.getElementById('smilesBtn');
 
@@ -14,80 +14,148 @@ function closeSmileModal() {
     document.getElementById('smileModal').style.display = 'none';
 }
 
-// Funkcija za dodavanje smajlova u chat
+// Funkcija za dodavanje smajlova/slika u chat
 function addSmile(smile) {
     const chatInput = document.getElementById('chatInput');
-    chatInput.value += smile; 
+    chatInput.value += smile;
     closeSmileModal();
 }
 
-// Dodavanje HTML koda za modalni prozor sa smajlovima
+// Funkcija za dodavanje slike kao emotikona u chat
+function addImageToChat(imgSrc) {
+    const chatInput = document.getElementById('chatInput');
+    chatInput.value += ` <img src="${imgSrc}"> `;
+    closeSmileModal();
+}
+
+// Dodavanje HTML koda za modalni prozor
 const smileModalHTML = `
     <div id="smileModal" style="
         display: none; 
         position: fixed; 
-        width: 200px; 
-        height: 200px; 
+        width: 450px; 
+        height: auto; 
         background: black; 
         padding: 10px; 
         border: 1px solid white; 
         z-index: 1000; 
-        overflow-y: scroll; 
+        overflow-y: auto; 
         border-radius: 5px;
-        color: white;">
-        <div id="smileContainer" style="display: flex; flex-wrap: wrap; gap: 8px;">
-<span class="smile" onclick="addSmile('☕')">☕</span>
- <span class="smile" style="font-size: 24px;" onclick="addSmile('😀')">😀</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('😂')">😂</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('😍')">😍</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('😎')">😎</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('😢')">😢</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('😡')">😡</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🤔')">🤔</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('👍')">👍</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('👎')">👎</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('😜')">😜</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('😝')">😝</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('😻')">😻</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🤩')">🤩</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🥳')">🥳</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🤗')">🤗</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('😢')">😢</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🤐')">🤐</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🤟')">🤟</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('💋')">💋</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('💕')">💕</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('💞')">💞</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('❤️')">❤️</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('💔')">💔</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🖤')">🖤</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('💛')">💛</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('💚')">💚</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🌧️')">🌧️</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('☀️')">☀️</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🌈')">🌈</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🌍')">🌍</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🌻')">🌻</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🌼')">🌼</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🌷')">🌷</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🍀')">🍀</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🍎')">🍎</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🥑')">🥑</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🥥')">🥥</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🍉')">🍉</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🥭')">🥭</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🍌')">🍌</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🍓')">🍓</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🧁')">🧁</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🍰')">🍰</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🎂')">🎂</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🍹')">🍹</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🚹')">🚹</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('🚺')">🚺</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('👁️‍🗨️')">👁️‍🗨️</span>
-<span class="smile" style="font-size: 24px;" onclick="addSmile('👀')">👀</span>
+        color: white;
+        flex-wrap: wrap;">
         
-         `;
+        <button onclick="closeSmileModal()" style="
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            float: right;
+            font-size: 14px;
+            border-radius: 3px;
+        ">X</button>
+        
+        <div id="smileContainer" style="display: flex; flex-wrap: wrap; gap: 8px;">
+        </div>
+        
+        <hr style="margin: 10px 0; border-color: white;">
+        
+        <div id="emojiContainer" style="display: flex; flex-wrap: wrap; gap: 8px;">
+        </div>
+    </div>
+`;
 
-// Umetanje modalnog HTML-a u telo stranice
-document.body.insertAdjacentHTML('beforeend', smileModalHTML);
+if (!document.getElementById('smileModal')) {
+    document.body.insertAdjacentHTML('beforeend', smileModalHTML);
+}
+
+const emojiContainer = document.getElementById('emojiContainer');
+const smileContainer = document.getElementById('smileContainer');
+const emojiFolder = 'emoji gif/';
+
+// Spajanje svih slika i emojija u jednu listu
+const allEmojisAndImages = [
+    { type: 'emoji', content: '☕' },
+    { type: 'emoji', content: '😀' },
+    { type: 'emoji', content: '😂' },
+    { type: 'emoji', content: '😍' },
+    { type: 'emoji', content: '😎' },
+    { type: 'emoji', content: '😢' },
+    { type: 'emoji', content: '😡' },
+    { type: 'emoji', content: '🤔' },
+    { type: 'emoji', content: '👍' },
+    { type: 'emoji', content: '👎' },
+    { type: 'emoji', content: '😜' },
+    { type: 'emoji', content: '😝' },
+    { type: 'emoji', content: '😻' },
+    { type: 'emoji', content: '🤩' },
+    { type: 'emoji', content: '🥳' },
+    { type: 'emoji', content: '🤗' },
+    { type: 'emoji', content: '🤐' },
+    { type: 'emoji', content: '🤟' },
+    { type: 'emoji', content: '💋' },
+    { type: 'emoji', content: '💕' },
+    { type: 'emoji', content: '💞' },
+    { type: 'emoji', content: '❤️' },
+    { type: 'emoji', content: '💔' },
+    { type: 'emoji', content: '🖤' },
+    { type: 'emoji', content: '💛' },
+    { type: 'emoji', content: '💚' },
+    { type: 'emoji', content: '🌧️' },
+    { type: 'emoji', content: '☀️' },
+    { type: 'emoji', content: '🌷' },
+    { type: 'emoji', content: '🚹' },
+    { type: 'emoji', content: '🚺' },
+    { type: 'emoji', content: '👁️‍🗨️' },
+    { type: 'emoji', content: '👀' },
+    
+    // PNG slike
+    { type: 'image', content: 'stik1.png' },
+    { type: 'image', content: 'stik2.png' },
+    { type: 'image', content: 'stik3.png' },
+    { type: 'image', content: 'stik4.png' },
+    { type: 'image', content: 'stik5.png' },
+    { type: 'image', content: 'stik6.png' },
+    { type: 'image', content: 'stik7.png' },
+    { type: 'image', content: 'stik8.png' },
+    { type: 'image', content: 'stik9.png' },
+    { type: 'image', content: 'stik10.png' },
+    
+    // GIF slike
+    { type: 'image', content: 'dance.gif' },
+    { type: 'image', content: 'dance1.gif' },
+    { type: 'image', content: 'dance2.gif' },
+    { type: 'image', content: 'dance3.gif' },
+    { type: 'image', content: 'ily1.gif' },
+    { type: 'image', content: 'ily2.gif' },
+    { type: 'image', content: 'man.gif' },
+    { type: 'image', content: 'mira.gif' },
+    { type: 'image', content: 'mira1.gif' },
+    { type: 'image', content: 'rg.gif' },
+    { type: 'image', content: 'srce.gif' },
+    { type: 'image', content: 'srce2.gif' },
+    { type: 'image', content: 'srce3.gif' },
+    { type: 'image', content: 'srce4.gif' }
+];
+
+// Iteracija kroz sve elemente i dodavanje u DOM
+allEmojisAndImages.forEach(item => {
+    const element = document.createElement('span');
+    let imgElement;
+
+    if (item.type === 'emoji') {
+        element.textContent = item.content;
+        element.classList.add('smile');
+        element.onclick = () => addSmile(item.content);
+    } else if (item.type === 'image') {
+        imgElement = document.createElement('img');
+        imgElement.src = emojiFolder + item.content;
+        imgElement.classList.add('smile');
+        imgElement.alt = item.content;
+        element.classList.add('smile');
+        element.onclick = () => addSmile(`<img src='${emojiFolder + item.content}' alt='emoji'>`);
+        element.appendChild(imgElement);
+    }
+
+    smileContainer.appendChild(element);
+});
