@@ -14,62 +14,78 @@ document.getElementById('smilesBtn').addEventListener('click', () => {
 
 // Funkcija za učitavanje slika iz localStorage
 const loadImagesFromLocalStorage = () => {
-    const smileContainer = document.getElementById('smileContainer');
-    const storedImages = JSON.parse(localStorage.getItem('smiles')) || [];
+    const smileModal = document.getElementById('smileModal');
+    smileModal.innerHTML = ''; // Očisti modal pre nego što dodaš nove slike
 
-    // Ako postoje slike u localStorage, dodaj ih u modal
-    if (storedImages.length > 0) {
-        storedImages.forEach(({ type, content }) => {
-            const span = document.createElement('span');
-            span.classList.add('smile');
-            span.onclick = () => addSmile(type === 'emoji' ? content : `<img src='${emojiFolder + content}' alt='emoji'>`);
+    const allItems = JSON.parse(localStorage.getItem('emojiData')) || [];
+    allItems.forEach(item => {
+        const element = document.createElement('span');
+        let imgElement;
 
-            if (type === 'image') {
-                const img = document.createElement('img');
-                img.src = emojiFolder + content;
-                img.alt = content;
-                span.appendChild(img);
-            } else {
-                span.textContent = content;
-            }
+        if (item.type === 'emoji') {
+            element.textContent = item.content;
+            element.classList.add('smile');
+            element.onclick = () => addSmile(item.content);
+        } else if (item.type === 'image') {
+            imgElement = document.createElement('img');
+            imgElement.src = emojiFolder + item.content;
+            imgElement.classList.add('smile');
+            imgElement.alt = item.content;
+            element.classList.add('smile');
+            element.onclick = () => addImageToChat(emojiFolder + item.content);
+            element.appendChild(imgElement);
+        }
 
-            smileContainer.appendChild(span);
-        });
+        smileModal.appendChild(element);
+    });
+};
+
+// Funkcija za dodavanje emojija u chat
+const addSmile = (smile) => {
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.value += smile;
+        closeSmileModal();
     }
 };
 
-// Funkcija za dodavanje slika u localStorage
-const saveImagesToLocalStorage = (images) => {
-    localStorage.setItem('smiles', JSON.stringify(images));
+// Funkcija za dodavanje slike u chat
+const addImageToChat = (imgSrc) => {
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.value += ` <img src="${imgSrc}" alt="emoji"> `;
+        closeSmileModal();
+    }
 };
 
-// Definišemo smajlove, emojije i slike
-const smileModalHTML = `...`; // Tvoj HTML kod za modal
+// Funkcija za zatvaranje modalnog prozora
+const closeSmileModal = () => {
+    const smileModal = document.getElementById('smileModal');
+    if (smileModal) {
+        smileModal.style.display = 'none';
+    }
+};
 
-// Dodajemo sve slike i emojije u listu
-const items = [
+// HTML kod za modal
+const smileModalHTML = `
+<div id="smileModal" style="display:none;position:fixed;width:450px;background:black;padding:10px;border:1px solid white;z-index:1000;overflow-y:auto;border-radius:5px;color:white;flex-wrap:wrap;">
+    <button onclick="closeSmileModal()" style="background:red;color:white;border:none;padding:5px 10px;cursor:pointer;float:right;">X</button>
+    <div id="smileContainer" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+</div>`;
+
+if (!document.getElementById('smileModal')) document.body.insertAdjacentHTML('beforeend', smileModalHTML);
+
+// Popis slika i emojija
+const emojiFolder = 'emoji gif/';
+const allItems = [
     ...['☕', '😀', '😂', '😍', '😎', '😢', '😡', '🤔', '👍', '👎', '😜', '😝', '😻', '🤩', '🥳', '🤗', '🤐', '🤟', '💋', '💕', '💞', '❤️', '💔', '🖤', '💛', '💚', '🌧️', '☀️', '🌷', '🚹', '🚺', '👁️‍🗨️', '👀'].map(e => ({ type: 'emoji', content: e })),
     ...['stik1.png', 'stik2.png', 'stik3.png', 'stik4.png', 'stik5.png', 'stik6.png', 'stik7.png', 'stik8.png', 'stik9.png', 'stik10.png', 'dance.gif', 'dance1.gif', 'dance2.gif', 'dance3.gif', 'ily1.gif', 'ily2.gif', 'man.gif', 'mira.gif', 'mira1.gif', 'rg.gif', 'srce.gif', 'srce2.gif', 'srce3.gif', 'srce4.gif'].map(img => ({ type: 'image', content: img }))
 ];
 
-// Dodajemo slike u modal
-const smileContainer = document.getElementById('smileContainer');
-items.forEach(({ type, content }) => {
-    const span = document.createElement('span');
-    span.classList.add('smile');
-    span.onclick = () => addSmile(type === 'emoji' ? content : `<img src='${emojiFolder + content}' alt='emoji'>`);
+// Čuvanje slika u localStorage
+const saveImagesToLocalStorage = () => {
+    localStorage.setItem('emojiData', JSON.stringify(allItems));
+};
 
-    if (type === 'image') {
-        const img = document.createElement('img');
-        img.src = emojiFolder + content;
-        img.alt = content;
-        span.appendChild(img);
-    } else {
-        span.textContent = content;
-    }
-
-    smileContainer.appendChild(span);
-});
-
-// Sačuvaj slike u localStorage
-saveImagesToLocalStorage(items);
+// Pozivamo funkciju da sačuvamo slike u localStorage
+saveImagesToLocalStorage();
